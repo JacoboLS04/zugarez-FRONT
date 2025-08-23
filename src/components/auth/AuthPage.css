@@ -1,0 +1,324 @@
+/* Estilos para el componente AuthPage con diseño moderno glassmorphism */
+
+/* Container principal */
+.auth-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e40af 50%, #0ea5e9 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Elementos de fondo animados */
+.auth-page::before {
+  content: '';
+  position: absolute;
+  top: -10rem;
+  right: -10rem;
+  width: 20rem;
+  height: 20rem;
+  background: rgba(59, 130, 246, 0.2);
+  border-radius: 50%;
+  filter: blur(64px);
+  animation: float 6s ease-in-out infinite;
+}
+
+.auth-page::after {
+  content: '';
+  position: absolute;
+  bottom: -10rem;
+  left: -10rem;
+  width: 24rem;
+  height: 24rem;
+  background: rgba(14, 165, 233, 0.1);
+  border-radius: 50%;
+  filter: blur(64px);
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+/* Container del formulario */
+.auth-container {
+  width: 100%;
+  max-width: 28rem;
+  position: relative;
+}
+
+/* Card principal con efecto glassmorphism */
+.auth-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 2rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-card:hover {
+  box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.25);
+}
+
+/* Header */
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.auth-subtitle {
+  color: rgb(209, 213, 219);
+  margin-bottom: 1.5rem;
+}
+
+/* Botones de toggle (Login/Register) */
+.auth-toggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.auth-toggle-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  color: rgb(147, 197, 253);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.auth-toggle-btn.active {
+  background: linear-gradient(to right, rgb(59, 130, 246), rgb(14, 165, 233));
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.auth-toggle-btn:hover:not(.active) {
+  color: rgb(147, 197, 253);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Formulario */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Grupos de input */
+.input-group {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.input-group:focus-within .input-icon {
+  color: rgb(59, 130, 246);
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgb(156, 163, 175);
+  transition: color 0.2s ease;
+  width: 1.25rem;
+  height: 1.25rem;
+  z-index: 2;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 3rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  color: white;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.auth-input::placeholder {
+  color: rgb(156, 163, 175);
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: rgb(59, 130, 246);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* Botón de mostrar/ocultar contraseña */
+.password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgb(156, 163, 175);
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.2s ease;
+  width: 1.25rem;
+  height: 1.25rem;
+  z-index: 2;
+}
+
+.password-toggle:hover {
+  color: rgb(59, 130, 246);
+}
+
+/* Botón principal */
+.auth-submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(to right, rgb(59, 130, 246), rgb(14, 165, 233));
+  border: none;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(to right, rgb(37, 99, 235), rgb(2, 132, 199));
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.25);
+}
+
+.auth-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.auth-submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Loading spinner */
+.loading-spinner {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+/* Mensaje de error */
+.error-message {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  color: rgb(254, 202, 202);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error-icon {
+  width: 1rem;
+  height: 1rem;
+  color: rgb(248, 113, 113);
+  flex-shrink: 0;
+}
+
+/* Link de cambio */
+.auth-switch {
+  text-align: center;
+  margin-top: 2rem;
+  color: rgb(156, 163, 175);
+  font-size: 0.875rem;
+}
+
+.auth-switch button {
+  background: none;
+  border: none;
+  color: rgb(59, 130, 246);
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: inherit;
+  font-family: inherit;
+  transition: color 0.2s ease;
+}
+
+.auth-switch button:hover {
+  color: rgb(147, 197, 253);
+}
+
+/* Animaciones */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsivo */
+@media (max-width: 640px) {
+  .auth-page {
+    padding: 0.5rem;
+  }
+  
+  .auth-card {
+    padding: 1.5rem;
+  }
+  
+  .auth-title {
+    font-size: 1.5rem;
+  }
+}
