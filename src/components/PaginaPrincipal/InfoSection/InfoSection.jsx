@@ -15,7 +15,7 @@ const items = [
     { n: "+4k ", t: "Postres vendidos" },
     { n: "+30", t: "Empleados" },
     { n: "+50", t: "Productos" },
-    { n: "2018 ", t: "Desde" },
+    { n: "2018 ", t: "Desde siempre" },
     
   ];
 
