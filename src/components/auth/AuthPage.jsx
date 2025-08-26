@@ -80,7 +80,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="auth-page" id="authPage">
+    <div className="auth-page" id="login">
       <div className="auth-container">
         <div className="auth-card">
           <div className="auth-header">

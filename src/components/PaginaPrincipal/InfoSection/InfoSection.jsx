@@ -1,7 +1,7 @@
 import "./InfoSection.css";
 import NosotrosTexto from "./NosotrosTexto";
 import ImageCarousel from "./ImageCarousel";
-import AboutContactInfo from "./AboutContactInfo";
+
 
 const imgs = [
   "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?q=80&w=1600&auto=format&fit=crop",
@@ -22,21 +22,19 @@ const items = [
 export default function AboutSection({ images = [] }) {
   return (
     <section id="nosotrosTexto" className="about">
-      <div  className="about__inner">
-        <NosotrosTexto/>
+      <div className="about__inner">
+        <NosotrosTexto />
         <ImageCarousel images={imgs} />
 
         <ul className="about__highlights">
-      {items.map((it, i) => (
-        <li key={i}>
-          <span className="h-num">{it.n}</span>
-          <span className="h-txt">{it.t}</span>
-        </li>
-      ))}
-    </ul>
+          {items.map((it, i) => (
+            <li key={i}>
+              <span className="h-num">{it.n}</span>
+              <span className="h-txt">{it.t}</span>
+            </li>
+          ))}
+        </ul>
       </div>
-
-      <AboutContactInfo />
     </section>
   );
 }

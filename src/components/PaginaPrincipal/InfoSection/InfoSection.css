@@ -3,8 +3,8 @@
 
 .about{
   background: color-mix(in srgb, var(--surface) 85%, transparent);
-  border-top: 1px solid var(--ring);
-  border-bottom: 1px solid var(--ring);
+  border-bottom: 2px solid var(--ring);
+  padding-top: 20px;
 }
 
 /* ===== Contenedor principal con áreas ===== */
@@ -13,8 +13,6 @@
   margin: 0 auto;
   padding: 1.25rem 1rem;
   display: grid;
-
-  /* Móvil: todo apilado */
   grid-template-areas:
     "text"
     "carousel"
@@ -31,7 +29,6 @@
 /* ===== Texto ===== */
 .about__text{
   background: color-mix(in srgb, var(--surface) 95%, #0000);
-  border: 1px solid var(--ring);
   border-radius: 12px;
   padding: 1rem;
 }
@@ -132,11 +129,9 @@
   margin: 0;
   padding: .9rem;
   display: grid;
-
-  /* Móvil: 2 columnas para mejor lectura */
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: .75rem;
-  background: color-mix(in srgb, var(--surface) 96%, #0000);
+  background: var(--ring);
   border: 1px solid var(--ring);
   border-radius: 12px;
 }
@@ -147,10 +142,10 @@
   gap: .5rem;
 }
 .h-num{
-  font-weight: 800;
+  font-weight: 600;
   font-size: clamp(1rem, 3vw, 1.3rem);
-  color: var(--text);
-  background: color-mix(in srgb, var(--brand) 18%, #fff);
+  color: #e0e8dee5;
+  background: var(--brand);
   border: 1px solid var(--ring);
   border-radius: 10px;
   padding: .35rem .5rem;

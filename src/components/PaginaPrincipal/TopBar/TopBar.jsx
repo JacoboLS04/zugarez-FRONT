@@ -103,12 +103,32 @@ export default function TopBar() {
               </a>
             </li>
             <li role="none">
-              <a role="menuitem" href="#menu" onClick={handleNavClick}>
-                Menú
+              <a
+                role="menuitem"
+                href="#productos"
+                onClick={(e) => {
+                  scrollToId("PreMenuContainer")(e);
+                  handleNavClick();
+                }}
+                >
+                Productos
               </a>
             </li>
             <li role="none">
-              <a role="menuitem" href="#contacto" onClick={handleNavClick}>
+              <a role="menuitem" href="login"
+                onClick={(e) => {
+                  scrollToId("login")(e);
+                  handleNavClick();
+                }}>
+                Iniciar Sesión
+              </a>
+            </li>
+            <li role="none">
+              <a role="menuitem" href="#contacto"
+                onClick={(e) => {
+                  scrollToId("contactoRedes")(e);
+                  handleNavClick();
+                }}>
                 Contacto
               </a>
             </li>

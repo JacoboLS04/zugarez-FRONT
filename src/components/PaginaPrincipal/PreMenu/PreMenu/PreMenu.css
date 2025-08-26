@@ -1,0 +1,65 @@
+.PreMenuContainer {
+    width: 75%;
+    padding: 0 ,10px,0 ,10px;
+  margin: 2rem auto;
+  display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  justify-content: center; 
+  justify-items: center;
+  row-gap: 1.5rem;
+}
+
+.PreMenuSection {
+  text-align: center;
+  margin: 2rem auto;
+  padding: 0 10px;
+}
+
+.PreMenuSectionTitle span {
+  color: var(--brand);
+}
+
+/* ====== Responsive ====== */
+
+/* Móvil: 1 columna */
+@media (max-width: 480px) {
+  .PreMenuContainer {
+    grid-template-columns: repeat(2, 1fr);
+    width: 95%;
+  }
+}
+
+/* Tablet pequeña: 2 columnas */
+@media (min-width: 481px) and (max-width: 767px) {
+  .PreMenuContainer {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 1.5rem;
+    width: 90%;
+  }
+}
+
+/* Tablet grande: 3 columnas */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .PreMenuContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+@media (min-width: 920px) and (max-width: 1200px) {
+  .PreMenuContainer {
+    grid-template-columns: repeat(3, 1fr);
+    width: 90%;
+    row-gap: 2rem;
+    column-gap: 2rem;
+  }
+}
+
+@media (min-width: 1200px)  {
+  .PreMenuContainer {
+    grid-template-columns: repeat(3, 1fr);
+    width: 60%;
+    row-gap: 3rem;
+  }
+}
+

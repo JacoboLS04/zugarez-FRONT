@@ -8,9 +8,11 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import PaginaPrincipal from './components/PaginaPrincipal/PaginaPrincipal';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+document.title = "ZUGAREZ S.A.S";
+
 root.render(
   <React.StrictMode>
-    <PaginaPrincipal />
+    <App />
   </React.StrictMode>
 );
 

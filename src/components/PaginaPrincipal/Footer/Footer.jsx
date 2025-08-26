@@ -8,7 +8,7 @@ function Footer() {
       <div className="footer__bottom">
 
         <div className="footer__social" aria-label="Redes sociales">
-            <a href="#" aria-label="Instagram" className="footer__social-btn">
+            <a href="https://www.instagram.com/luiserca.py/?utm_source=ig_web_button_share_sheet" aria-label="Instagram" className="footer__social-btn">
               {/* Instagram */}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="1.6"/>
@@ -16,7 +16,7 @@ function Footer() {
                 <circle cx="17" cy="7" r="1.2" fill="currentColor"/>
               </svg>
             </a>
-            <a href="#" aria-label="WhatsApp" className="footer__social-btn">
+            <a href="https://api.whatsapp.com/send?phone=573154530677&text=Hola%20que%20caf%C3%A9%20venden%3F%20" aria-label="WhatsApp" className="footer__social-btn" target="_blank" rel="noopener noreferrer">
               {/* WhatsApp */}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path d="M20 11.5a7.5 7.5 0 0 1-11 6.6L6 20l1-2.9A7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" strokeWidth="1.6"/>
