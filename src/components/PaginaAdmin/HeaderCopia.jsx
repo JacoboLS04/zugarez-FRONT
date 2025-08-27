@@ -16,7 +16,7 @@ const Header = () => {
     <header className="app-header">
       <div className="header-container">
         <div className="header-left">
-          <h1 className="app-title">CRUD App</h1>
+          <h1 className="app-title">Zugarez Admin</h1>   
         </div>
         
         <div className="header-right">

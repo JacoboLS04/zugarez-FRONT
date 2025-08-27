@@ -1,0 +1,27 @@
+.admin-page {
+  display: flex;
+  min-height: 100vh;
+  background: #f8f8f8;
+}
+
+.admin-layout {
+  display: flex;
+  width: 100%;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  background: #fff;
+}
+
+.content-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--brand, #7d4f50);
+}
+
+.content-text {
+  font-size: 1rem;
+  color: var(--text, #333);
+}

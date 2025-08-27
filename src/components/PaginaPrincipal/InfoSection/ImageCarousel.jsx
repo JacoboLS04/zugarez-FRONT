@@ -31,7 +31,7 @@ export default function ImageCarousel({
   }
 
   return (
-    <div className="carousel" role="region" aria-label="Carrusel con imágenes">
+    <div className="carousel" role="region" aria-label="Carrusel con imágenes" id="inicio">
       <div className="carousel__frame">
         <div
           className="carousel__track"

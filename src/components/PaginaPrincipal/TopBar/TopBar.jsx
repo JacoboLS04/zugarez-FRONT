@@ -65,7 +65,15 @@ export default function TopBar() {
   return (
     <header className="nav-root" data-scrolled={scrolled ? "true" : "false"}>
       <nav className="nav" aria-label="Barra de navegación principal">
-        <a className="nav__brand" href="#">
+        <a
+          className="nav__brand"
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            window.location.pathname = "/";
+            handleNavClick();
+          }}
+        >
           <ResponsiveImage imagePath={logo} altText="Logo aplicacion" size="small" />
           <span className="nav__brand-text">Zugarez S.A.S</span>
         </a>
@@ -117,7 +125,7 @@ export default function TopBar() {
             <li role="none">
               <a role="menuitem" href="login"
                 onClick={(e) => {
-                  scrollToId("login")(e);
+
                   handleNavClick();
                 }}>
                 Iniciar Sesión
@@ -132,7 +140,18 @@ export default function TopBar() {
                 Contacto
               </a>
             </li>
+
+            <li role="none">
+              <a role="menuitem" href="#contacto"
+                onClick={(e) => {
+                  scrollToId("menu")(e);
+                  handleNavClick();
+                }}>
+                Menú
+              </a>
+            </li>
           </ul>
+          
 
           <a
             className="nav__cta"
