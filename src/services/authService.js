@@ -103,6 +103,11 @@ export const authService = {
     }));
   },
 
+  // Logout - alias para clearAuthData
+  logout() {
+    this.clearAuthData();
+  },
+
   async loginInitFlexible(identifier, password, key) {
     const body = {
       password: password
