@@ -10,7 +10,7 @@ function AdminPage() {
         <div className="Admin-page">
            <Header/>
            <AdminLayout/>
-           <CrudMongoApp/>
+           
 
         </div>
         

@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }) => {
       const userData = response.user || response;
       setUser(userData);
       setIsAuthenticated(true);
+      console.log('Usuario autenticado:', userData); 
       
       return response;
     } catch (error) {

@@ -19,10 +19,7 @@ function MainContent({ section }) {
       {section === "nomina" && (
         <h1 className="content-title">Gestión de Nómina</h1>
       )}
-      <p className="content-text">
-        Aquí se mostrarán las herramientas y formularios para la sección de{" "}
-        <b>{section}</b>.
-      </p>
+      
     </main>
   );
 }
