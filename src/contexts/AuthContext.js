@@ -47,13 +47,16 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       setLoading(true);
-      const response = await authService.login(credentials);
-      
+      const response = await authService.loginInit(credentials.username, credentials.password);
+      // Si el backend responde con código enviado, espera el código en el componente Login
+      if (response.message === 'Código enviado al correo') {
+        return response;
+      }
+      // Si el backend responde con usuario y token, guardar datos
       const userData = response.user || response;
       setUser(userData);
       setIsAuthenticated(true);
       console.log('Usuario autenticado:', userData); 
-      
       return response;
     } catch (error) {
       throw error;
@@ -88,6 +91,24 @@ export const AuthProvider = ({ children }) => {
     authService.saveAuthData(authService.getToken(), userData);
   };
 
+  // Función para verificar el código de login
+  const loginVerifyCode = async (username, code) => {
+    try {
+      setLoading(true);
+      const response = await authService.verifyCode(username, code);
+      if (response.token) {
+        setUser(response.user || { username });
+        setIsAuthenticated(true);
+        authService.saveAuthData(response.token, response.user || { username });
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     user,
     isAuthenticated,
@@ -95,7 +116,8 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     register,
-    updateUser
+    updateUser,
+    loginVerifyCode
   };
 
   return (

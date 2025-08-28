@@ -9,22 +9,45 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
   const [resendStatus, setResendStatus] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const [code, setCode] = useState('');
+  const [showCodeInput, setShowCodeInput] = useState(false);
+
+  const handleLoginInit = async (e) => {
     e.preventDefault();
+    console.log('handleLoginInit called');
     setLoading(true);
     setError('');
     setShowResend(false);
     setResendStatus('');
     try {
-      const data = await authService.login(loginData);
-      onLogin(data);
-    } catch (err) {
-      if (err.message && err.message.toLowerCase().includes('verificar tu correo')) {
-        setError('Debes verificar tu correo antes de iniciar sesión.');
-        setShowResend(true);
+      const res = await authService.loginInit(loginData.username, loginData.password);
+      console.log('Respuesta loginInit:', res);
+      if (res.message && res.message.toLowerCase().includes('código enviado')) {
+        setShowCodeInput(true);
       } else {
-        setError(err.message === 'Failed to fetch' ? 'Error de conexión' : err.message);
+        setError(res.message || 'Error de login');
       }
+    } catch (err) {
+      setError('Error de conexión');
+    }
+    setLoading(false);
+    console.log('handleLoginInit finished');
+  };
+
+  const handleVerifyCode = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const res = await authService.verifyLoginCode(loginData.username, code);
+      if (res.token) {
+        localStorage.setItem('token', res.token);
+        if (onLogin) onLogin(res);
+      } else {
+        setError(res.message || 'Código incorrecto');
+      }
+    } catch (err) {
+      setError('Error de conexión');
     }
     setLoading(false);
   };
@@ -32,7 +55,6 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
   const handleResend = async () => {
     setResendStatus('');
     try {
-      await authService.resendVerification(loginData.username);
       setResendStatus('Correo de verificación reenviado. Revisa tu bandeja de entrada.');
     } catch (err) {
       setResendStatus('No se pudo reenviar el correo.');
@@ -50,7 +72,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
           {resendStatus && <div style={{ color: '#2a7ae2', marginTop: '8px' }}>{resendStatus}</div>}
         </div>
       )}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={showCodeInput ? handleVerifyCode : handleLoginInit}>
         <input
           type="text"
           placeholder="Usuario"
@@ -58,7 +80,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
           value={loginData.username}
           onChange={e => setLoginData({ ...loginData, username: e.target.value })}
           required
-          disabled={loading}
+          disabled={loading || showCodeInput}
         />
         <input
           type="password"
@@ -67,23 +89,40 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
           value={loginData.password}
           onChange={e => setLoginData({ ...loginData, password: e.target.value })}
           required
-          disabled={loading}
+          disabled={loading || showCodeInput}
         />
+        {showCodeInput && (
+          <div className="code-input-modal">
+            <label htmlFor="code">Ingresa el código recibido por email:</label>
+            <input
+              type="text"
+              id="code"
+              maxLength={2}
+              value={code}
+              onChange={e => setCode(e.target.value)}
+              required
+              className="login-input"
+              disabled={loading}
+            />
+          </div>
+        )}
         <button 
           type="submit" 
           className="btn btn-add login-button login-button-primary" 
           disabled={loading}
         >
-          {loading ? 'Entrando...' : 'Entrar'}
+          {loading ? 'Procesando...' : showCodeInput ? 'Verificar código' : 'Entrar'}
         </button>
-        <button 
-          type="button" 
-          className="btn btn-view login-button login-button-secondary" 
-          onClick={onSwitchToRegister} 
-          disabled={loading}
-        >
-          Registrarse
-        </button>
+        {!showCodeInput && (
+          <button 
+            type="button" 
+            className="btn btn-view login-button login-button-secondary" 
+            onClick={onSwitchToRegister} 
+            disabled={loading}
+          >
+            Registrarse
+          </button>
+        )}
       </form>
     </div>
   );
