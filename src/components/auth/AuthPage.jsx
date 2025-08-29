@@ -195,6 +195,7 @@ const AuthPage = () => {
                   <div className="input-group">
                     <User className="input-icon" />
                     <input
+                      className='auth-input'
                       type="text"
                       name="username"
                       placeholder="Usuario o Email"
@@ -207,6 +208,7 @@ const AuthPage = () => {
                   <div className="input-group">
                     <Lock className="input-icon" />
                     <input
+                      className='auth-input'
                       type={showPassword ? 'text' : 'password'}
                       name="password"
                       placeholder="Contraseña"
