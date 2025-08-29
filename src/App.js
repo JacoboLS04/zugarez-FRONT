@@ -12,6 +12,7 @@ import PaginaPrincipal from './components/PaginaPrincipal/PaginaPrincipal';
 import AuthPage from './components/auth/AuthPage';
 import { AuthProvider } from './contexts/AuthContext';
 import LoginPage from './components/LoginPage/LoginPage';
+import AccessibilityWidget from './components/Accesibility/AccessibilityWidget';
 
 function App() {
   return (
@@ -28,12 +29,7 @@ function App() {
             <Route path="/login" element={ <LoginPage/>} />
           </Routes>
         </Router>
-
-
-        
-    
-        
-
+        <AccessibilityWidget/>
       </React.StrictMode>
   
   );

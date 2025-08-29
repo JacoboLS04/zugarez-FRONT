@@ -191,7 +191,7 @@ const AuthPage = () => {
                   </button>
                 </form>
               ) : isLogin ? (
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className='formularioInicioSesion'>
                   <div className="input-group">
                     <User className="input-icon" />
                     <input
@@ -234,58 +234,63 @@ const AuthPage = () => {
                   </button>
                 </form>
               ) : (
-                <form onSubmit={handleSubmit}>
-                  <div className="input-group">
-                    <UserPlus className="input-icon" />
-                    <input
-                      type="text"
-                      name="username"
-                      placeholder="Usuario"
-                      value={formData.username}
-                      onChange={handleInputChange}
-                      autoComplete="username"
-                      required
-                    />
-                  </div>
-                  <div className="input-group">
-                    <Mail className="input-icon" />
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Correo electrónico"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      autoComplete="email"
-                      required
-                    />
-                  </div>
-                  <div className="input-group">
-                    <Lock className="input-icon" />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      name="password"
-                      placeholder="Contraseña"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      autoComplete="new-password"
-                      required
-                    />
+                <form onSubmit={handleSubmit} className="formularioRegistro">
+                    <div className="input-group">
+                      <UserPlus className="input-icon" />
+                      <input
+                        className="auth-input"
+                        type="text"
+                        name="username"
+                        placeholder="Usuario"
+                        value={formData.username}
+                        onChange={handleInputChange}
+                        autoComplete="username"
+                        required
+                      />
+                    </div>
+                    <div className="input-group">
+                      <Mail className="input-icon" />
+                      <input
+                        className="auth-input"
+                        type="email"
+                        name="email"
+                        placeholder="Correo electrónico"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        autoComplete="email"
+                        required
+                      />
+                    </div>
+                    <div className="input-group">
+                      <Lock className="input-icon" />
+                      <input
+                        className="auth-input"
+                        type={showPassword ? 'text' : 'password'}
+                        name="password"
+                        placeholder="Contraseña"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        autoComplete="new-password"
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="password-toggle"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff /> : <Eye />}
+                      </button>
+                    </div>
                     <button
-                      type="button"
-                      className="password-toggle"
-                      onClick={() => setShowPassword(!showPassword)}
+                      type="submit"
+                      className="auth-submit-btn"
+                      disabled={isLoading}
                     >
-                      {showPassword ? <EyeOff /> : <Eye />}
+                      Registrarse
                     </button>
-                  </div>
-                  <button
-                    type="submit"
-                    className="auth-submit-btn"
-                    disabled={isLoading}
-                  >
-                    Registrarse
-                  </button>
                 </form>
+
+
               )}
             </div>
 

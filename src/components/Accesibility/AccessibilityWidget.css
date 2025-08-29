@@ -1,0 +1,86 @@
+/* === Botón flotante === */
+.accessibility-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2000;
+}
+
+.accessibility-toggle {
+  background: var(--brand, #7d4f50);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: transform 0.2s ease;
+}
+
+.accessibility-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* === Panel === */
+.accessibility-panel {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--ring, #ddd);
+  border-radius: 12px;
+  padding: 1rem;
+  width: 220px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  animation: fadeIn 0.3s ease;
+}
+
+.accessibility-panel h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  text-align: center;
+  color: var(--text, #111);
+}
+
+.accessibility-panel .option {
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accessibility-panel .buttons button,
+.accessibility-panel .option button {
+  background: var(--brand, #7d4f50);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.3rem 0.6rem;
+  margin-left: 0.3rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.accessibility-panel button:hover {
+  background: #5a3637;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === Estilos de accesibilidad global === */
+body.high-contrast {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+body.grayscale {
+  filter: grayscale(100%);
+}
