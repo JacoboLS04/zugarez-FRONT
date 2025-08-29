@@ -143,7 +143,7 @@ a,
   display: inline-block;
   padding: .65rem .8rem;
   border-radius: 10px;
-  color: var(--muted);
+  color: var(--text);
   font-weight: 500;
 }
 .nav__list a:hover{

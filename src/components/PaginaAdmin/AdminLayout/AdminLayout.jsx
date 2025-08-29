@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Sidebar from "./Sidebar";
-import MainContent from "./MainContent";
-import "./AdminPage.css";
+import Sidebar from "../SideBar/Sidebar";
+import MainContent from "../MainContent";
+import "../AdminPage.css";
 
 function AdminLayout() {
   const [activeSection, setActiveSection] = useState("inventario");

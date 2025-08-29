@@ -2,9 +2,9 @@
 /* --bg, --text, --muted, --brand, --brand-ink, --surface, --ring */
 
 .site-footer{
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  background: var(--ring);
   border-top: 1px solid var(--ring);
-  color: var(--text);
+  color: var(--ring);
 }
 
 /* Contenedor del footer */
@@ -36,7 +36,7 @@
   width: 40px; 
   height: 40px;
   border-radius: 12px;
-  background: var(--surface);
+  background: var(--bg);
   color: var(--text);
   border: 1px solid var(--ring);
   transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
@@ -54,7 +54,7 @@
 /* Texto inferior */
 .footer__bottom p{
   margin: 0;
-  color: var(--muted);
+  color: var(--text);
   line-height: 1.4;
   font-size: clamp(.9rem, 1.8vw, 1rem);
 }

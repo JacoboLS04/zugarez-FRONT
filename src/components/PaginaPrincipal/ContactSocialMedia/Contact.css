@@ -8,7 +8,7 @@
 
 /* Card contenedora de la sección */
 .contactAbout{
-  background: color-mix(in srgb, var(--surface) 95%, transparent);
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
   border: 1px solid var(--ring);
   border-radius: 12px;
   padding: 1rem;
@@ -36,7 +36,7 @@
   flex-direction: column;
   gap: .6rem;
 
-  background: color-mix(in srgb, var(--surface) 98%, #0000);
+  background: rgb(232, 221, 221);
   border: 1px solid var(--ring);
   border-radius: 14px;
   padding: 1rem;

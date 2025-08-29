@@ -2,7 +2,7 @@
    --bg, --text, --muted, --brand, --brand-ink, --surface, --ring */
 
 .about{
-  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
   border-bottom: 2px solid var(--ring);
   padding-top: 20px;
 }
@@ -22,13 +22,17 @@
 }
 
 /* Áreas */
-.about__text{ grid-area: text; }
+.about__text{ 
+  grid-area: text;
+  border: 1px solid rgb(126, 122, 122); 
+
+}
 .carousel{    grid-area: carousel; }
 .about__highlights{ grid-area: stats; }
 
 /* ===== Texto ===== */
 .about__text{
-  background: color-mix(in srgb, var(--surface) 95%, #0000);
+  background: var(--bg);
   border-radius: 12px;
   padding: 1rem;
 }
@@ -42,7 +46,7 @@
 .about__text p{
   margin: 0;
   line-height: 1.6;
-  color: var(--muted);
+  color: var(--text);
   font-size: clamp(1.1rem, 1.8vw, 1.4rem);
 }
 
@@ -151,7 +155,7 @@
   padding: .35rem .5rem;
 }
 .h-txt{
-  color: var(--muted);
+  color: var(--text);
 }
 
 /* ===== Contacto & Ubicación ===== */

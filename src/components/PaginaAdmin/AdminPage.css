@@ -13,6 +13,7 @@
   flex: 1;
   padding: 2rem;
   background: #fff;
+  width: 80%;
 }
 
 .content-title {
@@ -24,4 +25,16 @@
 .content-text {
   font-size: 1rem;
   color: var(--text, #333);
+}
+
+@media (max-width: 550px) {
+  .admin-page {
+    flex-direction: column;
+
+  }
+
+  .main-content {
+    width: 100%;
+    padding: 0.7rem;
+  }
 }
