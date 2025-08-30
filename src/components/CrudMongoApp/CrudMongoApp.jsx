@@ -10,9 +10,8 @@ const CrudMongoApp = () => {
   const [currentView, setCurrentView] = useState('list');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState([]);
-  const [formData, setFormData] = useState({ name: '', price: '', urlImage: '' });
+  const [formData, setFormData] = useState({ name: '', price: '', brand: '', supplierId: '', description: '', urlImage: '' });
   const [loading, setLoading] = useState(false);
-  
   const { makeRequest } = useAuthenticatedRequest();
   const { user } = useAuth();
 
@@ -36,14 +35,20 @@ const CrudMongoApp = () => {
   };
 
   const handleEdit = (product) => {
-    setSelectedProduct(product);
-    setFormData({
-      name: product.name,
-      price: product.price,
-      urlImage: product.urlImage
-    });
-    setCurrentView('edit');
-  };
+  console.log('🔍 DEBUG handleEdit - Producto recibido:', product);
+  console.log('🔍 DEBUG handleEdit - Campos disponibles:', Object.keys(product));
+  
+  setSelectedProduct(product);
+  setFormData({
+    name: product.name || '',
+    price: product.price || '',
+    brand: product.brand || '',
+    supplierId: product.supplierId || '',
+    description: product.description || '',
+    urlImage: product.urlImage || ''
+  });
+  setCurrentView('edit');
+};
 
   const handleDelete = async (productId) => {
     const result = await Swal.fire({
@@ -71,12 +76,19 @@ const CrudMongoApp = () => {
   };
 
   const handleCreate = () => {
-    setFormData({ name: '', price: '', urlImage: '' });
-    setCurrentView('create');
-  };
+  setFormData({ 
+    name: '', 
+    price: '', 
+    brand: '', 
+    supplierId: '', 
+    description: '', 
+    urlImage: '' 
+  });
+  setCurrentView('create');
+};
 
   const handleSubmit = async () => {
-    if (!formData.name || !formData.price || !formData.urlImage) return;
+  if (!formData.name || !formData.price || !formData.brand || !formData.supplierId || !formData.urlImage) return;
     try {
       setLoading(true);
       if (currentView === 'create') {
@@ -106,10 +118,17 @@ const CrudMongoApp = () => {
   };
 
   const handleBack = () => {
-    setCurrentView('list');
-    setSelectedProduct(null);
-    setFormData({ name: '', price: '', urlImage: '' });
-  };
+  setCurrentView('list');
+  setSelectedProduct(null);
+  setFormData({ 
+    name: '', 
+    price: '', 
+    brand: '', 
+    supplierId: '', 
+    description: '', 
+    urlImage: '' 
+  });
+};
 
   return (
     <div className="crud-bg">
