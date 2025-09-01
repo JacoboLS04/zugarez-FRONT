@@ -1,5 +1,5 @@
 // ...existing code...
-const API_URL = 'http://localhost:8080/auth';
+const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/auth';
 
 export const authService = {
   async verifyCodeFlexible(identifier, code, key) {
@@ -139,7 +139,7 @@ export const authService = {
   },
 
   async verifyCode(email, code) {
-    const response = await fetch(`http://localhost:8080/auth/login/verify-code`, {
+    const response = await fetch(`https://better-billi-zugarez-sys-ed7b78de.koyeb.app/auth/login/verify-code`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, code })
