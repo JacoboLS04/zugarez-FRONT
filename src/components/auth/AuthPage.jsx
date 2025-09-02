@@ -3,7 +3,11 @@ import { authService } from '../../services/authService';
 import { User, Mail, Lock, Eye, EyeOff, UserPlus, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import './AuthPage.css';
+//TODO: Este componente tiene un pequeño bug, al iniciar sesión con correo,
+//TODO: si el usuario decide iniciar sesión con su nombre de usuario, el sistema no lo deja volver
 
+
+//TODO: Also, si entro con el usuario, me manda codigo pero no deja ingresar el codigo
 const AuthPage = () => {
   const { login, register, loginVerifyCode } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
