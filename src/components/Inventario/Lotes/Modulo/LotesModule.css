@@ -71,7 +71,6 @@ tbody td {
   color: var(--text);
 }
 
-/* ✅ Estilo en columnas */
 tbody td {
   font-weight: 500;
 }
