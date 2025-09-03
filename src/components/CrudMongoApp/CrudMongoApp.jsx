@@ -15,7 +15,7 @@ const CrudMongoApp = () => {
   const { makeRequest } = useAuthenticatedRequest();
   const { user } = useAuth();
 
-  const PRODUCTS_URL = 'http://localhost:8080/products';
+  const PRODUCTS_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/products';
 
   useEffect(() => {
     loadProducts();

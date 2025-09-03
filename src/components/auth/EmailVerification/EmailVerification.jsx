@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const API_URL = 'http://localhost:8080/auth/verify-email';
+const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/auth/verify-email';
 
 const EmailVerification = () => {
   const [status, setStatus] = useState('pending');
