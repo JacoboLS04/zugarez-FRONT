@@ -1,12 +1,17 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
 import { useAuthenticatedRequest } from '../../hooks/useAuth';
 import { useAuth } from '../../contexts/AuthContext';
+=======
+import React, { useState } from "react";
+>>>>>>> parent of 1aab6ca (modulo de movimientos realizado)
 import "./LotesModule.css";
 import LoteForm from "./LoteForm";
 
 const LotesModule = () => {
   const [lotes, setLotes] = useState([]);
+<<<<<<< HEAD
   const [products, setProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -61,6 +66,29 @@ const LotesModule = () => {
       availableQuantity: "",
       batchPrice: "",
       unitPrice: ""
+=======
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    idLote: "",
+    idProducto: "",
+    fechaVencimiento: "",
+    cantidadInicial: "",
+    cantidadDisponible: "",
+    precioLote: "",
+    precioUnidad: ""
+  });
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+    setFormData({
+      idLote: "",
+      idProducto: "",
+      fechaVencimiento: "",
+      cantidadInicial: "",
+      cantidadDisponible: "",
+      precioLote: "",
+      precioUnidad: ""
+>>>>>>> parent of 1aab6ca (modulo de movimientos realizado)
     });
   };
 
@@ -70,6 +98,7 @@ const LotesModule = () => {
     const { name, value } = e.target;
     let newData = { ...formData, [name]: value };
 
+<<<<<<< HEAD
     // Reglas automáticas
     if (name === "initialQuantity") {
       newData.availableQuantity = value;
@@ -79,11 +108,23 @@ const LotesModule = () => {
     }
     if (name === "batchPrice" && newData.initialQuantity > 0) {
       newData.unitPrice = (value / newData.initialQuantity).toFixed(2);
+=======
+    // reglas automáticas
+    if (name === "cantidadInicial") {
+      newData.cantidadDisponible = value;
+      if (newData.precioLote) {
+        newData.precioUnidad = (newData.precioLote / value).toFixed(2);
+      }
+    }
+    if (name === "precioLote" && newData.cantidadInicial) {
+      newData.precioUnidad = (value / newData.cantidadInicial).toFixed(2);
+>>>>>>> parent of 1aab6ca (modulo de movimientos realizado)
     }
 
     setFormData(newData);
   };
 
+<<<<<<< HEAD
   const handleSubmit = async (formDataToSubmit) => {
     if (!formDataToSubmit.productId || !formDataToSubmit.expirationDate || 
         !formDataToSubmit.initialQuantity || !formDataToSubmit.batchPrice) {
@@ -118,10 +159,16 @@ const LotesModule = () => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES');
+=======
+  // ✅ Ahora solo recibe datos, no el evento
+  const handleSubmit = (newLote) => {
+    setLotes([...lotes, newLote]);
+>>>>>>> parent of 1aab6ca (modulo de movimientos realizado)
   };
 
   return (
     <div className="lotes-module">
+<<<<<<< HEAD
       {loading && (
         <div className="loading-overlay">
           <div className="loading-spinner-lg">
@@ -132,6 +179,9 @@ const LotesModule = () => {
       )}
       
       <h2>Gestión de Lotes</h2>
+=======
+      <h2>Gestion de Lotes</h2>
+>>>>>>> parent of 1aab6ca (modulo de movimientos realizado)
       <button className="btn-add" onClick={handleOpenModal}>➕ Agregar Lote</button>
 
       <table>
@@ -147,6 +197,7 @@ const LotesModule = () => {
           </tr>
         </thead>
         <tbody>
+<<<<<<< HEAD
           {lotes.length > 0 ? (
             lotes.map((lote) => (
               <tr key={lote.id}>
@@ -166,21 +217,44 @@ const LotesModule = () => {
               </td>
             </tr>
           )}
+=======
+          {lotes.map((lote, idx) => (
+            <tr key={idx}>
+              <td>{lote.idLote}</td>
+              <td>{lote.idProducto}</td>
+              <td>{lote.fechaVencimiento}</td>
+              <td>{lote.cantidadInicial}</td>
+              <td>{lote.cantidadDisponible}</td>
+              <td>{lote.precioLote}</td>
+              <td>{lote.precioUnidad}</td>
+            </tr>
+          ))}
+>>>>>>> parent of 1aab6ca (modulo de movimientos realizado)
         </tbody>
       </table>
 
       {showModal && (
         <LoteForm
           formData={formData}
+<<<<<<< HEAD
           products={products}
           onChange={handleChange}
           onClose={handleCloseModal}
           onSubmit={handleSubmit}
           loading={loading}
+=======
+          onChange={handleChange}
+          onClose={handleCloseModal}
+          onSubmit={handleSubmit}
+>>>>>>> parent of 1aab6ca (modulo de movimientos realizado)
         />
       )}
     </div>
   );
 };
 
+<<<<<<< HEAD
 export default LotesModule;
+=======
+export default LotesModule;
+>>>>>>> parent of 1aab6ca (modulo de movimientos realizado)
