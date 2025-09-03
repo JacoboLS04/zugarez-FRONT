@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./LotesModule.css";
-import LoteForm from "./LoteForm";
+import LoteForm from "../Formulario/LoteForm";
 
 const LotesModule = () => {
   const [lotes, setLotes] = useState([]);
@@ -48,7 +48,7 @@ const LotesModule = () => {
     setFormData(newData);
   };
 
-  // ✅ Ahora solo recibe datos, no el evento
+
   const handleSubmit = (newLote) => {
     setLotes([...lotes, newLote]);
   };

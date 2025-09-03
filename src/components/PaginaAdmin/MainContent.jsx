@@ -1,6 +1,6 @@
 import React from "react";
 import CrudMongoApp from "../CrudMongoApp/CrudMongoApp";
-import InventoryModule from "../Inventario/InventoryModule"; // 👈 importas acá
+import InventoryModule from "../Inventario/InventoryModule";
 import "./AdminPage.css";
 
 function MainContent({ section }) {
@@ -9,7 +9,7 @@ function MainContent({ section }) {
       {section === "inventario" && (
         <div>
           <h1 className="content-title">Gestión de Inventario</h1>
-          <InventoryModule /> {/* 👈 aquí se llama */}
+          <InventoryModule /> 
         </div>
       )}
       {section === "productos" && (

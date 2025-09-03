@@ -3,9 +3,9 @@ import "./LoteForm.css";
 
 const LoteForm = ({ formData, onChange, onClose, onSubmit }) => {
   const handleSubmit = (e) => {
-    e.preventDefault();      // ✅ el evento se controla aquí
-    onSubmit(formData);      // ✅ solo pasamos los datos al padre
-    onClose();               // ✅ cerramos modal
+    e.preventDefault();  
+    onSubmit(formData);      
+    onClose();               
   };
 
   return (

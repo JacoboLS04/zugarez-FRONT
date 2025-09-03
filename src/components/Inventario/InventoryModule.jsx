@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import LotesModule from "./LotesModule";
+import LotesModule from "./Lotes/Modulo/LotesModule";
 // (luego importarás DashboardModule y MovimientosModule)
 import "./InventoryModule.css";
+import MovimientosModule from "./Movimientos/MovimientosModule";
 
 const InventoryModule = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
 
   return (
     <div className="inventory-module">
-      {/* Tabs */}
       <div className="inventory-tabs">
         <button
           className={activeTab === "dashboard" ? "active" : ""}
@@ -34,7 +34,7 @@ const InventoryModule = () => {
       <div className="inventory-content">
         {activeTab === "dashboard" && <h2>Aquí va el Dashboard</h2>}
         {activeTab === "lotes" && <LotesModule />}
-        {activeTab === "movimientos" && <h2>Aquí van los movimientos</h2>}
+        {activeTab === "movimientos" && <h2> <MovimientosModule/> </h2>}
       </div>
     </div>
   );
