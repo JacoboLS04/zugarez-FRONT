@@ -1,52 +1,61 @@
 import React, { useState, useEffect } from "react";
-import { Eye, Plus, Minus, RefreshCcw } from "lucide-react";
 import "./AccessibilityWidget.css";
+import { Eye, Contrast, Plus, Minus } from "lucide-react";
 
 const AccessibilityWidget = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [fontSize, setFontSize] = useState(100); // % del tamaño base
-  const [isGrayscale, setIsGrayscale] = useState(false);
+  const [fontSize, setFontSize] = useState(100); // porcentaje
+  const [highContrast, setHighContrast] = useState(false);
+  const [grayscale, setGrayscale] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  // Aplica cambios globales al body
+  // Aplica cambios de accesibilidad al body
   useEffect(() => {
-    document.body.style.filter = isGrayscale ? "grayscale(100%)" : "none";
-    document.documentElement.style.fontSize = `${fontSize}%`;
-  }, [fontSize, isGrayscale]);
-
-  const increaseFont = () => setFontSize((prev) => Math.min(prev + 10, 200));
-  const decreaseFont = () => setFontSize((prev) => Math.max(prev - 10, 50));
-  const toggleGrayscale = () => setIsGrayscale(!isGrayscale);
-  const resetAll = () => {
-    setFontSize(100);
-    setIsGrayscale(false);
-  };
+    document.body.style.fontSize = `${fontSize}%`;
+    document.body.classList.toggle("high-contrast", highContrast);
+    document.body.classList.toggle("grayscale", grayscale);
+  }, [fontSize, highContrast, grayscale]);
 
   return (
-    <div className="accessibility-widget">
-      {/* Botón flotante (el ojito) */}
-      <button
-        className="accessibility-toggle"
-        onClick={() => setIsOpen(!isOpen)}
+    <div className={`accessibility-widget ${open ? "open" : ""}`}>
+      {/* Botón flotante */}
+      <button 
+        className="accessibility-toggle" 
+        onClick={() => setOpen(!open)}
+        aria-label="Opciones de accesibilidad"
       >
         <Eye />
       </button>
 
       {/* Panel de opciones */}
-      {isOpen && (
+      {open && (
         <div className="accessibility-panel">
           <h4>Accesibilidad</h4>
-          <button onClick={increaseFont}>
-            <Plus size={18} /> Aumentar texto
-          </button>
-          <button onClick={decreaseFont}>
-            <Minus size={18} /> Reducir texto
-          </button>
-          <button onClick={toggleGrayscale}>
-             {isGrayscale ? "Desactivar grises" : "Escala de grises"}
-          </button>
-          <button onClick={resetAll}>
-            <RefreshCcw size={18} /> Restablecer
-          </button>
+
+          <div className="option">
+            <span>Tamaño de fuente</span>
+            <div className="buttons">
+              <button onClick={() => setFontSize(fontSize - 10)} disabled={fontSize <= 80}>
+                <Minus />
+              </button>
+              <button onClick={() => setFontSize(fontSize + 10)} disabled={fontSize >= 150}>
+                <Plus />
+              </button>
+            </div>
+          </div>
+
+          <div className="option">
+            <span>Contraste alto</span>
+            <button onClick={() => setHighContrast(!highContrast)}>
+              <Contrast />
+            </button>
+          </div>
+
+          <div className="option">
+            <span>Escala de grises</span>
+            <button onClick={() => setGrayscale(!grayscale)}>
+              🖤
+            </button>
+          </div>
         </div>
       )}
     </div>
