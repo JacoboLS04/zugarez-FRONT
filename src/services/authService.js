@@ -2,6 +2,17 @@
 const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/auth';
 
 export const authService = {
+  // Add the missing methods that Login component expects
+  async loginInit(username, password) {
+    // Default to username key, but could be enhanced to detect if it's an email
+    return this.loginInitFlexible(username, password, 'username');
+  },
+
+  async verifyLoginCode(username, code) {
+    // Default to username key, but could be enhanced to detect if it's an email
+    return this.verifyCodeFlexible(username, code, 'username');
+  },
+
   async verifyCodeFlexible(identifier, code, key) {
     const body = {
       code: code
@@ -101,11 +112,6 @@ export const authService = {
     window.dispatchEvent(new CustomEvent('authChange', { 
       detail: { authenticated: false, user: null } 
     }));
-  },
-
-  // Logout - alias para clearAuthData
-  logout() {
-    this.clearAuthData();
   },
 
   async loginInitFlexible(identifier, password, key) {
