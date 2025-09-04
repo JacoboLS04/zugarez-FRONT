@@ -1,30 +1,37 @@
 
 import React from 'react';
-import { AuthProvider } from './contexts/AuthContext';
+
 import ProtectedRoute from './components/ProtectedRoute';
-import Header from './components/Header';
+import Header from './components/PaginaAdmin/Header/Header';
 import CrudMongoApp from './components/CrudMongoApp/CrudMongoApp';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import TopBar from './components/PaginaPrincipal/TopBar/TopBar';
+import Carousel from './components/PaginaPrincipal/Carousel/Carousel';
+import InfoSection from './components/PaginaPrincipal/InfoSection/InfoSection';
+import PaginaPrincipal from './components/PaginaPrincipal/PaginaPrincipal';
+import AuthPage from './components/auth/AuthPage';
+import { AuthProvider } from './contexts/AuthContext';
+import LoginPage from './components/LoginPage/LoginPage';
+import AccessibilityWidget from './components/Accesibility/AccessibilityWidget';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/*" element={
-            <ProtectedRoute>
-              <div style={{ 
-                minHeight: '100vh', 
-                background: 'linear-gradient(135deg, #312e81 0%, #581c87 50%, #be185d 100%)'
-              }}>
-                <Header />
-                <CrudMongoApp />
-              </div>
-            </ProtectedRoute>
-          } />
-        </Routes>
-      </Router>
-    </AuthProvider>
+      
+
+
+      <React.StrictMode>
+        <Router>
+          <Routes>
+            {/* Página principal */}
+            <Route path="/" element={<PaginaPrincipal/>} />
+
+            {/* Login */}
+            <Route path="/login" element={ <LoginPage/>} />
+          </Routes>
+        </Router>
+        <AccessibilityWidget/>
+      </React.StrictMode>
+  
   );
 }
 

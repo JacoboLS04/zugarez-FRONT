@@ -1,0 +1,215 @@
+:root{
+  --bg: #AA998F;
+  --text: #111827;           /* Gray-900 */
+  --muted: #222121;          /* Gray-500 */
+  --brand: #7D4F50;          /* Verde principal */
+  --brand-ink: #0a3d22;
+  --surface: #d4c5bd;        /* Slate-50 */
+  --ring: rgba(0,0,0,.08);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+
+a, 
+.nav__list a, 
+.nav__cta, 
+.nav__brand {
+  text-decoration: none !important;
+  color: inherit;
+}
+
+.nav-root{
+  transition: background .25s ease, box-shadow .25s ease, border-color .25s ease;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--bg);  
+}
+
+.nav-root[data-scrolled="true"]{
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  backdrop-filter: blur(10px) saturate(120%);
+  box-shadow: 0 10px 24px -18px rgba(0,0,0,.35);
+  border-bottom-color: color-mix(in srgb, var(--ring) 60%, #0000);
+}
+
+.nav-root[data-scrolled="true"]::after{
+  background: color-mix(in srgb, var(--surface) 75%, transparent);
+}
+
+.nav-root[data-scrolled="true"] .nav{
+  padding: 0.6rem 1rem;
+}
+
+.nav-root::after{
+  content: "";
+  display: flex;
+  height: 5px;            /* ajusta el espacio a tu gusto */
+  background: var(--surface);        /* blanco (o el color que quieras) */
+}
+
+.nav{
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+
+.nav__brand{
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: .2px;
+}
+.nav__logo{
+  width: 28px; height: 28px;
+  display: inline-grid; place-items: center;
+  border-radius: 8px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 16px;
+}
+.nav__brand-text{ 
+  font-family: initial;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.nav__toggle{
+  margin-left: auto;
+  background: transparent;
+  border: 0;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: .5rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.nav__toggle:focus-visible{
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+.nav__bar{
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+}
+
+/* === PANEL DESLIZANTE (MÓVIL) === */
+.nav__menu{
+  position: fixed;
+  top: 75px;
+  left: 50%;
+  width: 85vw;
+  right: auto;
+  background: var(--bg);
+  border: 1px solid var(--ring);
+  border-radius: 14px;
+  transform: translate(-50%, -16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .25s ease, opacity .25s ease;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .5rem;
+  align-items: start;
+  padding: .75rem 1rem;
+}
+.nav__menu[data-open="true"]{
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* === LISTA DE ENLACES === */
+.nav__list{
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .25rem;
+}
+.nav__list a{
+  display: inline-block;
+  padding: .65rem .8rem;
+  border-radius: 10px;
+  color: var(--text);
+  font-weight: 500;
+}
+.nav__list a:hover{
+  color: var(--text);
+  background: var(--surface);
+  text-decoration: none !important; /* ✅ evita subrayado en hover */
+}
+
+/* CTA dentro del panel (móvil) */
+.nav__cta{
+  justify-self: stretch;
+  text-align: center;
+  background: var(--brand);
+  color: #fff;
+  padding: .65rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--brand) 40%, transparent);
+}
+.nav__cta:hover{
+  background: color-mix(in srgb, var(--brand) 85%, var(--brand-ink));
+  text-decoration: none !important; /* ✅ asegura sin subrayado */
+}
+
+/* Desktop */
+@media (min-width: 1000px){
+  .nav {
+  
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 85%;
+}
+
+  .nav__toggle{ display: none; }
+
+  .nav__menu{
+    position: static;
+    top: auto;
+    left: auto;
+    width: auto;
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+
+    flex: 1;
+    display: grid;
+    grid-template-columns: 3fr 1fr auto;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .nav__list{
+    grid-column: 1;
+    justify-self: center;
+    flex-direction: row;
+    align-items: center;
+    gap: .25rem .75rem;
+  }
+
+  .nav__cta{
+    grid-column: 3;
+    justify-self: end;
+    min-width: max-content;
+  }
+}

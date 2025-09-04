@@ -1,0 +1,71 @@
+/* Usa las mismas variables ya definidas en :root */
+/* --bg, --text, --muted, --brand, --brand-ink, --surface, --ring */
+
+.site-footer{
+  background: var(--ring);
+  border-top: 1px solid var(--ring);
+  color: var(--ring);
+}
+
+/* Contenedor del footer */
+.footer__bottom{
+  width: min(1120px, 92vw);
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;      /* móvil: apilado */
+  align-items: center;         /* centrado horizontal */
+  justify-content: center;     /* centrado vertical del bloque */
+  gap: 1rem;
+  text-align: center;          /* texto centrado */
+}
+
+/* Redes sociales centradas */
+.footer__social{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;             /* si no caben, bajan de línea */
+  gap: .6rem;
+}
+
+/* Botones de redes */
+.footer__social-btn{
+  display: inline-grid;
+  place-items: center;
+  width: 40px; 
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--ring);
+  transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.footer__social-btn:hover{
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--surface) 85%, #fff);
+  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--brand) 35%, transparent);
+}
+.footer__social-btn:focus-visible{
+  outline: 2px solid color-mix(in srgb, var(--brand) 45%, transparent);
+  outline-offset: 2px;
+}
+
+/* Texto inferior */
+.footer__bottom p{
+  margin: 0;
+  color: var(--text);
+  line-height: 1.4;
+  font-size: clamp(.9rem, 1.8vw, 1rem);
+}
+
+/* ====== Desktop ====== */
+@media (min-width: 640px){
+  .footer__bottom{
+    flex-direction: row;       /* en desktop: en línea */
+    gap: 1.25rem 2rem;
+  }
+  /* Mantén todo centrado como bloque */
+  .footer__social{ order: 0; }
+  .footer__bottom p{ order: 1; }
+}

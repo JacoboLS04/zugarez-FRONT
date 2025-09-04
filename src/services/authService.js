@@ -1,7 +1,40 @@
 // ...existing code...
-const API_URL = 'http://localhost:8080/auth';
+const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/auth';
 
 export const authService = {
+  async verifyCodeFlexible(identifier, code, key) {
+    const body = {
+      code: code
+    };
+    // Agregar el campo correcto según el tipo
+    if (key === 'email') {
+      body.email = identifier;
+      body.username = null;
+    } else {
+      body.username = identifier;
+      body.email = null;
+    }
+    console.log('Enviando verificación de código:', JSON.stringify(body));
+    
+    const response = await fetch(`${API_URL}/verify-code`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
+    console.log('Respuesta verificación:', response.status);
+    const data = await response.json();
+    console.log('Data verificación COMPLETA:', data);
+    console.log('¿Tiene token?', !!data.token);
+    console.log('Token:', data.token);
+    
+    // Si hay error, lanzar excepción con el mensaje del backend
+    if (!response.ok) {
+      throw new Error(data.message || `Error ${response.status}`);
+    }
+    
+    return data;
+  },
   // ...existing code...
   // Obtener token del localStorage
   getToken() {
@@ -70,57 +103,48 @@ export const authService = {
     }));
   },
 
-  async login(loginData) {
-    console.log('=== INTENTO DE LOGIN FRONTEND ===');
-    console.log('Intentando login con:', loginData);
-    console.log('URL del login:', `${API_URL}/login`);
-    
-    try {
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginData)
-      });
+  // Logout - alias para clearAuthData
+  logout() {
+    this.clearAuthData();
+  },
 
-      console.log('Respuesta del login:', response.status, response.statusText);
-
-      let data;
-      try {
-        data = await response.clone().json();
-      } catch (e) {
-        data = null;
-      }
-
-      if (!response.ok) {
-        let errorMessage = 'Usuario o contraseña incorrectos';
-        if (data && data.message) {
-          errorMessage = data.message;
-        } else {
-          const errorText = await response.text();
-          errorMessage = errorText || errorMessage;
-        }
-        console.error('Error en login:', errorMessage);
-        throw new Error(errorMessage);
-      }
-
-      if (!data) {
-        data = await response.json();
-      }
-      console.log('Datos recibidos del login:', data);
-
-      // Guardar token y datos del usuario
-      if (data.token) {
-        console.log('Token recibido, guardando...');
-        this.saveAuthData(data.token, data.user || data);
-      } else {
-        console.error('No se recibió token en la respuesta');
-      }
-
-      return data;
-    } catch (fetchError) {
-      console.error('Error de fetch:', fetchError);
-      throw fetchError;
+  async loginInitFlexible(identifier, password, key) {
+    const body = {
+      password: password
+    };
+    // Agregar el campo correcto según el tipo
+    if (key === 'email') {
+      body.email = identifier;
+      body.username = null;
+    } else {
+      body.username = identifier;
+      body.email = null;
     }
+    console.log('Enviando login init:', JSON.stringify(body));
+    const response = await fetch(`${API_URL}/login/init`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    console.log('Respuesta login init:', response.status);
+    const data = await response.json();
+    console.log('Data login init:', JSON.stringify(data));
+    
+    // Si hay error, lanzar excepción con el mensaje del backend
+    if (!response.ok) {
+      throw new Error(data.message || `Error ${response.status}`);
+    }
+    
+    return data;
+  },
+
+  async verifyCode(email, code) {
+    const response = await fetch(`https://better-billi-zugarez-sys-ed7b78de.koyeb.app/auth/login/verify-code`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code })
+    });
+    return response.json();
   },
 
   async register(registerData) {

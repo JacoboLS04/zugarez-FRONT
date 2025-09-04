@@ -1,0 +1,54 @@
+/* Ajuste general del carrusel */
+#carouselExample {
+  max-width: 80%;       
+  margin: 0 auto;       
+  overflow: hidden;     
+  border-radius: 12px;  
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-item img {
+  height: 350px;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Flechas de navegación */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-size: 100% 100%;
+  filter: invert(1);
+}
+
+/* Animación suave */
+.carousel-item {
+  transition: transform 0.8s ease-in-out;
+}
+
+/* 📱 Responsivo: aumenta el ancho en pantallas medianas */
+@media (max-width: 992px) {
+  #carouselExample {
+    max-width: 90%;
+  }
+}
+
+/* 📱 Más pequeño aún: ocupa casi todo el ancho */
+@media (max-width: 768px) {
+  #carouselExample {
+    max-width: 95%;
+  }
+
+  .carousel-item img {
+    height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  #carouselExample {
+    max-width: 90%;
+  }
+
+  .carousel-item img {
+    height: 180px;
+  }
+}

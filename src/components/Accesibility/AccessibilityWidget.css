@@ -1,0 +1,79 @@
+.accessibility-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+/* Botón flotante */
+.accessibility-toggle {
+  background: var(--brand, #7d4f50);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 55px;
+  height: 55px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.accessibility-toggle:hover {
+  transform: scale(1.1);
+  background: #5a3637;
+}
+
+/* Panel flotante */
+.accessibility-panel {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--ring, #ddd);
+  border-radius: 12px;
+  padding: 1rem;
+  width: 240px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+  animation: fadeIn 0.25s ease;
+}
+
+.accessibility-panel h4 {
+  margin: 0 0 0.6rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--brand, #7d4f50);
+  text-align: center;
+}
+
+/* Botones del panel */
+.accessibility-panel button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  margin-bottom: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--surface, #f6f6f6);
+  color: var(--text, #333);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.accessibility-panel button:hover {
+  background: var(--brand, #7d4f50);
+  color: #fff;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
