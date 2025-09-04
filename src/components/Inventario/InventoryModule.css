@@ -73,10 +73,11 @@
 /* === RESPONSIVE === */
 
 /* 📱 Muy pequeños (max 400px) */
-@media (max-width: 400px) {
+@media (max-width: 450px) {
   .inventory-tabs {
     flex-direction: column;
     align-items: stretch;
+    width: 100%;
   }
   .inventory-tabs button {
     font-size: 0.8rem;

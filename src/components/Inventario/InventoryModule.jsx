@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import LotesModule from "./LotesModule";
-// (luego importarás DashboardModule y MovimientosModule)
 import "./InventoryModule.css";
+import MovimientosModule from "./MovimientosModule";
 
 const InventoryModule = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("inventario");
 
   return (
     <div className="inventory-module">
       {/* Tabs */}
       <div className="inventory-tabs">
         <button
-          className={activeTab === "dashboard" ? "active" : ""}
-          onClick={() => setActiveTab("dashboard")}
+          className={activeTab === "inventario" ? "active" : ""}
+          onClick={() => setActiveTab("inventario")}
         >
-          Dashboard
+          Inventario
         </button>
         <button
           className={activeTab === "lotes" ? "active" : ""}
@@ -32,9 +32,9 @@ const InventoryModule = () => {
 
       {/* Contenido dinámico */}
       <div className="inventory-content">
-        {activeTab === "dashboard" && <h2>Aquí va el Dashboard</h2>}
+        {activeTab === "inventario" && <h2>Inventario</h2>}
         {activeTab === "lotes" && <LotesModule />}
-        {activeTab === "movimientos" && <h2>Aquí van los movimientos</h2>}
+        {activeTab === "movimientos" && <h2> <MovimientosModule/> </h2>}
       </div>
     </div>
   );

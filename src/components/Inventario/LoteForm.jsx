@@ -1,67 +1,103 @@
 import React from "react";
 import "./LoteForm.css";
 
-const LoteForm = ({ formData, onChange, onClose, onSubmit }) => {
+const LoteForm = ({ formData, products, onChange, onClose, onSubmit, loading }) => {
   const handleSubmit = (e) => {
-    e.preventDefault();      // ✅ el evento se controla aquí
-    onSubmit(formData);      // ✅ solo pasamos los datos al padre
-    onClose();               // ✅ cerramos modal
+    e.preventDefault();      // el evento se controla aquí
+    onSubmit(formData);      // solo pasamos los datos al padre
   };
+
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="modal-overlay fullscreen" onClick={onClose}>
       <div className="modal-card" onClick={(e) => e.stopPropagation()}>
         <h3>Agregar Lote</h3>
+
         <form onSubmit={handleSubmit} className="form-lote">
-          <input
-            type="text"
-            name="idProducto"
-            placeholder="Producto"
-            value={formData.idProducto}
+          {/* Selector de Producto */}
+          <select
+            name="productId"
+            value={formData.productId}
             onChange={onChange}
             required
-          />
+          >
+            <option value="">Seleccionar Producto</option>
+            {products?.map((product) => (
+              <option key={product.id} value={product.id}>
+                {product.name} - ${product.price}
+              </option>
+            ))}
+          </select>
+
+          {/* Fecha de Vencimiento */}
           <input
             type="date"
-            name="fechaVencimiento"
-            value={formData.fechaVencimiento}
+            name="expirationDate"
+            value={formData.expirationDate}
             onChange={onChange}
+            min={today}
             required
           />
+
+          {/* Cantidad Inicial */}
           <input
             type="number"
-            name="cantidadInicial"
+            name="initialQuantity"
             placeholder="Cantidad Inicial"
-            value={formData.cantidadInicial}
+            value={formData.initialQuantity}
             onChange={onChange}
+            min="1"
             required
           />
+
+          {/* Cantidad Disponible (solo lectura) */}
           <input
             type="number"
-            name="cantidadDisponible"
+            name="availableQuantity"
             placeholder="Cantidad Disponible"
-            value={formData.cantidadDisponible}
+            value={formData.availableQuantity}
             readOnly
+            style={{ backgroundColor: "#f5f5f5" }}
           />
+
+          {/* Precio del Lote */}
           <input
             type="number"
-            name="precioLote"
+            name="batchPrice"
             placeholder="Precio Lote"
-            value={formData.precioLote}
+            value={formData.batchPrice}
             onChange={onChange}
+            step="0.01"
+            min="0"
             required
           />
+
+          {/* Precio por Unidad (solo lectura) */}
           <input
             type="number"
-            name="precioUnidad"
+            name="unitPrice"
             placeholder="Precio Unidad"
-            value={formData.precioUnidad}
+            value={formData.unitPrice}
             readOnly
+            style={{ backgroundColor: "#f5f5f5" }}
           />
 
           <div className="form-actions">
-            <button type="submit" className="btn-primary">Guardar</button>
-            <button type="button" className="btn-secondary" onClick={onClose}>
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={loading}
+            >
+              {loading ? "⏳ Guardando..." : "💾 Guardar"}
+            </button>
+
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={onClose}
+              disabled={loading}
+            >
               Cancelar
             </button>
           </div>
