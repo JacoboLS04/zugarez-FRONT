@@ -10,6 +10,15 @@ const LotesModule = () => {
   const [products, setProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState({
+    productId: "",
+    startDate: "",
+    endDate: "",
+    initialQuantity: "",
+    availableQuantity: "",
+  });
   const [formData, setFormData] = useState({
     productId: "",
     expirationDate: "",
@@ -17,6 +26,10 @@ const LotesModule = () => {
     availableQuantity: "",
     batchPrice: "",
     unitPrice: ""
+  });
+  const [sortConfig, setSortConfig] = useState({
+    key: 'id',
+    direction: 'ascending'
   });
 
   const { makeRequest } = useAuthenticatedRequest();
@@ -116,9 +129,156 @@ const LotesModule = () => {
   };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES');
+  // Dividir la fecha en año, mes, día
+  const [year, month, day] = dateString.split('-');
+  // Crear la fecha especificando todos los componentes (mes es 0-indexado en JS)
+  const date = new Date(year, month - 1, day);
+  return date.toLocaleDateString('es-ES');
+};
+  // Filter handling functions
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({
+      ...filters,
+      [name]: value
+    });
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      productId: "",
+      startDate: "",
+      endDate: "",
+      initialQuantity: "",
+      availableQuantity: "",
+    });
+    setSearchTerm("");
+  };
+
+  // Sort handling function
+  const requestSort = (key) => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Function to get the sort direction indicator
+  const getSortDirectionIndicator = (column) => {
+    if (sortConfig.key !== column) return null;
+    return sortConfig.direction === 'ascending' ? ' ↑' : ' ↓';
+  };
+
+  // Filter and sort lotes based on search term and filters
+  const filteredLotes = lotes.filter(lote => {
+    // Search term filtering (case insensitive)
+    const productName = getProductName(lote.product?.id).toLowerCase();
+    const initialQuantityStr = lote.initialQuantity.toString();
+    
+    if (searchTerm && 
+        !productName.includes(searchTerm.toLowerCase()) && 
+        !initialQuantityStr.includes(searchTerm)) {
+      return false;
+    }
+    
+    // Column filters
+    if (filters.productId && lote.product?.id.toString() !== filters.productId) {
+      return false;
+    }
+    
+    // Date range filtering
+    if ((filters.startDate || filters.endDate) && lote.expirationDate) {
+      const loteDate = new Date(lote.expirationDate);
+      
+      if (filters.startDate) {
+        const startDate = new Date(filters.startDate);
+        if (loteDate < startDate) return false;
+      }
+      
+      if (filters.endDate) {
+        const endDate = new Date(filters.endDate);
+        // Add one day to include the end date in the range
+        endDate.setDate(endDate.getDate() + 1);
+        if (loteDate >= endDate) return false;
+      }
+    }
+    
+    if (filters.initialQuantity && lote.initialQuantity.toString() !== filters.initialQuantity) {
+      return false;
+    }
+    
+    if (filters.availableQuantity && lote.availableQuantity.toString() !== filters.availableQuantity) {
+      return false;
+    }
+    
+    return true;
+  });
+
+  // Apply sorting to the filtered lotes
+  const sortedLotes = React.useMemo(() => {
+    let sortableLotes = [...filteredLotes];
+    if (sortConfig.key) {
+      sortableLotes.sort((a, b) => {
+        let aValue, bValue;
+        
+        // Handle different sorting keys
+        switch(sortConfig.key) {
+          case 'id':
+            return sortConfig.direction === 'ascending' 
+              ? a.id - b.id 
+              : b.id - a.id;
+          
+          case 'product':
+            aValue = getProductName(a.product?.id).toLowerCase();
+            bValue = getProductName(b.product?.id).toLowerCase();
+            break;
+          
+          case 'expirationDate':
+            aValue = new Date(a.expirationDate);
+            bValue = new Date(b.expirationDate);
+            break;
+          
+          case 'initialQuantity':
+            return sortConfig.direction === 'ascending' 
+              ? a.initialQuantity - b.initialQuantity 
+              : b.initialQuantity - a.initialQuantity;
+          
+          case 'availableQuantity':
+            return sortConfig.direction === 'ascending' 
+              ? a.availableQuantity - b.availableQuantity 
+              : b.availableQuantity - a.availableQuantity;
+          
+          case 'batchPrice':
+            return sortConfig.direction === 'ascending' 
+              ? a.batchPrice - b.batchPrice 
+              : b.batchPrice - a.batchPrice;
+          
+          case 'unitPrice':
+            return sortConfig.direction === 'ascending' 
+              ? a.unitPrice - b.unitPrice 
+              : b.unitPrice - a.unitPrice;
+          
+          default:
+            return 0;
+        }
+        
+        // Generic comparison for string and date types
+        if (aValue < bValue) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableLotes;
+  }, [filteredLotes, sortConfig, products]);
 
   return (
     <div className="lotes-module">
@@ -134,21 +294,99 @@ const LotesModule = () => {
       <h2>Gestión de Lotes</h2>
       <button className="btn-add" onClick={handleOpenModal}>➕ Agregar Lote</button>
 
+      {/* Search bar */}
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Buscar por producto o cantidad inicial..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="search-input"
+        />
+      </div>
+
+      {/* Filters */}
+      <div className="filters-container">
+        <div className="filter-item">
+          <label>Fecha Vencimiento (Desde):</label>
+          <input 
+            type="date" 
+            name="startDate" 
+            value={filters.startDate} 
+            onChange={handleFilterChange}
+            className="filter-input"
+          />
+        </div>
+
+        <div className="filter-item">
+          <label>Fecha Vencimiento (Hasta):</label>
+          <input 
+            type="date" 
+            name="endDate" 
+            value={filters.endDate} 
+            onChange={handleFilterChange}
+            className="filter-input"
+          />
+        </div>
+
+        <div className="filter-item">
+          <label>Cantidad Inicial:</label>
+          <input 
+            type="number" 
+            name="initialQuantity" 
+            value={filters.initialQuantity} 
+            onChange={handleFilterChange}
+            className="filter-input"
+            placeholder="Cantidad exacta"
+          />
+        </div>
+
+        <div className="filter-item">
+          <label>Cantidad Disponible:</label>
+          <input 
+            type="number" 
+            name="availableQuantity" 
+            value={filters.availableQuantity} 
+            onChange={handleFilterChange}
+            className="filter-input"
+            placeholder="Cantidad exacta"
+          />
+        </div>
+
+        <button className="btn-reset-filters" onClick={resetFilters}>
+          Limpiar Filtros
+        </button>
+      </div>
+
       <table>
         <thead>
           <tr>
-            <th># Lote</th>
-            <th>Producto</th>
-            <th>Fecha Vencimiento</th>
-            <th>Cantidad Inicial</th>
-            <th>Cantidad Disponible</th>
-            <th>Precio Lote</th>
-            <th>Precio Unidad</th>
+            <th className="sortable-header" onClick={() => requestSort('id')}>
+              # Lote{getSortDirectionIndicator('id')}
+            </th>
+            <th className="sortable-header" onClick={() => requestSort('product')}>
+              Producto{getSortDirectionIndicator('product')}
+            </th>
+            <th className="sortable-header" onClick={() => requestSort('expirationDate')}>
+              Fecha Vencimiento{getSortDirectionIndicator('expirationDate')}
+            </th>
+            <th className="sortable-header" onClick={() => requestSort('initialQuantity')}>
+              Cantidad Inicial{getSortDirectionIndicator('initialQuantity')}
+            </th>
+            <th className="sortable-header" onClick={() => requestSort('availableQuantity')}>
+              Cantidad Disponible{getSortDirectionIndicator('availableQuantity')}
+            </th>
+            <th className="sortable-header" onClick={() => requestSort('batchPrice')}>
+              Precio Lote{getSortDirectionIndicator('batchPrice')}
+            </th>
+            <th className="sortable-header" onClick={() => requestSort('unitPrice')}>
+              Precio Unidad{getSortDirectionIndicator('unitPrice')}
+            </th>
           </tr>
         </thead>
         <tbody>
-          {lotes.length > 0 ? (
-            lotes.map((lote) => (
+          {sortedLotes.length > 0 ? (
+            sortedLotes.map((lote) => (
               <tr key={lote.id}>
                 <td>{lote.id}</td>
                 <td>{getProductName(lote.product?.id)}</td>
@@ -162,7 +400,7 @@ const LotesModule = () => {
           ) : (
             <tr>
               <td colSpan="7" style={{textAlign: 'center', padding: '20px'}}>
-                No hay lotes registrados
+                {lotes.length > 0 ? 'No hay resultados para la búsqueda' : 'No hay lotes registrados'}
               </td>
             </tr>
           )}

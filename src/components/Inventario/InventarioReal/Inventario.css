@@ -1,0 +1,208 @@
+:root {
+  --bg: #aa998f;
+  --text: #111827;
+  --muted: #555;
+  --brand: #7d4f50;
+  --surface: #ffffff;
+  --ring: rgba(0, 0, 0, 0.1);
+}
+
+/* === Módulo === */
+.inventory-module {
+  padding: 2rem;
+  background: var(--bg);
+  border-radius: 12px;
+  min-height: 85vh;
+}
+
+/* === Dashboard === */
+.inventory-dashboard {
+  margin-bottom: 2rem;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  justify-items: center;
+}
+
+.dashboard-card{
+  background: var(--brand);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.card h3 {
+  margin: 0 0 .8rem;
+  color: var(--brand);
+}
+
+/* === Tabla === */
+.inventory-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border-radius: 12px;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.inventory-table th {
+  background: var(--brand);
+  color: #fff;
+  padding: 0.75rem;
+}
+
+.inventory-table td {
+  padding: 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--ring);
+}
+
+.inventory-table tr:hover {
+  background: #d5d5d5;
+  cursor: pointer;
+}
+
+/* Seleccionada */
+.inventory-table tbody tr.selected {
+  background: color-mix(in srgb, rgb(218, 218, 218) 40%, var(--brand) 70%) ;
+  
+  font-weight: bold;
+}
+
+
+
+/* Card general */
+.card {
+  background: var(--muted);
+  padding: 1rem;
+  border-radius: 12px;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.inventory-dashboard .card.selected {
+  background: color-mix(in srgb, var(--brand) 20%, #d9d9d9 70%);
+  border: 1px solid var(--brand);
+  width: 500px;
+
+}
+
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+}
+
+
+.card.selected h3 {
+  color: var(--brand);
+  font-size: 1.4rem;
+}
+
+.card.selected p {
+  font-size: 1rem;
+  color: var(--text);
+  margin: 0.25rem 0;
+}
+
+/* Estilos para los controles de filtrado */
+.filter-controls {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  position: relative;
+  justify-content: center;
+}
+
+.search-input {
+  padding: 10px 15px 10px 40px;
+  border: 2px solid var(--ring);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  font-size: 1rem;
+  color: var(--text);
+  background-color: var(--surface);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+/* Hacer que los encabezados de tabla sean clickeables */
+th {
+  cursor: pointer;
+  user-select: none;
+}
+
+th:hover {
+  background-color: color-mix(in srgb, var(--brand) 80%, #d9d9d9 40%);
+}
+
+/* Estilo para cuando no hay resultados */
+.no-results {
+  text-align: center;
+  padding: 20px;
+  color: #888;
+}
+
+/* Indicar que filas son clickeables */
+tbody tr {
+  cursor: pointer;
+}
+
+tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* === Responsive === */
+@media (max-width: 1024px) {
+  .dashboard-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 850px) {
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+  .inventory-table table {
+    font-size: 0.9rem;
+  }
+
+  .inventory-dashboard .card.selected {
+  background: color-mix(in srgb, var(--brand) 20%, #d9d9d9 70%);
+  border: 1px solid var(--brand);
+  width: 300px;
+
+}
+
+}
+
+@media (max-width: 480px) {
+  .inventory-module {
+    padding: 1rem;
+  }
+  .inventory-table table {
+    font-size: 0.8rem;
+  }
+
+  .inventory-dashboard .card.selected {
+  background: color-mix(in srgb, var(--brand) 20%, #d9d9d9 70%);
+  border: 1px solid var(--brand);
+  width: 200px;
+
+}
+}

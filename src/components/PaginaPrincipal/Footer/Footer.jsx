@@ -8,7 +8,7 @@ function Footer() {
       <div className="footer__bottom">
 
         <div className="footer__social" aria-label="Redes sociales">
-            <a href="https://www.instagram.com/luiserca.py/?utm_source=ig_web_button_share_sheet" aria-label="Instagram" className="footer__social-btn">
+            <a href="https://www.instagram.com/andr3s.15?igsh=MXJmNmgwdjRuYzltNQ==" aria-label="Instagram" className="footer__social-btn">
               {/* Instagram */}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="1.6"/>

@@ -45,7 +45,7 @@ function Sidebar({ active, onSelect }) {
               setOpen(false);
             }}
           >
-            Nómina
+            Nómina (Proximamente)
           </li>
         </ul>
       </aside>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import LotesModule from "./LotesModule";
 import "./InventoryModule.css";
 import MovimientosModule from "./MovimientosModule";
+import Inventario from "./InventarioReal/Inventario";
 
 const InventoryModule = () => {
   const [activeTab, setActiveTab] = useState("inventario");
@@ -32,7 +33,7 @@ const InventoryModule = () => {
 
       {/* Contenido dinámico */}
       <div className="inventory-content">
-        {activeTab === "inventario" && <h2>Inventario</h2>}
+        {activeTab === "inventario" && <h2><Inventario /></h2>}
         {activeTab === "lotes" && <LotesModule />}
         {activeTab === "movimientos" && <h2> <MovimientosModule/> </h2>}
       </div>

@@ -11,7 +11,6 @@
 .inventory-module {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
   background: var(--surface);
   border-radius: 12px;
   box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.25);
@@ -53,11 +52,9 @@
 
 /* === Contenido dinámico === */
 .inventory-content {
-  background: #fff;
-  border: 1px solid var(--ring);
   border-radius: 12px;
   flex-grow: 1;
-  box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.15);
+  border: #838383 solid 1px;
   overflow-x: auto;
   padding: 1.5rem;
 }
@@ -123,7 +120,5 @@
     font-size: 1.05rem;
     padding: 0.8rem 1.6rem;
   }
-  .inventory-content {
-    padding: 2rem;
-  }
+
 }
