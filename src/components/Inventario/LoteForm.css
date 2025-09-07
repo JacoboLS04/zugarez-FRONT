@@ -222,9 +222,43 @@ select.searchable-select option {
   font-style: italic;
 }
 
+/* Currency input styles */
+.currency-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.currency-input-container input {
+  width: 100%;
+  font-weight: 500;
+  /* Align text to the right for currency */
+  padding-right: 0.8rem;
+}
+
+/* Fila de dos inputs */
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+  margin-bottom: 0.5rem;
+}
+
 @media (max-width: 500px) {
   .modal-card {
-
     width: 90%;
+  }
+  
+  /* Make form rows stack on mobile */
+  .form-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .form-row .form-group {
+    width: 100%;
   }
 }

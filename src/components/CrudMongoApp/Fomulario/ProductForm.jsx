@@ -54,6 +54,32 @@ const ProductForm = ({
     handleSubmit(dataToSend);
   };
 
+  // Función para formatear precio como moneda
+  const formatCurrency = (value) => {
+    if (!value) return "";
+    
+    // Convertir a número y formatear con puntos de miles
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return "";
+    
+    // Formatear como moneda colombiana (con puntos para miles)
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(numValue);
+  };
+
+  // Manejar cambio en el campo de precio
+  const handlePriceChange = (e) => {
+    // Extraer solo los dígitos del valor ingresado
+    const rawValue = e.target.value.replace(/[^\d]/g, '');
+    
+    // Actualizar el estado con el valor numérico
+    setFormData({ ...formData, price: rawValue });
+  };
+
   return (
     <div className="crud-bg">
       <div className="product-form-container">
@@ -61,8 +87,8 @@ const ProductForm = ({
           <div className="product-form-header">{title}</div>
           
           <form className="product-form-body" onSubmit={validateAndSubmit}>
-            {/* === FILA 1: Nombre y Precio === */}
-            <div className="form-row">
+            {/* === FILA 1: Nombre, Precio y Stock Mínimo === */}
+            <div className="form-row three-columns">
               <div className="form-group">
                 <label>Nombre *</label>
                 <input
@@ -78,14 +104,26 @@ const ProductForm = ({
 
               <div className="form-group">
                 <label>Precio *</label>
+                <div className="price-input-container">
+                  <input
+                    type="text"
+                    placeholder="Ej. $32.500"
+                    value={formatCurrency(formData.price)}
+                    onChange={handlePriceChange}
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="form-group">
+                <label>Stock Mínimo *</label>
                 <input
                   type="number"
-                  step="0.01"
-                  min="0.01"
-                  placeholder="Ej. 8500"
-                  value={formData.price || ""}
+                  min="0"
+                  placeholder="Ej. 10"
+                  value={formData.stockMinimo || ""}
                   onChange={(e) =>
-                    setFormData({ ...formData, price: e.target.value })
+                    setFormData({ ...formData, stockMinimo: e.target.value })
                   }
                   required
                 />

@@ -44,7 +44,7 @@ const LoteList = () => {
       <table className="lote-table">
         <thead>
           <tr>
-            <th># Lote</th>
+            <th># Loteeee</th>
             <th>Producto</th>
             <th>Fecha vencimiento</th>
             <th>Cant. Inicial</th>

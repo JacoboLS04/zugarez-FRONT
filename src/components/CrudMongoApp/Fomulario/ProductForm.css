@@ -59,6 +59,41 @@
   flex: 1;
 }
 
+/* Fila de tres inputs */
+.form-row.three-columns {
+  display: flex;
+  gap: 1rem;
+}
+
+.form-row.three-columns .form-group {
+  min-width: 0; /* Permite que los elementos se reduzcan si es necesario */
+}
+
+/* Distribución específica: 50% - 25% - 25% */
+.form-row.three-columns .form-group:nth-child(1) {
+  flex: 0 0 50%; /* No crecer, no reducir, 50% de ancho base */
+}
+
+.form-row.three-columns .form-group:nth-child(2),
+.form-row.three-columns .form-group:nth-child(3) {
+  flex: 0 0 23%; /* No crecer, no reducir, 25% de ancho base */
+}
+
+/* Ajuste para pantallas pequeñas */
+@media (max-width: 768px) {
+  .form-row.three-columns {
+    flex-direction: column;
+  }
+  
+  .form-row.three-columns .form-group,
+  .form-row.three-columns .form-group:nth-child(1),
+  .form-row.three-columns .form-group:nth-child(2),
+  .form-row.three-columns .form-group:nth-child(3) {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+}
+
 /* Inputs y textarea */
 .product-form-body input,
 .product-form-body textarea {
@@ -176,6 +211,18 @@
 
 .btn-delete:hover {
   background: #e74c3c;
+}
+
+/* Contenedor de entrada de precio */
+.price-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.price-input-container input {
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
 }
 
 /* 📱 Mobile */

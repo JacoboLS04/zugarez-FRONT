@@ -5,6 +5,17 @@ import { useAuth } from '../../contexts/AuthContext';
 import "./LotesModule.css";
 import LoteForm from "./LoteForm";
 
+// ===== Helper formato COP =====
+const formatCOP = (value, fractionDigits = 0) => {
+  const num = Number(value ?? 0);
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  }).format(isNaN(num) ? 0 : num);
+};
+
 const LotesModule = () => {
   const [lotes, setLotes] = useState([]);
   const [products, setProducts] = useState([]);
@@ -47,7 +58,15 @@ const LotesModule = () => {
     try {
       setLoading(true);
       const data = await makeRequest(LOTES_URL, { method: 'GET' });
-      setLotes(data || []);
+      // Normaliza a números para no romper sort y formatear bien
+      const normalized = (data || []).map(l => ({
+        ...l,
+        batchPrice: Number(l.batchPrice),
+        unitPrice: Number(l.unitPrice),
+        initialQuantity: Number(l.initialQuantity),
+        availableQuantity: Number(l.availableQuantity),
+      }));
+      setLotes(normalized);
     } catch (error) {
       console.error('Error cargando lotes:', error);
       Swal.fire('Error', 'No se pudieron cargar los lotes: ' + error.message, 'error');
@@ -83,15 +102,25 @@ const LotesModule = () => {
     const { name, value } = e.target;
     let newData = { ...formData, [name]: value };
 
-    // Reglas automáticas
+    // Reglas automáticas (aseguramos números en cálculos)
     if (name === "initialQuantity") {
-      newData.availableQuantity = value;
-      if (newData.batchPrice && value > 0) {
-        newData.unitPrice = (newData.batchPrice / value).toFixed(2);
+      const qty = Number(value || 0);
+      newData.availableQuantity = qty;
+      const batch = Number(newData.batchPrice || 0);
+      if (batch > 0 && qty > 0) {
+        newData.unitPrice = (batch / qty).toFixed(2);
+      } else {
+        newData.unitPrice = "";
       }
     }
-    if (name === "batchPrice" && newData.initialQuantity > 0) {
-      newData.unitPrice = (value / newData.initialQuantity).toFixed(2);
+    if (name === "batchPrice") {
+      const batch = Number(value || 0);
+      const qty = Number(newData.initialQuantity || 0);
+      if (batch > 0 && qty > 0) {
+        newData.unitPrice = (batch / qty).toFixed(2);
+      } else {
+        newData.unitPrice = "";
+      }
     }
 
     setFormData(newData);
@@ -109,7 +138,14 @@ const LotesModule = () => {
       await makeRequest(LOTES_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formDataToSubmit)
+        // Asegura tipos correctos al enviar
+        body: JSON.stringify({
+          ...formDataToSubmit,
+          initialQuantity: Number(formDataToSubmit.initialQuantity),
+          availableQuantity: Number(formDataToSubmit.availableQuantity || formDataToSubmit.initialQuantity),
+          batchPrice: Number(formDataToSubmit.batchPrice),
+          unitPrice: Number(formDataToSubmit.unitPrice),
+        })
       });
       
       Swal.fire('¡Éxito!', 'Lote creado correctamente', 'success');
@@ -129,17 +165,17 @@ const LotesModule = () => {
   };
 
   const formatDate = (dateString) => {
-  // Dividir la fecha en año, mes, día
-  const [year, month, day] = dateString.split('-');
-  // Crear la fecha especificando todos los componentes (mes es 0-indexado en JS)
-  const date = new Date(year, month - 1, day);
-  return date.toLocaleDateString('es-ES');
-};
-  // Filter handling functions
+    const [year, month, day] = (dateString || "").split('-');
+    const date = new Date(year, month - 1, day);
+    return isNaN(date) ? "" : date.toLocaleDateString('es-ES');
+  };
+
+  // Search
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
+  // Filters
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters({
@@ -159,7 +195,7 @@ const LotesModule = () => {
     setSearchTerm("");
   };
 
-  // Sort handling function
+  // Sort
   const requestSort = (key) => {
     let direction = 'ascending';
     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
@@ -168,30 +204,26 @@ const LotesModule = () => {
     setSortConfig({ key, direction });
   };
 
-  // Function to get the sort direction indicator
   const getSortDirectionIndicator = (column) => {
     if (sortConfig.key !== column) return null;
     return sortConfig.direction === 'ascending' ? ' ↑' : ' ↓';
   };
 
-  // Filter and sort lotes based on search term and filters
+  // Filter & search
   const filteredLotes = lotes.filter(lote => {
-    // Search term filtering (case insensitive)
     const productName = getProductName(lote.product?.id).toLowerCase();
-    const initialQuantityStr = lote.initialQuantity.toString();
-    
+    const initialQuantityStr = String(lote.initialQuantity ?? "");
+
     if (searchTerm && 
         !productName.includes(searchTerm.toLowerCase()) && 
         !initialQuantityStr.includes(searchTerm)) {
       return false;
     }
     
-    // Column filters
-    if (filters.productId && lote.product?.id.toString() !== filters.productId) {
+    if (filters.productId && lote.product?.id?.toString() !== filters.productId) {
       return false;
     }
     
-    // Date range filtering
     if ((filters.startDate || filters.endDate) && lote.expirationDate) {
       const loteDate = new Date(lote.expirationDate);
       
@@ -202,31 +234,29 @@ const LotesModule = () => {
       
       if (filters.endDate) {
         const endDate = new Date(filters.endDate);
-        // Add one day to include the end date in the range
         endDate.setDate(endDate.getDate() + 1);
         if (loteDate >= endDate) return false;
       }
     }
     
-    if (filters.initialQuantity && lote.initialQuantity.toString() !== filters.initialQuantity) {
+    if (filters.initialQuantity && String(lote.initialQuantity) !== filters.initialQuantity) {
       return false;
     }
     
-    if (filters.availableQuantity && lote.availableQuantity.toString() !== filters.availableQuantity) {
+    if (filters.availableQuantity && String(lote.availableQuantity) !== filters.availableQuantity) {
       return false;
     }
     
     return true;
   });
 
-  // Apply sorting to the filtered lotes
+  // Sort apply
   const sortedLotes = React.useMemo(() => {
     let sortableLotes = [...filteredLotes];
     if (sortConfig.key) {
       sortableLotes.sort((a, b) => {
         let aValue, bValue;
         
-        // Handle different sorting keys
         switch(sortConfig.key) {
           case 'id':
             return sortConfig.direction === 'ascending' 
@@ -267,7 +297,6 @@ const LotesModule = () => {
             return 0;
         }
         
-        // Generic comparison for string and date types
         if (aValue < bValue) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
@@ -393,8 +422,9 @@ const LotesModule = () => {
                 <td>{formatDate(lote.expirationDate)}</td>
                 <td>{lote.initialQuantity}</td>
                 <td>{lote.availableQuantity}</td>
-                <td>${lote.batchPrice.toFixed(2)}</td>
-                <td>${lote.unitPrice.toFixed(2)}</td>
+                {/* === precios formateados === */}
+                <td>{formatCOP(lote.batchPrice)}</td>
+                <td>{formatCOP(lote.unitPrice)}</td>
               </tr>
             ))
           ) : (

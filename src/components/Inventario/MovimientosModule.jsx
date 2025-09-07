@@ -9,6 +9,10 @@ const MovimientosModule = () => {
   const [lotes, setLotes] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sortConfig, setSortConfig] = useState({
+    key: 'id',
+    direction: 'ascending'
+  });
   
   const { makeRequest } = useAuthenticatedRequest();
   const LOTES_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/inventory/lotes';
@@ -18,7 +22,7 @@ const MovimientosModule = () => {
   }, []);
 
   const loadLotes = async () => {
-    try {
+    try { 
       setLoading(true);
       const data = await makeRequest(LOTES_URL, { method: 'GET' });
       setLotes(data || []);
@@ -35,6 +39,53 @@ const MovimientosModule = () => {
     setShowModal(false); // cerrar modal al guardar
   };
 
+  // Sort handling function
+  const requestSort = (key) => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Function to get the sort direction indicator
+  const getSortDirectionIndicator = (column) => {
+    if (sortConfig.key !== column) return null;
+    return sortConfig.direction === 'ascending' ? ' ↑' : ' ↓';
+  };
+
+  // Apply sorting to movimientos
+  const sortedMovimientos = React.useMemo(() => {
+    let sortableMovimientos = [...movimientos];
+    if (sortConfig.key) {
+      sortableMovimientos.sort((a, b) => {
+        let aValue = a[sortConfig.key];
+        let bValue = b[sortConfig.key];
+        
+        // Handle string comparison case-insensitive
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          aValue = aValue.toLowerCase();
+          bValue = bValue.toLowerCase();
+        }
+        
+        // Handle date comparison
+        if (sortConfig.key === 'fecha') {
+          aValue = new Date(aValue);
+          bValue = new Date(bValue);
+        }
+        
+        if (aValue < bValue) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableMovimientos;
+  }, [movimientos, sortConfig]);
+
   return (
     <div className="movimientos-module">
       <h2>Movimientos de Inventario</h2>
@@ -45,17 +96,29 @@ const MovimientosModule = () => {
       <table>
         <thead>
           <tr>
-            <th>#</th>
-            <th>Lote</th>
-            <th>Tipo</th>
-            <th>Cantidad</th>
-            <th>Fecha</th>
-            <th>Motivo</th>
+            <th className="sortable-header" onClick={() => requestSort('id')}>
+              #{getSortDirectionIndicator('id')}
+            </th>
+            <th className="sortable-header" onClick={() => requestSort('lote')}>
+              Lote{getSortDirectionIndicator('lote')}
+            </th>
+            <th className="sortable-header" onClick={() => requestSort('tipo')}>
+              Tipo{getSortDirectionIndicator('tipo')}
+            </th>
+            <th className="sortable-header" onClick={() => requestSort('cantidad')}>
+              Cantidad{getSortDirectionIndicator('cantidad')}
+            </th>
+            <th className="sortable-header" onClick={() => requestSort('fecha')}>
+              Fecha{getSortDirectionIndicator('fecha')}
+            </th>
+            <th className="sortable-header" onClick={() => requestSort('motivo')}>
+              Motivo{getSortDirectionIndicator('motivo')}
+            </th>
           </tr>
         </thead>
         <tbody>
-          {movimientos.length > 0 ? (
-            movimientos.map((m) => (
+          {sortedMovimientos.length > 0 ? (
+            sortedMovimientos.map((m) => (
               <tr key={m.id}>
                 <td>{m.id}</td>
                 <td>{m.lote}</td>

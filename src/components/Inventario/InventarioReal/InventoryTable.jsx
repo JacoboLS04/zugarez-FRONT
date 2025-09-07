@@ -10,6 +10,7 @@ const InventoryTable = ({ products, onSelect }) => {
   // Actualizar productos filtrados cuando cambian los criterios
   useEffect(() => {
     let result = [...products];
+    console.log(products);
 
     // Aplicar filtro de búsqueda
     if (searchTerm) {
@@ -91,6 +92,9 @@ const InventoryTable = ({ products, onSelect }) => {
             <th onClick={() => handleSort("stock")}>
               Stock disponible{getSortIndicator("stock")}
             </th>
+            <th onClick={() => handleSort("stock_minimo")}>
+              Stock Mínimo{getSortIndicator("stock_minimo")}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -104,11 +108,12 @@ const InventoryTable = ({ products, onSelect }) => {
               <td>{p.name}</td>
               <td>{p.brand}</td>
               <td>{p.stock}</td>
+              <td>{p.stock_minimo || 0}</td>
             </tr>
           ))}
           {filteredProducts.length === 0 && (
             <tr>
-              <td colSpan="4" className="no-results">
+              <td colSpan="5" className="no-results">
                 No se encontraron productos
               </td>
             </tr>

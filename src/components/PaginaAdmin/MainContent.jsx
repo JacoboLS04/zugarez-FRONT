@@ -9,7 +9,7 @@ function MainContent({ section }) {
       {section === "inventario" && (
         <div>
           <h1 className="content-title">Gestión de Inventario</h1>
-          <InventoryModule /> {/* 👈 aquí se llama */}
+          <InventoryModule /> 
         </div>
       )}
       {section === "productos" && (
