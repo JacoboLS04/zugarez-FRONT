@@ -1,3 +1,4 @@
+import react from "react";
 import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
 import { useAuthenticatedRequest } from '../../hooks/useAuth';
@@ -5,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import "./LotesModule.css";
 import LoteForm from "./LoteForm";
 
-// ===== Helper formato COP =====
+
 const formatCOP = (value, fractionDigits = 0) => {
   const num = Number(value ?? 0);
   return new Intl.NumberFormat("es-CO", {
