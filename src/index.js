@@ -12,7 +12,9 @@ document.title = "ZUGAREZ S.A.S";
 
 root.render(
   <React.StrictMode>
+
     <App />
+    
   </React.StrictMode>
 );
 

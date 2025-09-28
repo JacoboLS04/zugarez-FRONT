@@ -14,11 +14,11 @@ import { AuthProvider } from './contexts/AuthContext';
 import LoginPage from './components/LoginPage/LoginPage';
 import AccessibilityWidget from './components/Accesibility/AccessibilityWidget';
 
+import MenuPage from './components/PaginaPrincipal/Menu/Menu/MenuPage';
+
 function App() {
   return (
       
-
-
       <React.StrictMode>
         <Router>
           <Routes>
@@ -27,6 +27,11 @@ function App() {
 
             {/* Login */}
             <Route path="/login" element={ <LoginPage/>} />
+
+            {/* Menú */}
+            <Route path="/menu" element={<MenuPage />} />
+
+            
           </Routes>
         </Router>
         <AccessibilityWidget/>

@@ -107,8 +107,8 @@ const InventoryTable = ({ products, onSelect }) => {
               <td>{p.id}</td>
               <td>{p.name}</td>
               <td>{p.brand}</td>
-              <td>{p.stock}</td>
-              <td>{p.stock_minimo || 0}</td>
+              <td>{p.stockActual}</td>
+              <td>{p.stockMinimo}</td>
             </tr>
           ))}
           {filteredProducts.length === 0 && (
