@@ -75,7 +75,7 @@ export default function TopBar() {
           }}
         >
           <ResponsiveImage imagePath={logo} altText="Logo aplicacion" size="small" />
-          <span className="nav__brand-text">Zugarez S.A.S</span>
+          <span className="nav__brand-text" href="home">Zugarez S.A.S</span>
         </a>
 
         <button
@@ -110,27 +110,18 @@ export default function TopBar() {
                 Nosotros
               </a>
             </li>
+            
+            
             <li role="none">
-              <a
-                role="menuitem"
-                href="#productos"
+              <a role="menuitem" href="#menu"
                 onClick={(e) => {
-                  scrollToId("PreMenuContainer")(e);
-                  handleNavClick();
-                }}
-                >
-                Productos
-              </a>
-            </li>
-            <li role="none">
-              <a role="menuitem" href="login"
-                onClick={(e) => {
-
+                  scrollToId("PreMenuSection")(e);
                   handleNavClick();
                 }}>
-                Iniciar Sesión
+                Menú
               </a>
             </li>
+            
             <li role="none">
               <a role="menuitem" href="#contacto"
                 onClick={(e) => {
@@ -142,16 +133,16 @@ export default function TopBar() {
             </li>
 
             <li role="none">
-              <a role="menuitem" href="#contacto"
+              <a role="menuitem" href="login"
                 onClick={(e) => {
-                  scrollToId("menu")(e);
+
                   handleNavClick();
                 }}>
-                Menú
+                Iniciar Sesión
               </a>
             </li>
+
           </ul>
-          
 
           <a
             className="nav__cta"

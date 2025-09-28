@@ -104,6 +104,7 @@ const CrudMongoApp = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
+        console.log('Producto actualizado:', { ...selectedProduct, ...formData });
         Swal.fire('¡Éxito!', 'Producto actualizado correctamente', 'success');
       }
       await loadProducts();
