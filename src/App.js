@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 import ProtectedRoute from './components/ProtectedRoute';
@@ -13,8 +12,10 @@ import AuthPage from './components/auth/AuthPage';
 import { AuthProvider } from './contexts/AuthContext';
 import LoginPage from './components/LoginPage/LoginPage';
 import AccessibilityWidget from './components/Accesibility/AccessibilityWidget';
-
+import ClientApp from './components/ClientApp/ClientApp';
+import OrdersApp from './components/OrdersApp/OrdersApp';
 import MenuPage from './components/PaginaPrincipal/Menu/Menu/MenuPage';
+import ClientShopping from './components/ClientShopping/ClientShopping';
 
 function App() {
   return (
@@ -31,6 +32,14 @@ function App() {
             {/* Menú */}
             <Route path="/menu" element={<MenuPage />} />
 
+            {/* Cliente - Pedidos */}
+            <Route path="/client" element={<ClientApp />} />
+
+            {/* Cliente - Compras */}
+            <Route path="/shop" element={<ClientShopping />} />
+
+            {/* Gestión de Pedidos */}
+            <Route path="/orders" element={<OrdersApp />} />
             
           </Routes>
         </Router>
