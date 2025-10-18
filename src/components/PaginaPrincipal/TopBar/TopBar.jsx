@@ -146,11 +146,8 @@ export default function TopBar() {
 
           <a
             className="nav__cta"
-            href="#"
+            href="login"
             onClick={(e) => {
-              e.preventDefault();
-              const el = document.getElementById("authPage");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
               handleNavClick();
             }}
           >

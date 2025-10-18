@@ -1,0 +1,146 @@
+.client-shopping {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+}
+
+.shopping-content {
+  flex: 1;
+}
+
+/* Product Cards */
+.product-card {
+  transition: all 0.3s ease;
+  border: none;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-container {
+  height: 200px;
+  overflow: hidden;
+  background-color: #f8f9fa;
+}
+
+.product-image {
+  height: 100%;
+  object-fit: contain;
+  padding: 15px;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+/* Cart Toggle Button */
+.cart-toggle {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+}
+
+.cart-toggle-btn {
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-weight: 600;
+  border: none;
+  font-size: 1rem;
+}
+
+/* Filter Panel */
+.filter-panel {
+  position: sticky;
+  top: 20px;
+  border: none;
+}
+
+.category-list {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #ffffff;
+}
+
+/* Shopping Cart */
+.shopping-cart {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.cart-item {
+  transition: background-color 0.2s ease;
+}
+
+.cart-item:hover {
+  background-color: #f8f9fa;
+}
+
+.cart-item-image {
+  border: 2px solid #e9ecef;
+}
+
+/* Price Section */
+.price-section {
+  padding: 10px;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .filter-panel {
+    margin-bottom: 20px;
+    position: static;
+  }
+  
+  .cart-toggle {
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  .cart-toggle-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .shopping-content {
+    padding: 20px 0;
+  }
+}
+
+/* Loading Animation */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Quantity Input Styling */
+.input-group .btn {
+  border-color: #ced4da;
+}
+
+.input-group .form-control {
+  border-left: none;
+  border-right: none;
+}
+
+/* Badge Styling */
+.badge {
+  font-size: 0.75em;
+  padding: 0.5em 0.75em;
+}
+
+/* Card Footer */
+.card-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
