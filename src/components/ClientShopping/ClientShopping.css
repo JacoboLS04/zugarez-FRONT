@@ -1,146 +1,421 @@
-.client-shopping {
-  min-height: 100vh;
+:root{
+  --brand-primary: #2C3E50;
+  --brand-accent: #E67E22;
+  --surface: #ffffff;
+  --muted: #6c757d;
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(44,62,80,0.08);
+  --card-width: 360px; /* ancho objetivo de cada card */
+}
+
+/* Layout básico */
+.client-shopping{
+  background: linear-gradient(180deg,#fbfcfd 0%, #fff 100%);
+  min-height:100vh;
+  padding:24px;
+  box-sizing:border-box;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color:var(--brand-primary);
+}
+
+/* Contenedor principal (usa grid en su componente) */
+.shopping-content{
+  max-width:1200px;
+  margin:0 auto;
+}
+
+/* -------------------------
+   Product Card (mejorada)
+   ------------------------- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-width), 1fr));
+  gap: 18px;
+}
+
+.product-card {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(44,62,80,0.04);
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
-}
-
-.shopping-content {
-  flex: 1;
-}
-
-/* Product Cards */
-.product-card {
-  transition: all 0.3s ease;
-  border: none;
-  overflow: hidden;
+  gap: 12px;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  min-width: 0;
+  min-width: 250px;
 }
 
 .product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(44,62,80,0.10);
 }
 
 .card-img-container {
-  height: 200px;
+  height: 220px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(180deg, rgba(236,240,241,0.6), rgba(255,255,255,0.4));
+  border-radius: 10px;
   overflow: hidden;
-  background-color: #f8f9fa;
+  padding: 8px;
 }
 
 .product-image {
-  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
   object-fit: contain;
-  padding: 15px;
-  transition: transform 0.3s ease;
+  transition: transform 200ms ease;
 }
+.product-card:hover .product-image { transform: scale(1.03); }
 
-.product-card:hover .product-image {
-  transform: scale(1.05);
-}
-
-/* Cart Toggle Button */
-.cart-toggle {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 1000;
-}
-
-.cart-toggle-btn {
-  border-radius: 50px;
-  padding: 12px 24px;
-  font-weight: 600;
-  border: none;
-  font-size: 1rem;
-}
-
-/* Filter Panel */
-.filter-panel {
-  position: sticky;
-  top: 20px;
-  border: none;
-}
-
-.category-list {
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #ffffff;
-}
-
-/* Shopping Cart */
-.shopping-cart {
-  border: none;
-  border-radius: 15px;
+/* Title & meta: permitir hasta 2 líneas con ellipsis */
+.product-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--brand-primary);
+  margin: 0;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;  
   overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
-.cart-item {
-  transition: background-color 0.2s ease;
+.product-badge {
+  display:inline-block;
+  background: rgba(230,126,34,0.12);
+  color: var(--brand-accent);
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight:700;
+  font-size: 0.78rem;
 }
 
-.cart-item:hover {
-  background-color: #f8f9fa;
+.product-desc {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-top: 6px;
+  min-height: 40px;
 }
 
-.cart-item-image {
-  border: 2px solid #e9ecef;
+/* Price & actions */
+.card-actions {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-top: auto;
 }
 
-/* Price Section */
-.price-section {
-  padding: 10px;
-  background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+.price {
+  font-weight: 800;
+  color: #118a4d;
+  font-size: 1.2rem;
+}
+
+/* Añadir al carrito */
+.add-btn {
+  background: linear-gradient(90deg,var(--brand-accent), #ff9a4d);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight:700;
+  box-shadow: 0 8px 20px rgba(230,126,34,0.18);
+}
+
+/* -------------------------
+   Controles de cantidad
+   ------------------------- */
+.qty-controls {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background: rgba(0,0,0,0.02);
+  padding: 6px;
+  border-radius: 10px;
+}
+
+/* botones + / - */
+.qty-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 8px;
+  border: 1px solid rgba(44,62,80,0.08);
+  background: #fff;
+  color: var(--brand-primary);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.qty-btn:active { transform: translateY(1px); }
+
+.qty-count {
+  min-width: 36px;
   text-align: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--brand-primary);
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: transparent;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .filter-panel {
-    margin-bottom: 20px;
-    position: static;
+/* Evitar botones gigantes en móviles y asegurar legibilidad */
+@media (max-width: 576px) {
+  .product-grid {
+    grid-template-columns: 1fr;
   }
-  
-  .cart-toggle {
-    bottom: 20px;
-    right: 20px;
+  .card-img-container {
+    height: 180px;
   }
-  
-  .cart-toggle-btn {
-    padding: 10px 20px;
-    font-size: 0.9rem;
+  .qty-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 15px;
   }
-  
-  .shopping-content {
-    padding: 20px 0;
+  .qty-count {
+    min-width: 32px;
+    font-size: 0.95rem;
   }
 }
 
-/* Loading Animation */
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
+/* -------------------------
+   Botón de carrito flotante
+   ------------------------- */
+.cart-toggle{
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  z-index: 1400;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
 }
 
-/* Quantity Input Styling */
-.input-group .btn {
-  border-color: #ced4da;
+.cart-toggle-btn{
+  background: linear-gradient(90deg,var(--brand-accent), #ff9a4d);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
-.input-group .form-control {
-  border-left: none;
-  border-right: none;
+/* En pantallas muy pequeñas, mover a la esquina inferior derecha para no tapar contenido */
+@media (max-width:576px){
+  .cart-toggle{
+    top: auto;
+    bottom: 12px;
+    right: 12px;
+    transform: none;
+  }
+  .cart-toggle-btn{
+    padding:8px 10px;
+    font-size:0.9rem;
+  }
 }
 
-/* Badge Styling */
-.badge {
-  font-size: 0.75em;
-  padding: 0.5em 0.75em;
+/* Shopping cart panel (drawer en móvil) - ligera mejora visual */
+.shopping-cart{
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(44,62,80,0.04);
+  padding:12px;
 }
 
-/* Card Footer */
-.card-footer {
-  background-color: #f8f9fa;
-  border-top: 1px solid #e9ecef;
+/* ==========================
+   ClientePage: quitar sidebar (integrado)
+   ========================== */
+
+/* Hacemos que el contenedor sea un bloque único y eliminamos la separación visual */
+.cliente-page {
+  display: block; /* no grid */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  overflow: visible;
+}
+
+/* Ocultar la sidebar por completo (no está fuera ni visible) */
+.cliente-sidebar {
+  display: none !important;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Si existían botones de navegación internos, los mantenemos estilísticamente por si se usan en otro lugar */
+.cliente-nav-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-align: left;
+  font-weight: 700;
+  color: var(--brand-primary);
+  cursor: pointer;
+}
+
+/* Contenido principal ocupa todo el ancho y tiene su padding */
+.cliente-content {
+  padding: 0;
+  min-height: 60vh;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* responsive: nada que mostrar de la sidebar en móvil tampoco */
+@media (max-width: 900px) {
+  .cliente-page {
+    padding: 12px;
+  }
+  .cliente-sidebar {
+    display: none !important;
+  }
+  .cliente-content {
+    padding: 12px 0 0 0;
+  }
+}
+
+/* Ajustes de accesibilidad y focus */
+.header-btn:focus, .cart-toggle-btn:focus, .qty-btn:focus, .add-btn:focus {
+  outline: 3px solid rgba(44,62,80,0.08);
+  border-radius:8px;
+}
+
+/* =========================
+    Estilos para formulario de baja
+    ========================= */
+.unsubscribe-form {
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,251,0.98));
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(44,62,80,0.06);
+  box-shadow: 0 8px 24px rgba(44,62,80,0.06);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Etiquetas y disposición */
+.unsubscribe-form label {
+  display: block;
+  font-weight: 700;
+  color: var(--brand-primary);
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+/* Inputs y textarea */
+.unsubscribe-form input,
+.unsubscribe-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 2px solid rgba(44,62,80,0.08);
+  background: #fbfdff;
+  font-size: 0.95rem;
+  color: var(--brand-primary);
+  box-sizing: border-box;
+  transition: box-shadow 150ms ease, border-color 150ms ease;
+  ;
+}
+
+.unsubscribe-form input:focus,
+.unsubscribe-form textarea:focus {
+  outline: none;
+  border-color:1px solid rgba(44,62,80,0.18);
+  box-shadow: 0 6px 20px rgba(44,62,80,0.06);
+}
+
+/* textarea tamaño mínimo y control de resize */
+.unsubscribe-form textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+/* Acciones (botones) */
+.unsubscribe-form .form-actions,
+.unsubscribe-form > div[style*="justify-content"] { /* support inline layout fallback */ 
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* Botones: cancelar (tema claro) */
+.unsubscribe-form .header-btn {
+  background: transparent;
+  border: 1px solid rgba(44,62,80,0.08);
+  color: var(--brand-primary);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.unsubscribe-form .header-btn:hover { transform: translateY(-2px); }
+
+/* Botón principal: pedir baja (destacado) */
+.unsubscribe-form .logout-btn {
+  background: linear-gradient(90deg, var(--brand-accent), #ff9a4d);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(230,126,34,0.16);
+  font-weight: 800;
+}
+.unsubscribe-form .logout-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Mensajes / helper */
+.unsubscribe-form .muted, .unsubscribe-form .helper {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+/* Responsive: ajustar padding interno en pantallas pequeñas */
+@media (max-width: 520px) {
+  .unsubscribe-form {
+    padding: 10px;
+  }
+  .unsubscribe-form input,
+  .unsubscribe-form textarea {
+    font-size: 0.92rem;
+  }
+  .unsubscribe-form .form-actions {
+    gap: 8px;
+  }
 }

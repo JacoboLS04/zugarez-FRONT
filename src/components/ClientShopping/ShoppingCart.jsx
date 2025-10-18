@@ -200,10 +200,25 @@ const ShoppingCart = () => {
       
       {cart.length > 0 && (
         <div className="card-footer">
+
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <span className="fw-bold">Subtotal:</span>
+            <span className="h6 fw-bold text-success mb-0">
+              {formatCOP(totalAmount)}
+            </span>
+          </div>
+
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <span className="fw-bold">Impuestos:</span>
+            <span className="h6 fw-bold text-success mb-0">
+              {formatCOP(totalAmount*0.05)}
+            </span>
+          </div>
+
           <div className="d-flex justify-content-between align-items-center mb-3">
             <span className="fw-bold">Total:</span>
-            <span className="h5 fw-bold text-success mb-0">
-              {formatCOP(totalAmount)}
+            <span className="h2 fw-bold text-success mb-0">
+              {formatCOP(totalAmount + (totalAmount*0.05))}
             </span>
           </div>
           

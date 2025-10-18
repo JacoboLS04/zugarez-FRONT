@@ -3,7 +3,7 @@ import React from 'react';
 import ProtectedRoute from './components/ProtectedRoute';
 import Header from './components/PaginaAdmin/Header/Header';
 import CrudMongoApp from './components/CrudMongoApp/CrudMongoApp';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import TopBar from './components/PaginaPrincipal/TopBar/TopBar';
 import Carousel from './components/PaginaPrincipal/Carousel/Carousel';
 import InfoSection from './components/PaginaPrincipal/InfoSection/InfoSection';
@@ -16,6 +16,7 @@ import ClientApp from './components/ClientApp/ClientApp';
 import OrdersApp from './components/OrdersApp/OrdersApp';
 import MenuPage from './components/PaginaPrincipal/Menu/Menu/MenuPage';
 import ClientShopping from './components/ClientShopping/ClientShopping';
+import ClientePage from './components/ClientShopping/ClientePage'; // <-- nuevo wrapper con sidebar
 
 function App() {
   return (
@@ -35,8 +36,11 @@ function App() {
             {/* Cliente - Pedidos */}
             <Route path="/client" element={<ClientApp />} />
 
-            {/* Cliente - Compras */}
-            <Route path="/shop" element={<ClientShopping />} />
+            {/* Cliente - Compras: ahora en /cliente */}
+            <Route path="/cliente" element={<ClientePage />} />
+
+            {/* Mantener compatibilidad: redirigir /shop a /cliente */}
+            <Route path="/shop" element={<Navigate to="/cliente" replace />} />
 
             {/* Gestión de Pedidos */}
             <Route path="/orders" element={<OrdersApp />} />
