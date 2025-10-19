@@ -24,6 +24,7 @@ function App() {
   return (
       
       <React.StrictMode>
+        <AuthProvider>
         <Router>
           <Routes>
             {/* Página principal */}
@@ -51,6 +52,7 @@ function App() {
             
           </Routes>
         </Router>
+        </AuthProvider>
         <AccessibilityWidget/>
       </React.StrictMode>
   
