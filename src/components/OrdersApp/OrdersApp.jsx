@@ -9,7 +9,7 @@ const OrdersApp = () => {
   return (
     <AuthProvider>
       <div className="orders-app">
-        <TopBar />
+        
         
         <div className="orders-content container py-5">
           <h1 className="text-center mb-5">Gestión de Pedidos Admin</h1>

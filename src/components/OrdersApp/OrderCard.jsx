@@ -95,9 +95,7 @@ const OrderCard = ({ order, onUpdateStatus }) => {
           <small className="text-muted">
             {order.products.length} producto(s) en este pedido
           </small>
-          <button className="btn btn-outline-primary btn-sm">
-            Ver Detalles
-          </button>
+          
         </div>
       </div>
     </div>

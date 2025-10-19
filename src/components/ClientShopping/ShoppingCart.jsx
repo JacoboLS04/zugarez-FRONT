@@ -109,7 +109,7 @@ const ShoppingCart = () => {
       <div className="card-header bg-primary text-white">
         <div className="d-flex justify-content-between align-items-center">
           <h5 className="mb-0">
-            <i className="bi bi-cart3 me-2"></i>Mi Carrito
+            <i className="bi bi-cart3 me-2" ></i>Mi Carrito
           </h5>
           <span className="badge bg-light text-dark fs-6">
             {totalItems} {totalItems === 1 ? 'item' : 'items'}

@@ -2,6 +2,7 @@ import React from "react";
 import CrudMongoApp from "../CrudMongoApp/CrudMongoApp";
 import InventoryModule from "../Inventario/InventoryModule"; // 👈 importas acá
 import "./AdminPage.css";
+import OrdersApp from "../OrdersApp/OrdersApp";
 
 function MainContent({ section }) {
   return (
@@ -16,6 +17,12 @@ function MainContent({ section }) {
         <div>
           <h1 className="content-title">Gestión de Productos</h1>
           <CrudMongoApp />
+        </div>
+      )}
+      {section === "pedidos" && (
+        <div>
+          <h1 className="content-title">Gestión de Pedidos</h1>
+          < OrdersApp/>
         </div>
       )}
       {section === "nomina" && (
