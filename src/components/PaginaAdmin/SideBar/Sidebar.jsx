@@ -39,6 +39,15 @@ function Sidebar({ active, onSelect }) {
             Productos
           </li>
           <li
+            className={`sidebar__item ${active === "pedidos" ? "active" : ""}`}
+            onClick={() => {
+              onSelect("pedidos");
+              setOpen(false);
+            }}
+          >
+            Pedidos
+          </li>
+          <li
             className={`sidebar__item ${active === "nomina" ? "active" : ""}`}
             onClick={() => {
               onSelect("nomina");

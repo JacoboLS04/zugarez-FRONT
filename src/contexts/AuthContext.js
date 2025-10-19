@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Auto-logout por inactividad (1 minuto = 60000ms)
-  const INACTIVITY_TIMEOUT = 600000; // 1 minuto
+  const INACTIVITY_TIMEOUT = 6000000; // 1 minuto
   const inactivityTimer = useRef(null);
 
   // Función de logout (definir antes de usarla)

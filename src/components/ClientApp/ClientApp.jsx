@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CartProvider } from '../../contexts/CartContext';
-import TopBar from '../PaginaPrincipal/TopBar/TopBar';
+import TopBar from '../ClientShopping/Header/Header';
 import ProductCatalog from './ProductCatalog';
 import Cart from './Cart';
 import './ClientApp.css';

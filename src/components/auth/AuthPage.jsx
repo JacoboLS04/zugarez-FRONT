@@ -17,6 +17,7 @@ const AuthPage = () => {
     email: '',
     password: ''
   });
+  const [userType, setUserType] = useState('client'); // Default to client
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showResend, setShowResend] = useState(false);
@@ -32,6 +33,11 @@ const AuthPage = () => {
       [e.target.name]: e.target.value
     });
     if (error) setError('');
+  };
+
+  // Maneja cambios en el tipo de usuario
+  const handleUserTypeChange = (e) => {
+    setUserType(e.target.value);
   };
 
   // Validación de formulario
@@ -65,7 +71,9 @@ const AuthPage = () => {
           // El backend ya devuelve el JWT completo, solo guardarlo
           localStorage.setItem('token', res.token);
           if (res.user) {
-            localStorage.setItem('user', JSON.stringify(res.user));
+            // Guardar el usuario con el tipo seleccionado
+            const userData = {...res.user, userType};
+            localStorage.setItem('user', JSON.stringify(userData));
           }
           
           // Recargar la página para que el contexto se actualice
@@ -113,16 +121,31 @@ const AuthPage = () => {
             }
             setShowCodeInput(true);
           } else if (res.token) {
-            await login({ username: formData.username, password: formData.password });
+            const loginResult = await login({ 
+              username: formData.username, 
+              password: formData.password 
+            });
+            
+            // Guardar userType en localStorage
+            if (loginResult && loginResult.user) {
+              const userData = {...loginResult.user, userType};
+              localStorage.setItem('user', JSON.stringify(userData));
+            } else {
+              // Si no hay respuesta específica, intentar guardar userType con el usuario actual
+              const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+              localStorage.setItem('user', JSON.stringify({...currentUser, userType}));
+            }
           } else {
             setError(res.message || 'Error de login');
           }
         } else {
-          await register({
+          const registerData = {
             username: formData.username,
             email: formData.email,
-            password: formData.password
-          });
+            password: formData.password,
+            userType: userType // Incluir el tipo de usuario
+          };
+          await register(registerData);
           setIsLogin(true);
           setFormData({ username: formData.username, email: '', password: formData.password });
           setError('');
@@ -229,6 +252,35 @@ const AuthPage = () => {
                       {showPassword ? <EyeOff /> : <Eye />}
                     </button>
                   </div>
+                  
+                  {/* Radio buttons para seleccionar tipo de usuario */}
+                  <div className="user-type-selection">
+                    <label className="radio-container">
+                      <input
+                        type="radio"
+                        name="userType"
+                        value="client"
+                        checked={userType === 'client'}
+                        onChange={handleUserTypeChange}
+                      />
+                      <span className="radio-label">Cliente.</span>
+                    </label>
+
+                
+                    
+
+                    <label className="radio-container">
+                      <input
+                        type="radio"
+                        name="userType"
+                        value="admin"
+                        checked={userType === 'admin'}
+                        onChange={handleUserTypeChange}
+                      />
+                      <span className="radio-label">Administrador</span>
+                    </label>
+                  </div>
+                  
                   <button
                     type="submit"
                     className="auth-submit-btn"
@@ -285,6 +337,31 @@ const AuthPage = () => {
                         {showPassword ? <EyeOff /> : <Eye />}
                       </button>
                     </div>
+                    
+                    {/* Radio buttons para seleccionar tipo de usuario en registro */}
+                    <div className="user-type-selection">
+                      <label className="radio-container">
+                        <input
+                          type="radio"
+                          name="userType"
+                          value="client"
+                          checked={userType === 'client'}
+                          onChange={handleUserTypeChange}
+                        />
+                        <span className="radio-label">Cliente</span>
+                      </label>
+                      <label className="radio-container">
+                        <input
+                          type="radio"
+                          name="userType"
+                          value="admin"
+                          checked={userType === 'admin'}
+                          onChange={handleUserTypeChange}
+                        />
+                        <span className="radio-label">Administrador</span>
+                      </label>
+                    </div>
+                    
                     <button
                       type="submit"
                       className="auth-submit-btn"
@@ -293,8 +370,6 @@ const AuthPage = () => {
                       Registrarse
                     </button>
                 </form>
-
-
               )}
             </div>
 

@@ -1,0 +1,223 @@
+.remisiones-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  width: 100%;
+}
+
+.remisiones-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.remisiones-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.add-remision-btn {
+  background-color: #4299e1;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-remision-btn:hover {
+  background-color: #3182ce;
+}
+
+.add-remision-btn:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+/* Mensajes de carga, error y éxito */
+.upload-message {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.upload-message.error {
+  background-color: #fed7d7;
+  color: #c53030;
+}
+
+.upload-message.success {
+  background-color: #c6f6d5;
+  color: #2f855a;
+}
+
+.upload-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #ebf8ff;
+  border-radius: 4px;
+  color: #2c5282;
+}
+
+.loader {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #2c5282;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Lista de remisiones */
+.remisiones-list-container {
+  margin-top: 1.5rem;
+}
+
+.remisiones-list-container h2 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #4a5568;
+  margin-bottom: 1rem;
+}
+
+.no-remisiones {
+  text-align: center;
+  padding: 3rem 1rem;
+  background-color: #f7fafc;
+  border-radius: 8px;
+  color: #718096;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.no-remisiones .subtext {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* Tabla de remisiones */
+.remisiones-table-container {
+  overflow-x: auto;
+}
+
+.remisiones-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.remisiones-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background-color: #f7fafc;
+  color: #4a5568;
+  font-weight: 500;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.remisiones-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #edf2f7;
+  color: #2d3748;
+}
+
+.remisiones-table tr:hover {
+  background-color: #f7fafc;
+}
+
+.remision-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.excel-icon {
+  color: #2f855a;
+}
+
+.remision-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #718096;
+}
+
+.remision-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+  background-color: #edf2f7;
+}
+
+.action-btn.download {
+  color: #3182ce;
+}
+
+.action-btn.delete {
+  color: #e53e3e;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .remisiones-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .add-remision-btn {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .remisiones-table th:nth-child(3),
+  .remisiones-table td:nth-child(3) {
+    display: none;
+  }
+}
