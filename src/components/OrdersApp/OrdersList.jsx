@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuthenticatedRequest } from '../../hooks/useAuth';
-import OrdersFilterPanel from './OrdersFilterPanel';
+import { paymentService } from '../../services/paymentService';
+import { authService } from '../../services/authService';
 import OrderCard from './OrderCard';
 import Swal from 'sweetalert2';
 
@@ -9,8 +9,8 @@ const OrdersList = () => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
-  const { makeRequest } = useAuthenticatedRequest();
-  
+  const [error, setError] = useState(null);
+
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
@@ -31,85 +31,27 @@ const OrdersList = () => {
   const loadOrders = async () => {
     try {
       setLoading(true);
+      const token = authService.getToken();
       
-      // Mock data with Colombian products and categories
-      const mockOrders = [
-        {
-          id: 1,
-          customerName: 'Juan Pérez',
-          products: [
-            { name: 'Coca-Cola 500 ml', category: 'Refrescos', price: 3500, quantity: 2 },
-            { name: 'Empanada de carne', category: 'Frias', price: 2500, quantity: 3 }
-          ],
-          total: 14500,
-          status: 'Pendiente',
-          date: '2024-01-15',
-          time: '14:30'
-        },
-        {
-          id: 2,
-          customerName: 'María García',
-          products: [
-            { name: 'Croissaint frances', category: 'Panaderia', price: 4200, quantity: 2 },
-            { name: 'Cafe late', category: 'Calientes', price: 5500, quantity: 1 }
-          ],
-          total: 13900,
-          status: 'Completado',
-          date: '2024-01-14',
-          time: '09:15'
-        },
-        {
-          id: 3,
-          customerName: 'Carlos López',
-          products: [
-            { name: 'Pastel de chocolate', category: 'Pasteleria', price: 8500, quantity: 1 },
-            { name: 'Capuchino', category: 'Calientes', price: 6200, quantity: 2 }
-          ],
-          total: 20900,
-          status: 'En Proceso',
-          date: '2024-01-16',
-          time: '16:45'
-        },
-        {
-          id: 4,
-          customerName: 'Ana Rodríguez',
-          products: [
-            { name: 'CheesCake', category: 'Pasteleria', price: 12000, quantity: 1 },
-            { name: 'Granizado de cafe', category: 'Refrescos', price: 4800, quantity: 1 },
-            { name: 'Malteada', category: 'Refrescos', price: 7500, quantity: 1 }
-          ],
-          total: 24300,
-          status: 'Pendiente',
-          date: '2024-01-17',
-          time: '11:20'
-        },
-        {
-          id: 5,
-          customerName: 'Luis Martínez',
-          products: [
-            { name: 'Empanada de carne', category: 'Frias', price: 2500, quantity: 4 },
-            { name: 'Coca-Cola 500 ml', category: 'Refrescos', price: 3500, quantity: 2 }
-          ],
-          total: 17000,
-          status: 'Completado',
-          date: '2024-01-15',
-          time: '13:10'
-        }
-      ];
+      if (!token) {
+        setError('Debes iniciar sesión para ver tus pedidos');
+        return;
+      }
 
-      setOrders(mockOrders);
+      const data = await paymentService.getMyOrders(token);
+      setOrders(data);
       
       // Extract unique categories based on your provided categories
       const availableCategories = ['Frias', 'Pa\' Picar', 'Refrescos', 'Calientes', 'Pasteleria', 'Panaderia'];
       setCategories(availableCategories);
       
       // Find max price for range slider
-      const maxPrice = Math.max(...mockOrders.map(order => order.total));
+      const maxPrice = Math.max(...data.map(order => order.total));
       setPriceRange(prev => ({ min: prev.min, max: Math.ceil(maxPrice) }));
       
-    } catch (error) {
-      console.error('Error loading orders:', error);
-      Swal.fire('Error', 'No se pudieron cargar los pedidos: ' + error.message, 'error');
+    } catch (err) {
+      console.error('Error cargando pedidos:', err);
+      setError('No se pudieron cargar los pedidos: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -189,6 +131,25 @@ const OrdersList = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+        <p className="mt-3">Cargando pedidos...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="alert alert-danger" role="alert">
+        {error}
+      </div>
+    );
+  }
+
   return (
     <div className="orders-list">
       <div className="row mb-4">
@@ -204,13 +165,7 @@ const OrdersList = () => {
         </div>
         
         <div className="col-md-9">
-          {loading ? (
-            <div className="text-center py-5">
-              <div className="spinner-border" role="status">
-                <span className="visually-hidden">Cargando...</span>
-              </div>
-            </div>
-          ) : filteredOrders.length > 0 ? (
+          {filteredOrders.length > 0 ? (
             <div className="row">
               {filteredOrders.map(order => (
                 <div className="col-12 mb-4" key={order.id}>

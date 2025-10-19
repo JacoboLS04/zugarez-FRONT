@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../../contexts/CartContext';
+import { paymentService } from '../../services/paymentService';
+import { authService } from '../../services/authService';
 
 const Cart = () => {
   const { cart, totalItems, totalAmount, removeFromCart, updateQuantity, clearCart } = useCart();
+  const [loading, setLoading] = useState(false);
   
   const handleQuantityChange = (productId, event) => {
     const newQuantity = parseInt(event.target.value);
@@ -17,16 +20,42 @@ const Cart = () => {
     }
   };
   
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (cart.length === 0) {
       alert('Agrega productos antes de continuar');
       return;
     }
-    
-    if (window.confirm(`Total a pagar: $${totalAmount.toLocaleString()}\n¿Deseas proceder al pago?`)) {
-      // Here would go the checkout logic
-      alert('¡Pedido realizado con éxito!');
-      clearCart();
+
+    const token = authService.getToken();
+    if (!token) {
+      alert('Debes iniciar sesión para realizar un pedido');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Convertir el carrito al formato esperado por el backend
+      const items = cart.map(item => ({
+        productId: item.id,
+        quantity: item.quantity
+      }));
+
+      // Crear la orden y obtener la preferencia de MercadoPago
+      const response = await paymentService.checkout(items, token);
+      
+      // Guardar el orderId en localStorage para referencia
+      localStorage.setItem('currentOrderId', response.orderId);
+      
+      // Redirigir a MercadoPago usando el preferenceId
+      const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${response.preferenceId}`;
+      window.location.href = mercadoPagoUrl;
+      
+    } catch (error) {
+      console.error('Error al procesar el pago:', error);
+      alert('Error al procesar el pago: ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -91,16 +120,31 @@ const Cart = () => {
       
       <div className="card-footer">
         <div className="d-flex justify-content-between mb-2">
-          <span>Total:</span>
+          <span>Subtotal:</span>
           <span className="fw-bold">${totalAmount.toLocaleString()}</span>
+        </div>
+        <div className="d-flex justify-content-between mb-2">
+          <span>Impuestos (5%):</span>
+          <span className="fw-bold">${(totalAmount * 0.05).toLocaleString()}</span>
+        </div>
+        <div className="d-flex justify-content-between mb-3 border-top pt-2">
+          <span className="fw-bold">Total:</span>
+          <span className="fw-bold text-primary">${(totalAmount * 1.05).toLocaleString()}</span>
         </div>
         
         <button 
           className="btn btn-success w-100 mb-2" 
           onClick={handleCheckout}
-          disabled={cart.length === 0}
+          disabled={cart.length === 0 || loading}
         >
-          Proceder al Pago
+          {loading ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Procesando...
+            </>
+          ) : (
+            'Proceder al Pago con MercadoPago'
+          )}
         </button>
         
         <button 
