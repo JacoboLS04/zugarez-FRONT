@@ -31,7 +31,7 @@ function App() {
             <Route path="/" element={<PaginaPrincipal/>} />
 
             {/* Login */}
-            <Route path="/login" element={ <LoginPage/>} />
+            <Route path="/login/*" element={ <LoginPage/>} />
 
             {/* Menú */}
             <Route path="/menu" element={<MenuPage />} />
