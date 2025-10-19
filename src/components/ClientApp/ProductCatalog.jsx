@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FilterPanel from './FilterPanel';
 import ProductCard from './ProductCard';
-import axios from 'axios';
+import api from '../../services/api';
 
 const ProductCatalog = () => {
   const [products, setProducts] = useState([]);
@@ -14,7 +14,7 @@ const ProductCatalog = () => {
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
   const [selectedCategories, setSelectedCategories] = useState([]);
 
-  const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/products';
+  const API_URL = '/products';
 
   useEffect(() => {
     loadProducts();
@@ -28,9 +28,9 @@ const ProductCatalog = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      // Use regular axios since product fetching doesn't need authentication
-      const response = await axios.get(API_URL);
-      const data = response.data;
+  // Use centralized api client
+  const response = await api.get(API_URL);
+  const data = response.data;
       
       setProducts(data || []);
       

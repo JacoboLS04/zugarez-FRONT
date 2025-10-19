@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../../services/api';
 
 const Unsubscribe = () => {
   const [form, setForm] = useState({ reason: '' });
@@ -47,44 +48,45 @@ const Unsubscribe = () => {
         reason,
       };
 
-      const headers = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch('https://better-billi-zugarez-sys-ed7b78de.koyeb.app/api/unsubscribe', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(body),
-      });
+      try {
+        const response = await api.post('/api/unsubscribe', body);
+        // axios resolves for 2xx
+        if (response && (response.status === 200 || response.status === 201)) {
+          // ✅ 200 OK: logout obligado por especificación
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          try { sessionStorage.clear(); } catch (e) {}
 
-      if (res.ok) {
-        // ✅ 200 OK: logout obligado por especificación
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        try { sessionStorage.clear(); } catch (e) {}
-
-        alert('Tu solicitud de baja ha sido procesada correctamente.');
-        // redirigir al login indicando baja voluntaria
-        window.location.href = '/login?unsubscribed=true';
-        return;
-      }
-
-      // manejar errores conocidos
-      if (res.status === 400) {
-        const data = await res.json().catch(() => ({}));
-        alert(data.details?.reason || data.message || 'Datos inválidos');
-      } else if (res.status === 409) {
-        alert('Tu cuenta ya está dada de baja');
-      } else if (res.status === 403) {
-        // el backend bloqueó al usuario: limpiar y redirigir
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        try { sessionStorage.clear(); } catch (e) {}
-        alert('Tu cuenta ha sido desactivada');
-        window.location.href = '/login?deactivated=true';
-      } else {
-        const text = await res.text().catch(() => null);
-        console.error('unsubscribe failed', res.status, text);
-        alert('Error al procesar la solicitud');
+          alert('Tu solicitud de baja ha sido procesada correctamente.');
+          // redirigir al login indicando baja voluntaria
+          window.location.href = '/login?unsubscribed=true';
+          return;
+        }
+      } catch (err) {
+        // axios error handling
+        if (err.response) {
+          const status = err.response.status;
+          const data = err.response.data || {};
+          if (status === 400) {
+            alert(data.details?.reason || data.message || 'Datos inválidos');
+          } else if (status === 409) {
+            alert('Tu cuenta ya está dada de baja');
+          } else if (status === 403) {
+            // el backend bloqueó al usuario: limpiar y redirigir
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            try { sessionStorage.clear(); } catch (e) {}
+            alert('Tu cuenta ha sido desactivada');
+            window.location.href = '/login?deactivated=true';
+          } else {
+            console.error('unsubscribe failed', status, err.response.data);
+            alert('Error al procesar la solicitud');
+          }
+        } else {
+          console.error(err);
+          alert('Ocurrió un error al enviar la solicitud.');
+        }
       }
 
       // limpiar formulario

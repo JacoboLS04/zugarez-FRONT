@@ -11,7 +11,7 @@ const Inventario = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   
   const { makeRequest } = useAuthenticatedRequest();
-  const PRODUCTS_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/products';
+  const PRODUCTS_URL = '/products';
 
   // Fetch products from the database when component mounts
   useEffect(() => {

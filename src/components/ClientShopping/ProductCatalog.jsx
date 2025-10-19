@@ -16,7 +16,7 @@ const ProductCatalog = () => {
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
   const [selectedCategories, setSelectedCategories] = useState([]);
 
-  const PRODUCTS_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/products';
+  const PRODUCTS_URL = '/products';
 
   useEffect(() => {
     loadProducts();

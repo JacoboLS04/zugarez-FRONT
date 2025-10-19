@@ -15,7 +15,7 @@ const MovimientosModule = () => {
   });
   
   const { makeRequest } = useAuthenticatedRequest();
-  const LOTES_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/inventory/lotes';
+  const LOTES_URL = '/inventory/lotes';
 
   useEffect(() => {
     loadLotes();

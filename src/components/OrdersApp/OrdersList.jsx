@@ -17,7 +17,7 @@ const OrdersList = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
 
-  const ORDERS_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/orders';
+  const ORDERS_URL = '/orders';
 
   useEffect(() => {
     loadOrders();

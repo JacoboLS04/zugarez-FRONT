@@ -46,8 +46,8 @@ const LotesModule = () => {
   const { makeRequest } = useAuthenticatedRequest();
   const { user } = useAuth();
 
-  const LOTES_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/inventory/lotes';
-  const PRODUCTS_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/products';
+  const LOTES_URL = '/inventory/lotes';
+  const PRODUCTS_URL = '/products';
 
   useEffect(() => {
     loadLotes();

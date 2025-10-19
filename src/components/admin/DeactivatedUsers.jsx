@@ -13,8 +13,8 @@ export default function DeactivatedUsers() {
   async function loadDeactivatedUsers() {
     setLoading(true);
     try {
-      console.log('DeactivatedUsers: loading list');
-      const response = await api.get('/admin/users/deactivated');
+  console.log('DeactivatedUsers: loading list');
+  const response = await api.get('/api/admin/users/deactivated');
       console.log('DeactivatedUsers: response', response?.data);
       setUsers(response.data.users || []);
     } catch (error) {
@@ -36,7 +36,7 @@ export default function DeactivatedUsers() {
     if (!window.confirm(`¿Estás seguro de reactivar al usuario "${username}"?`)) return;
     setProcessing(userId);
     try {
-      await api.post(`/admin/users/${userId}/reactivate`);
+  await api.post(`/api/admin/users/${userId}/reactivate`);
       alert(`Usuario "${username}" reactivado correctamente`);
       await loadDeactivatedUsers();
     } catch (error) {

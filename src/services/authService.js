@@ -1,5 +1,7 @@
-// ...existing code...
-const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app/auth';
+import api from './api';
+
+const DEFAULT_BASE = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
+const API_URL = (process.env.REACT_APP_API_BASE || DEFAULT_BASE) + '/auth';
 
 export const authService = {
   async verifyCodeFlexible(identifier, code, key) {
@@ -139,12 +141,19 @@ export const authService = {
   },
 
   async verifyCode(email, code) {
-    const response = await fetch(`https://better-billi-zugarez-sys-ed7b78de.koyeb.app/auth/login/verify-code`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, code })
-    });
-    return response.json();
+    // use api client when possible
+    try {
+      const res = await api.post('/auth/login/verify-code', { email, code });
+      return res.data;
+    } catch (err) {
+      // fallback to fetch
+      const response = await fetch(`${API_URL}/login/verify-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code })
+      });
+      return response.json();
+    }
   },
 
   async register(registerData) {
