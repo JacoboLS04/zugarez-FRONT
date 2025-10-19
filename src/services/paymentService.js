@@ -3,6 +3,8 @@ const API_URL = process.env.REACT_APP_API_BASE || DEFAULT_BASE;
 
 export const paymentService = {
   async checkout(items, token) {
+    console.log('Enviando checkout:', { items });
+    
     const response = await fetch(`${API_URL}/payment/checkout`, {
       method: 'POST',
       headers: {
@@ -12,12 +14,17 @@ export const paymentService = {
       body: JSON.stringify({ items })
     });
 
+    console.log('Respuesta checkout:', response.status);
+    
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Error al procesar el pago');
+      console.error('Error en checkout:', error);
+      throw new Error(error.error || error.message || 'Error al procesar el pago');
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log('Data checkout:', data);
+    return data;
   },
 
   async getMyOrders(token) {
