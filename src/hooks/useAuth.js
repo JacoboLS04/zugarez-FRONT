@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { authService } from '../services/authService';
 import { useAuth } from '../contexts/AuthContext';
+import api from '../services/api';
 
 // Hook para hacer peticiones autenticadas
 export const useAuthenticatedRequest = () => {
@@ -8,18 +9,31 @@ export const useAuthenticatedRequest = () => {
 
   const makeRequest = async (url, options = {}) => {
     try {
-      const response = await authService.authenticatedRequest(url, options);
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Error en la petición');
-      }
-      
-      return await response.json();
+      const method = (options.method || 'GET').toLowerCase();
+
+      const axiosConfig = {
+        url,
+        method,
+        headers: options.headers || {},
+        data: options.body,
+        params: options.params,
+      };
+
+      const response = await api.request(axiosConfig);
+      return response.data;
     } catch (error) {
-      if (error.message === 'Sesión expirada') {
-        logout();
+      // If backend indicates auth problems, log out
+      const status = error?.response?.status;
+      if (status === 401 || status === 403) {
+        try { logout(); } catch (e) {}
       }
+
+      // Normalize error message
+      if (error?.response?.data) {
+        const msg = error.response.data.message || error.response.data.error || error.response.statusText;
+        throw new Error(msg || 'Error en la petición');
+      }
+
       throw error;
     }
   };
