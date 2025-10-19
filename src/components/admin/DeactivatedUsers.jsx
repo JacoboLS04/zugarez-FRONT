@@ -19,7 +19,14 @@ export default function DeactivatedUsers() {
       setUsers(response.data.users || []);
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
-      alert('Error al cargar usuarios desactivados');
+      // if axios error, include response body/status for debugging
+      if (error.response) {
+        console.error('Backend response data:', error.response.data);
+        console.error('Backend status:', error.response.status);
+        alert(`Error al cargar usuarios desactivados (status ${error.response.status}). Revisa consola para más detalles.`);
+      } else {
+        alert('Error al cargar usuarios desactivados');
+      }
     } finally {
       setLoading(false);
     }
