@@ -9,12 +9,6 @@ export const usePaymentNotifications = () => {
   const { clearCart } = useCart();
 
   useEffect(() => {
-    // Ejecutar en TODAS las rutas principales
-    const allowedPaths = ['/', '/client', '/products', '/orders'];
-    if (!allowedPaths.includes(location.pathname)) {
-      return;
-    }
-
     const formatCOP = (amount) => {
       return new Intl.NumberFormat('es-CO', {
         style: 'currency',
@@ -32,51 +26,65 @@ export const usePaymentNotifications = () => {
       console.log('🎉 Pago exitoso detectado:', { orderId, status, total });
 
       // Limpiar carrito
-      clearCart();
+      try {
+        clearCart();
+      } catch (error) {
+        console.error('Error limpiando carrito:', error);
+      }
       
       // Limpiar URL
       setSearchParams({});
 
-      // Mostrar alert nativo
-      const mensaje = `🎉 ¡Pago Exitoso!\n\nOrden: #${orderId}\nEstado: ${status}\nTotal: ${formatCOP(total)}\n\n✅ Recibirás un correo de confirmación`;
+      // Mostrar alert
+      const confirmar = window.confirm(
+        `🎉 ¡Pago Exitoso!\n\n` +
+        `Orden: #${orderId}\n` +
+        `Estado: ${status}\n` +
+        `Total: ${formatCOP(total)}\n\n` +
+        `✅ Recibirás un correo de confirmación\n\n` +
+        `¿Quieres ver tus pedidos?`
+      );
 
-      if (window.confirm(mensaje + '\n\n¿Quieres ver tus pedidos?')) {
+      if (confirmar) {
         navigate('/orders');
       } else {
-        // Redirigir a /client para seguir comprando
-        navigate('/client', { replace: true });
+        navigate('/client');
       }
     }
 
     // ❌ Detectar pago fallido
     if (searchParams.get('paymentFailed') === 'true') {
-      console.log('❌ Pago fallido detectado');
+      console.log('❌ Pago fallido');
       setSearchParams({});
       alert('❌ Pago Rechazado\n\nEl pago fue rechazado o cancelado.');
-      navigate('/client', { replace: true });
+      navigate('/client');
     }
 
     // ⏳ Detectar pago pendiente
     if (searchParams.get('paymentPending') === 'true') {
-      console.log('⏳ Pago pendiente detectado');
+      console.log('⏳ Pago pendiente');
       setSearchParams({});
       
-      const mensaje = '⏳ Pago Pendiente\n\nTu pago está pendiente de confirmación.\nTe notificaremos por correo cuando sea aprobado.';
-      
-      if (window.confirm(mensaje + '\n\n¿Quieres ver tus pedidos?')) {
+      const confirmar = window.confirm(
+        '⏳ Pago Pendiente\n\n' +
+        'Tu pago está pendiente de confirmación.\n' +
+        'Te notificaremos por correo.\n\n' +
+        '¿Quieres ver tus pedidos?'
+      );
+
+      if (confirmar) {
         navigate('/orders');
       } else {
-        navigate('/client', { replace: true });
+        navigate('/client');
       }
     }
 
     // ⚠️ Error general
     if (searchParams.get('paymentError') === 'true') {
-      console.error('⚠️ Error de pago detectado');
+      console.error('⚠️ Error de pago');
       setSearchParams({});
-      
-      alert('⚠️ Error Procesando el Pago\n\nHubo un error al procesar tu pago.\nVerifica tu historial de pedidos.');
-      navigate('/client', { replace: true });
+      alert('⚠️ Error Procesando el Pago\n\nVerifica tu historial de pedidos.');
+      navigate('/client');
     }
-  }, [searchParams, setSearchParams, clearCart, location.pathname, navigate]);
+  }, [searchParams, setSearchParams, clearCart, navigate]);
 };
