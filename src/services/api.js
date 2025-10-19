@@ -22,18 +22,35 @@ api.interceptors.response.use(
   (res) => res,
   (error) => {
     const res = error?.response;
-    if (res?.status === 403) {
-      const data = res.data || {};
-      if (data.error === "Tu cuenta ha sido desactivada" || data.deactivatedAt) {
-        try { localStorage.removeItem('token'); } catch(e) {}
-        try { localStorage.removeItem('user'); } catch(e) {}
-        try { sessionStorage.clear(); } catch(e) {}
-        // redirigir a login con query
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login?deactivated=true';
+    try {
+      if (res) {
+        // Log details to help debugging backend issues (will appear in browser console)
+        console.error('[api] response error:', {
+          url: res.config?.url,
+          status: res.status,
+          data: res.data,
+          headers: res.headers
+        });
+
+        // Special handling for 403 (deactivated account)
+        if (res.status === 403) {
+          const data = res.data || {};
+          if (data.error === "Tu cuenta ha sido desactivada" || data.deactivatedAt) {
+            try { localStorage.removeItem('token'); } catch(e) {}
+            try { localStorage.removeItem('user'); } catch(e) {}
+            try { sessionStorage.clear(); } catch(e) {}
+            if (typeof window !== 'undefined') {
+              window.location.href = '/login?deactivated=true';
+            }
+          }
         }
+      } else {
+        console.error('[api] network or CORS error', error);
       }
+    } catch (e) {
+      console.error('[api] error while logging response', e);
     }
+
     return Promise.reject(error);
   }
 );
