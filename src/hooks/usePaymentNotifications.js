@@ -1,13 +1,20 @@
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import Swal from 'sweetalert2';
 
 export const usePaymentNotifications = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const { clearCart } = useCart();
 
   useEffect(() => {
+    // Solo ejecutar en rutas de productos/cliente
+    const allowedPaths = ['/products', '/client', '/'];
+    if (!allowedPaths.includes(location.pathname)) {
+      return;
+    }
+
     const formatCOP = (amount) => {
       return new Intl.NumberFormat('es-CO', {
         style: 'currency',
@@ -123,5 +130,5 @@ export const usePaymentNotifications = () => {
       
       setSearchParams({});
     }
-  }, [searchParams, setSearchParams, clearCart]);
+  }, [searchParams, setSearchParams, clearCart, location.pathname]);
 };

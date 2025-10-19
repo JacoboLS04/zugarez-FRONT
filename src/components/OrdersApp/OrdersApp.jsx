@@ -1,5 +1,6 @@
 import React from 'react';
 import { AuthProvider, useAuth } from '../../contexts/AuthContext';
+import { CartProvider } from '../../contexts/CartContext';
 import Footer from '../PaginaPrincipal/Footer/Footer';
 import OrdersList from './OrdersList';
 import './OrdersApp.css';
@@ -26,7 +27,9 @@ const OrdersAppContent = () => {
 const OrdersApp = () => {
   return (
     <AuthProvider>
-      <OrdersAppContent />
+      <CartProvider>
+        <OrdersAppContent />
+      </CartProvider>
     </AuthProvider>
   );
 };
