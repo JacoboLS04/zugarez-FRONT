@@ -106,6 +106,10 @@ const ShoppingCart = () => {
 
       const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
       
+      console.log('📦 Creando orden...');
+      console.log('Items:', items);
+      console.log('Token:', token.substring(0, 20) + '...');
+      
       const response = await fetch(`${API_URL}/payment/checkout`, {
         method: 'POST',
         headers: {
@@ -115,29 +119,62 @@ const ShoppingCart = () => {
         body: JSON.stringify({ items })
       });
 
+      console.log('📡 Response status:', response.status);
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al procesar el pago');
+        console.error('❌ Error del backend:', errorData);
+        throw new Error(errorData.error || errorData.details || 'Error al procesar el pago');
       }
 
       const data = await response.json();
-      console.log('✅ Orden creada:', data);
+      console.log('✅ Respuesta del backend:', data);
+      console.log('🔑 Preference ID:', data.preferenceId);
+      console.log('📋 Order ID:', data.orderId);
+      console.log('🔐 Public Key recibida:', data.publicKey);
+
+      if (!data.preferenceId) {
+        throw new Error('No se recibió preferenceId del servidor');
+      }
 
       localStorage.setItem('currentOrderId', data.orderId);
+      localStorage.setItem('currentPreferenceId', data.preferenceId);
 
-      // REDIRECCIÓN DIRECTA A MERCADOPAGO
+      // Construir URL usando el init point de sandbox
       const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
-      console.log('🚀 Redirigiendo a:', mercadoPagoUrl);
+      console.log('🚀 URL de MercadoPago:', mercadoPagoUrl);
       
-      window.location.href = mercadoPagoUrl;
+      Swal.fire({
+        title: '¡Redirigiendo a MercadoPago!',
+        html: `
+          <p>Orden creada: <strong>#${data.orderId}</strong></p>
+          <p>Total: <strong>$${(totalAmount * 1.05).toLocaleString()}</strong></p>
+          <small class="text-muted">Serás redirigido en 2 segundos...</small>
+        `,
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+        willClose: () => {
+          console.log('🔄 Iniciando redirección...');
+          window.location.href = mercadoPagoUrl;
+        }
+      });
       
     } catch (error) {
-      console.error('💥 Error:', error);
+      console.error('💥 Error completo:', error);
+      console.error('Stack:', error.stack);
       setLoading(false);
       Swal.fire({
-        title: 'Error',
-        text: 'No se pudo procesar el pago: ' + error.message,
-        icon: 'error'
+        title: 'Error al procesar el pago',
+        html: `
+          <p><strong>Error:</strong> ${error.message}</p>
+          <small class="text-muted">Verifica que tu sesión esté activa e intenta nuevamente</small>
+        `,
+        icon: 'error',
+        confirmButtonText: 'Entendido'
       });
     }
   };

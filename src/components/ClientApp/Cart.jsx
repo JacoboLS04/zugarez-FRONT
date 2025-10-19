@@ -45,6 +45,9 @@ const Cart = () => {
 
       const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
       
+      console.log('📦 Iniciando checkout...');
+      console.log('Items:', items);
+      
       const response = await fetch(`${API_URL}/payment/checkout`, {
         method: 'POST',
         headers: {
@@ -53,6 +56,8 @@ const Cart = () => {
         },
         body: JSON.stringify({ items })
       });
+
+      console.log('📡 Status:', response.status);
 
       if (response.status === 401 || response.status === 403) {
         authService.clearAuthData();
@@ -63,24 +68,31 @@ const Cart = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al procesar el pago');
+        console.error('❌ Error:', errorData);
+        throw new Error(errorData.error || errorData.details || 'Error al procesar el pago');
       }
 
       const data = await response.json();
-      console.log('✅ Orden creada:', data);
+      console.log('✅ Datos recibidos:', data);
+
+      if (!data.preferenceId) {
+        throw new Error('No se recibió preferenceId del servidor');
+      }
 
       localStorage.setItem('currentOrderId', data.orderId);
+      localStorage.setItem('currentPreferenceId', data.preferenceId);
 
-      // REDIRECCIÓN DIRECTA
       const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
       console.log('🚀 Redirigiendo a:', mercadoPagoUrl);
       
-      window.location.href = mercadoPagoUrl;
+      setTimeout(() => {
+        window.location.href = mercadoPagoUrl;
+      }, 500);
       
     } catch (error) {
       console.error('💥 Error:', error);
       setLoading(false);
-      alert('Error: ' + error.message);
+      alert(`Error al procesar el pago: ${error.message}\n\nVerifica tu conexión e intenta nuevamente.`);
     }
   };
   
