@@ -11,7 +11,7 @@ const Inventario = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   
   const { makeRequest } = useAuthenticatedRequest();
-  const PRODUCTS_URL = '/products';
+  const PRODUCTS_URL = '/api/products';
 
   // Fetch products from the database when component mounts
   useEffect(() => {

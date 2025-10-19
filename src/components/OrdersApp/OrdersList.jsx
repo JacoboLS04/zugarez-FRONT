@@ -17,7 +17,7 @@ const OrdersList = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
 
-  const ORDERS_URL = '/orders';
+  const ORDERS_URL = '/api/orders';
 
   useEffect(() => {
     loadOrders();

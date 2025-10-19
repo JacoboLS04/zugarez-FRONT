@@ -46,8 +46,8 @@ const LotesModule = () => {
   const { makeRequest } = useAuthenticatedRequest();
   const { user } = useAuth();
 
-  const LOTES_URL = '/inventory/lotes';
-  const PRODUCTS_URL = '/products';
+  const LOTES_URL = '/api/inventory/lotes';
+  const PRODUCTS_URL = '/api/products';
 
   useEffect(() => {
     loadLotes();
