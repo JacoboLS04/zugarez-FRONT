@@ -1,6 +1,7 @@
 import React from 'react';
 
 import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedAdmin from './components/ProtectedAdmin';
 import Header from './components/PaginaAdmin/Header/Header';
 import CrudMongoApp from './components/CrudMongoApp/CrudMongoApp';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
@@ -17,6 +18,7 @@ import OrdersApp from './components/OrdersApp/OrdersApp';
 import MenuPage from './components/PaginaPrincipal/Menu/Menu/MenuPage';
 import ClientShopping from './components/ClientShopping/ClientShopping';
 import ClientePage from './components/ClientShopping/ClientePage'; // <-- nuevo wrapper con sidebar
+import DeactivatedUsers from './components/admin/DeactivatedUsers';
 
 function App() {
   return (
@@ -44,6 +46,8 @@ function App() {
 
             {/* Gestión de Pedidos */}
             <Route path="/orders" element={<OrdersApp />} />
+            {/* Admin: usuarios desactivados */}
+            <Route path="/admin/deactivated-users" element={<ProtectedAdmin><DeactivatedUsers/></ProtectedAdmin>} />
             
           </Routes>
         </Router>

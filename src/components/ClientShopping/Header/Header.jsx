@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext.js"; 
 import ResponsiveImage from "../../Assest/Support/ResponsiveImage.jsx";
@@ -25,8 +26,19 @@ const Header = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // abrir modal de info de usuario
-  const openUserModal = () => setUserModalOpen(true);
+  // abrir modal de info de usuario - si es admin redirigir a panel admin
+  const navigate = useNavigate();
+  const openUserModal = () => {
+    const roles = user?.roles ?? user?.role ?? [];
+    const isAdmin = Array.isArray(roles)
+      ? roles.some(r => String(r).toLowerCase().includes('admin'))
+      : String(roles).toLowerCase().includes('admin');
+    if (isAdmin) {
+      navigate('/admin/deactivated-users');
+      return;
+    }
+    setUserModalOpen(true);
+  };
   const closeUserModal = () => setUserModalOpen(false);
 
   /* -----------------------
