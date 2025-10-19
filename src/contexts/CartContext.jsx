@@ -66,6 +66,10 @@ export const CartProvider = ({ children }) => {
   // Clear cart
   const clearCart = () => {
     setCart([]);
+    localStorage.removeItem('cart');
+    localStorage.removeItem('currentOrderId');
+    localStorage.removeItem('currentPreferenceId');
+    console.log('🗑️ Carrito limpiado completamente');
   };
 
   return (

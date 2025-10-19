@@ -15,6 +15,7 @@ const OrdersList = () => {
   const loadOrders = async () => {
     try {
       setLoading(true);
+      setError(null);
       const token = authService.getToken();
       
       if (!token) {
@@ -24,10 +25,10 @@ const OrdersList = () => {
       }
 
       const data = await paymentService.getMyOrders(token);
+      console.log('✅ Pedidos cargados:', data);
       setOrders(data);
-      setError(null);
     } catch (err) {
-      console.error('Error cargando pedidos:', err);
+      console.error('❌ Error cargando pedidos:', err);
       setError('No se pudieron cargar los pedidos: ' + err.message);
     } finally {
       setLoading(false);

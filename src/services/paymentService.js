@@ -57,6 +57,8 @@ export const paymentService = {
   },
 
   async getMyOrders(token) {
+    console.log('📦 Obteniendo mis pedidos...');
+    
     const response = await fetch(`${API_URL}/payment/orders`, {
       method: 'GET',
       headers: {
@@ -73,7 +75,9 @@ export const paymentService = {
       throw new Error('Error al obtener pedidos');
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log('✅ Pedidos obtenidos:', data.length);
+    return data;
   },
 
   async getOrderById(orderId, token) {

@@ -3,24 +3,26 @@ import React from 'react';
 const OrderCard = ({ order }) => {
   const getStatusBadgeClass = (status) => {
     switch (status) {
-      case 'PENDING': return 'bg-warning';
-      case 'PROCESSING': return 'bg-info';
-      case 'PAID': return 'bg-success';
-      case 'COMPLETED': return 'bg-success';
-      case 'FAILED': return 'bg-danger';
-      case 'CANCELLED': return 'bg-secondary';
-      default: return 'bg-secondary';
+      case 'PENDING': return 'bg-warning text-dark';
+      case 'PROCESSING': return 'bg-info text-white';
+      case 'APPROVED': return 'bg-success text-white';
+      case 'PAID': return 'bg-success text-white';
+      case 'COMPLETED': return 'bg-primary text-white';
+      case 'FAILED': return 'bg-danger text-white';
+      case 'CANCELLED': return 'bg-secondary text-white';
+      default: return 'bg-secondary text-white';
     }
   };
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'PENDING': return 'Pendiente de Pago';
-      case 'PROCESSING': return 'Procesando Pago';
-      case 'PAID': return 'Pagado';
-      case 'COMPLETED': return 'Completado';
-      case 'FAILED': return 'Pago Fallido';
-      case 'CANCELLED': return 'Cancelado';
+      case 'PENDING': return '⏳ Pendiente de Pago';
+      case 'PROCESSING': return '🔄 Procesando Pago';
+      case 'APPROVED': return '✅ Aprobado';
+      case 'PAID': return '💳 Pagado';
+      case 'COMPLETED': return '📦 Completado';
+      case 'FAILED': return '❌ Pago Fallido';
+      case 'CANCELLED': return '🚫 Cancelado';
       default: return status;
     }
   };

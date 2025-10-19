@@ -25,28 +25,34 @@ export const usePaymentNotifications = () => {
 
       Swal.fire({
         icon: 'success',
-        title: '¡Pago Exitoso!',
+        title: '🎉 ¡Pago Exitoso!',
         html: `
-          <div class="text-start">
-            <p><strong>Orden:</strong> #${orderId}</p>
-            <p><strong>Estado:</strong> <span class="badge bg-success">${status}</span></p>
-            <p><strong>Total:</strong> <span class="text-success fw-bold">${formatCOP(total)}</span></p>
+          <div class="text-start p-3">
+            <div class="mb-3">
+              <i class="bi bi-check-circle-fill text-success me-2"></i>
+              <strong>Orden #${orderId}</strong>
+            </div>
+            <div class="mb-2">
+              <span class="badge bg-success">${status}</span>
+            </div>
+            <div class="mb-3">
+              <h4 class="text-success">${formatCOP(total)}</h4>
+            </div>
+            <hr>
+            <p class="text-muted mb-0">
+              <i class="bi bi-envelope me-2"></i>
+              Recibirás un correo de confirmación
+            </p>
           </div>
-          <hr>
-          <p class="text-muted small">
-            <i class="bi bi-envelope me-2"></i>
-            Recibirás un correo de confirmación
-          </p>
         `,
-        confirmButtonText: 'Ver Mis Pedidos',
+        confirmButtonText: 'Ver Mis Compras',
         showCancelButton: true,
-        cancelButtonText: 'Continuar Comprando',
-        confirmButtonColor: '#198754'
+        cancelButtonText: 'Seguir Comprando',
+        confirmButtonColor: '#198754',
+        cancelButtonColor: '#6c757d'
       }).then((result) => {
         if (result.isConfirmed) {
           navigate('/orders');
-        } else {
-          navigate('/client');
         }
       });
       
@@ -58,12 +64,8 @@ export const usePaymentNotifications = () => {
     if (searchParams.get('paymentFailed') === 'true') {
       Swal.fire({
         icon: 'error',
-        title: 'Pago Rechazado',
-        html: `
-          <p>El pago fue rechazado o cancelado.</p>
-          <hr>
-          <p class="text-muted small">Verifica tus datos e intenta nuevamente</p>
-        `,
+        title: '❌ Pago Rechazado',
+        text: 'El pago fue rechazado o cancelado. Por favor, intenta nuevamente.',
         confirmButtonText: 'Reintentar',
         confirmButtonColor: '#dc3545'
       }).then(() => {
@@ -77,16 +79,16 @@ export const usePaymentNotifications = () => {
     if (searchParams.get('paymentPending') === 'true') {
       Swal.fire({
         icon: 'warning',
-        title: 'Pago Pendiente',
+        title: '⏳ Pago Pendiente',
         html: `
           <p>Tu pago está pendiente de confirmación.</p>
           <hr>
-          <p class="text-muted small">
+          <p class="text-muted">
             <i class="bi bi-clock me-2"></i>
             Te notificaremos por correo cuando sea aprobado
           </p>
         `,
-        confirmButtonText: 'Ver Mis Pedidos',
+        confirmButtonText: 'Ver Mis Compras',
         confirmButtonColor: '#ffc107'
       }).then(() => {
         navigate('/orders');
@@ -101,8 +103,7 @@ export const usePaymentNotifications = () => {
         icon: 'error',
         title: 'Error en el Pago',
         text: 'Hubo un error procesando el pago. Por favor, contacta con soporte.',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#dc3545'
+        confirmButtonText: 'Entendido'
       });
       
       navigate('/', { replace: true });
