@@ -1,11 +1,48 @@
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, useSearchParams, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from '../../contexts/AuthContext';
 import Footer from '../PaginaPrincipal/Footer/Footer';
 import OrdersList from './OrdersList';
 import './OrdersApp.css';
 import { usePaymentNotifications } from './hooks/usePaymentNotifications';
 import { CartProvider } from './contexts/CartContext';
+
+function PaymentHandler() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (searchParams.get('paymentSuccess') === 'true') {
+      const orderId = searchParams.get('orderId');
+      const status = searchParams.get('status');
+      const total = searchParams.get('total');
+
+      console.log('🎉 PAGO EXITOSO');
+
+      localStorage.removeItem('cart');
+      localStorage.removeItem('currentOrderId');
+      localStorage.removeItem('currentPreferenceId');
+
+      setSearchParams({});
+
+      const formatCOP = (amount) => {
+        return new Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+          minimumFractionDigits: 0
+        }).format(amount);
+      };
+
+      if (window.confirm(`🎉 ¡PAGO EXITOSO!\n\nOrden: #${orderId}\nTotal: ${formatCOP(total)}\n\n¿Ver pedidos?`)) {
+        navigate('/orders');
+      } else {
+        navigate('/client');
+      }
+    }
+  }, [searchParams, setSearchParams, navigate]);
+
+  return null;
+}
 
 function AppContent() {
   const { user } = useAuth();
@@ -34,6 +71,7 @@ function App() {
     <Router>
       <AuthProvider>
         <CartProvider>
+          <PaymentHandler />
           <AppContent />
         </CartProvider>
       </AuthProvider>

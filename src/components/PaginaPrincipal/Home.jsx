@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { usePaymentNotifications } from '../../hooks/usePaymentNotifications';
 
 const Home = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { clearCart } = useCart();
 
@@ -15,6 +15,14 @@ const Home = () => {
       const orderId = searchParams.get('orderId');
       const status = searchParams.get('status');
       const total = searchParams.get('total');
+
+      console.log('🎉 PAGO EXITOSO:', { orderId, status, total });
+
+      // Limpiar carrito
+      clearCart();
+      
+      // Limpiar URL
+      setSearchParams({});
 
       // Formatear total
       const formattedTotal = new Intl.NumberFormat('es-CO', {
@@ -44,9 +52,6 @@ const Home = () => {
           navigate('/orders');
         }
       });
-      
-      // Limpiar carrito
-      clearCart();
       
       // Limpiar parámetros de la URL
       navigate('/', { replace: true });
@@ -90,7 +95,7 @@ const Home = () => {
       
       navigate('/', { replace: true });
     }
-  }, [searchParams, navigate, clearCart]);
+  }, [searchParams, setSearchParams, navigate, clearCart]);
 
   // Detectar notificaciones de pago
   usePaymentNotifications();
