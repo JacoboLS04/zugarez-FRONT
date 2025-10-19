@@ -12,8 +12,12 @@ import { usePaymentNotifications } from '../../hooks/usePaymentNotifications';
 const ClientShoppingContent = () => {
   const [showCart, setShowCart] = useState(false);
   
-  // Ahora SÍ puede usar el hook porque ya está dentro del CartProvider
-  usePaymentNotifications();
+  // Hook de notificaciones - CON MANEJO DE ERRORES
+  try {
+    usePaymentNotifications();
+  } catch (error) {
+    console.error('Error en usePaymentNotifications:', error);
+  }
 
   const toggleCart = () => {
     setShowCart(!showCart);

@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import { useSearchParams, useLocation } from 'react-router-dom';
+import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import Swal from 'sweetalert2';
 
 export const usePaymentNotifications = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const { clearCart } = useCart();
 
   useEffect(() => {
@@ -31,143 +31,88 @@ export const usePaymentNotifications = () => {
 
       console.log('🎉 Pago exitoso detectado:', { orderId, status, total });
 
-      Swal.fire({
-        icon: 'success',
-        title: '🎉 ¡Pago Exitoso!',
-        html: `
-          <div class="text-start p-3">
-            <div class="mb-3">
-              <i class="bi bi-check-circle-fill text-success me-2"></i>
-              <strong>Orden #${orderId}</strong>
-            </div>
-            <div class="mb-2">
-              <span class="badge bg-success">${status}</span>
-            </div>
-            <div class="mb-3">
-              <h4 class="text-success">${formatCOP(total)}</h4>
-            </div>
-            <hr>
-            <p class="text-muted mb-0">
-              <i class="bi bi-envelope me-2"></i>
-              Recibirás un correo de confirmación
-            </p>
-          </div>
-        `,
-        confirmButtonText: '🛒 Seguir Comprando',
-        showCancelButton: true,
-        cancelButtonText: '📦 Ver Mi Pedido',
-        confirmButtonColor: '#198754',
-        cancelButtonColor: '#6c757d',
-        allowOutsideClick: false
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Usuario quiere seguir comprando - redirige a productos
-          window.location.href = '/products';
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          // Usuario quiere ver su pedido
-          window.location.href = '/orders';
-        }
-      });
-      
+      // Limpiar carrito PRIMERO
       clearCart();
+      
+      // Limpiar parámetros
       setSearchParams({});
+
+      // Mostrar alerta nativa (más confiable que SweetAlert)
+      const mensaje = `
+🎉 ¡Pago Exitoso!
+
+Orden: #${orderId}
+Estado: ${status}
+Total: ${formatCOP(total)}
+
+✅ Recibirás un correo de confirmación
+      `;
+
+      if (window.confirm(mensaje + '\n\n¿Quieres ver tus pedidos?')) {
+        navigate('/orders');
+      } else {
+        // Se queda en /products para seguir comprando
+        navigate('/products', { replace: true });
+      }
     }
 
     // ❌ Detectar pago fallido
     if (searchParams.get('paymentFailed') === 'true') {
       console.log('❌ Pago fallido detectado');
-
-      Swal.fire({
-        icon: 'error',
-        title: '❌ Pago Rechazado',
-        html: `
-          <p>El pago fue rechazado o cancelado.</p>
-          <hr>
-          <p class="text-muted">Verifica tus datos e intenta nuevamente</p>
-        `,
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#dc3545'
-      }).then(() => {
-        // Después de cerrar, se queda en /products
-        setSearchParams({});
-      });
+      
+      setSearchParams({});
+      
+      alert('❌ Pago Rechazado\n\nEl pago fue rechazado o cancelado.\nVerifica tus datos e intenta nuevamente.');
     }
 
     // ⏳ Detectar pago pendiente
     if (searchParams.get('paymentPending') === 'true') {
       console.log('⏳ Pago pendiente detectado');
-
-      Swal.fire({
-        icon: 'warning',
-        title: '⏳ Pago Pendiente',
-        html: `
-          <p>Tu pago está pendiente de confirmación.</p>
-          <hr>
-          <p class="text-muted">
-            <i class="bi bi-clock me-2"></i>
-            Te notificaremos por correo cuando sea aprobado
-          </p>
-        `,
-        confirmButtonText: 'Ver Mis Pedidos',
-        showCancelButton: true,
-        cancelButtonText: 'Seguir Comprando',
-        confirmButtonColor: '#ffc107'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = '/orders';
-        } else {
-          window.location.href = '/products';
-        }
-      });
       
       setSearchParams({});
+      
+      const mensaje = `
+⏳ Pago Pendiente
+
+Tu pago está pendiente de confirmación.
+Te notificaremos por correo cuando sea aprobado.
+
+Esto puede tomar de algunos minutos a 48 horas hábiles.
+      `;
+
+      if (window.confirm(mensaje + '\n\n¿Quieres ver tus pedidos?')) {
+        navigate('/orders');
+      }
     }
 
     // ⚠️ Error general
     if (searchParams.get('paymentError') === 'true') {
       console.error('⚠️ Error de pago detectado');
       console.error('URL completa:', window.location.href);
-      console.error('Todos los parámetros:', Object.fromEntries(searchParams));
-
-      Swal.fire({
-        icon: 'error',
-        title: '⚠️ Error Procesando el Pago',
-        html: `
-          <div class="text-start">
-            <p><strong>Hubo un error al procesar tu pago en el servidor.</strong></p>
-            <hr>
-            <p class="text-muted">Posibles causas:</p>
-            <ul class="text-muted small">
-              <li>Error de comunicación con MercadoPago</li>
-              <li>Error al actualizar la orden en la base de datos</li>
-              <li>Problema de configuración del servidor</li>
-            </ul>
-            <hr>
-            <p class="mb-0">
-              <i class="bi bi-info-circle me-2"></i>
-              <strong>¿Qué hacer?</strong>
-            </p>
-            <p class="text-muted small mb-0">
-              1. Verifica tu historial de pedidos<br>
-              2. Si el pago fue descontado pero no aparece la orden, contacta a soporte<br>
-              3. NO intentes pagar nuevamente sin verificar
-            </p>
-          </div>
-        `,
-        confirmButtonText: 'Ver Mis Pedidos',
-        showCancelButton: true,
-        cancelButtonText: 'Volver a Productos',
-        confirmButtonColor: '#0d6efd',
-        cancelButtonColor: '#6c757d'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = '/orders';
-        } else {
-          window.location.href = '/products';
-        }
-      });
       
       setSearchParams({});
+      
+      const mensaje = `
+⚠️ Error Procesando el Pago
+
+Hubo un error al procesar tu pago en el servidor.
+
+Posibles causas:
+• Error de comunicación con MercadoPago
+• Error al actualizar la orden en la base de datos
+• Problema de configuración del servidor
+
+¿Qué hacer?
+1. Verifica tu historial de pedidos
+2. Si el pago fue descontado pero no aparece la orden, contacta a soporte
+3. NO intentes pagar nuevamente sin verificar
+      `;
+
+      if (window.confirm(mensaje + '\n\n¿Quieres ver tus pedidos?')) {
+        navigate('/orders');
+      } else {
+        navigate('/products', { replace: true });
+      }
     }
-  }, [searchParams, setSearchParams, clearCart, location.pathname]);
+  }, [searchParams, setSearchParams, clearCart, location.pathname, navigate]);
 };
