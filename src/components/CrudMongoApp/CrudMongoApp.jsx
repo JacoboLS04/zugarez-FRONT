@@ -15,7 +15,7 @@ const CrudMongoApp = () => {
   const { makeRequest } = useAuthenticatedRequest();
   const { user } = useAuth();
 
-  const PRODUCTS_URL = '/api/products';
+  const PRODUCTS_URL = '/products';
 
   useEffect(() => {
     loadProducts();

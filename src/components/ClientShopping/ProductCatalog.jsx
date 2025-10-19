@@ -16,7 +16,7 @@ const ProductCatalog = () => {
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
   const [selectedCategories, setSelectedCategories] = useState([]);
 
-  const PRODUCTS_URL = '/api/products';
+  const PRODUCTS_URL = '/products';
 
   useEffect(() => {
     loadProducts();
