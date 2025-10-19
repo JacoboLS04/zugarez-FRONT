@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const Unsubscribe = () => {
-  const [form, setForm] = useState({ name: '', email: '', reason: '' });
+  const [form, setForm] = useState({ reason: '' });
   const [sending, setSending] = useState(false);
 
   const handleChange = (e) =>
@@ -9,8 +9,16 @@ const Unsubscribe = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.email.trim() || !form.reason.trim()) {
-      alert('Por favor completa todos los campos.');
+
+    const reason = String(form.reason || '').trim();
+
+    // Validaciones: motivo obligatorio 10-500 caracteres
+    if (!reason || reason.length < 10) {
+      alert('El motivo debe tener al menos 10 caracteres');
+      return;
+    }
+    if (reason.length > 500) {
+      alert('El motivo no puede superar los 500 caracteres');
       return;
     }
 
@@ -18,14 +26,69 @@ const Unsubscribe = () => {
 
     setSending(true);
     try {
-      // placeholder: sustituir por tu endpoint real
-      await fetch('/api/unsubscribe', {
+      // intentar obtener token y user desde localStorage
+      const token = localStorage.getItem('token');
+      let userName = '';
+      let userEmail = '';
+      try {
+        const userRaw = localStorage.getItem('user');
+        if (userRaw) {
+          const parsed = JSON.parse(userRaw);
+          userName = parsed?.name || parsed?.username || '';
+          userEmail = parsed?.email || '';
+        }
+      } catch (err) {
+        // ignore parse errors
+      }
+
+      const body = {
+        name: userName || '',
+        email: userEmail || '',
+        reason,
+      };
+
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const res = await fetch('/api/unsubscribe', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        headers,
+        body: JSON.stringify(body),
       });
-      alert('Solicitud enviada. Revisaremos tu petición.');
-      setForm({ name: '', email: '', reason: '' });
+
+      if (res.ok) {
+        // ✅ 200 OK: logout obligado por especificación
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        try { sessionStorage.clear(); } catch (e) {}
+
+        alert('Tu solicitud de baja ha sido procesada correctamente.');
+        // redirigir al login indicando baja voluntaria
+        window.location.href = '/login?unsubscribed=true';
+        return;
+      }
+
+      // manejar errores conocidos
+      if (res.status === 400) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.details?.reason || data.message || 'Datos inválidos');
+      } else if (res.status === 409) {
+        alert('Tu cuenta ya está dada de baja');
+      } else if (res.status === 403) {
+        // el backend bloqueó al usuario: limpiar y redirigir
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        try { sessionStorage.clear(); } catch (e) {}
+        alert('Tu cuenta ha sido desactivada');
+        window.location.href = '/login?deactivated=true';
+      } else {
+        const text = await res.text().catch(() => null);
+        console.error('unsubscribe failed', res.status, text);
+        alert('Error al procesar la solicitud');
+      }
+
+      // limpiar formulario
+      setForm({ reason: '' });
     } catch (err) {
       console.error(err);
       alert('Ocurrió un error al enviar la solicitud.');
@@ -40,15 +103,7 @@ const Unsubscribe = () => {
       <p className="muted">Completa el formulario para solicitar la eliminación de tus datos.</p>
 
       <form onSubmit={handleSubmit} className="form-stack">
-        <label>
-          Nombre
-          <input name="name" value={form.name} onChange={handleChange} required />
-        </label>
-
-        <label>
-          Correo
-          <input type="email" name="email" value={form.email} onChange={handleChange} required />
-        </label>
+        {/* Nombre y correo eliminados: el backend obtiene usuario/email desde el token */}
 
         <label>
           Motivo
