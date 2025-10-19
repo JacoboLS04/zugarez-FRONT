@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useCart } from '../../contexts/CartContext';
-import { paymentService } from '../../services/paymentService';
 import { authService } from '../../services/authService';
 
 const Cart = () => {
@@ -35,28 +34,62 @@ const Cart = () => {
     try {
       setLoading(true);
       
+      console.log('🛒 Iniciando checkout...');
+      console.log('Carrito:', cart);
+      
       // Convertir el carrito al formato esperado por el backend
       const items = cart.map(item => ({
         productId: item.id,
         quantity: item.quantity
       }));
 
-      // Crear la orden y obtener la preferencia de MercadoPago
-      const response = await paymentService.checkout(items, token);
+      console.log('📦 Items a enviar:', items);
+
+      // Llamar directamente al backend sin usar paymentService
+      const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
       
-      // Guardar el orderId en localStorage para referencia
-      localStorage.setItem('currentOrderId', response.orderId);
+      const response = await fetch(`${API_URL}/payment/checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ items })
+      });
+
+      console.log('📡 Respuesta status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('❌ Error del backend:', errorData);
+        throw new Error(errorData.error || errorData.message || 'Error al procesar el pago');
+      }
+
+      const data = await response.json();
+      console.log('✅ Respuesta del backend:', data);
+      console.log('🔑 Preference ID:', data.preferenceId);
+      console.log('📋 Order ID:', data.orderId);
+
+      // Guardar el orderId en localStorage
+      localStorage.setItem('currentOrderId', data.orderId);
+      console.log('💾 Order ID guardado en localStorage');
+
+      // Construir URL de MercadoPago
+      const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
+      console.log('🔗 URL de MercadoPago:', mercadoPagoUrl);
+
+      // IMPORTANTE: NO MOSTRAR ALERT, REDIRIGIR INMEDIATAMENTE
+      console.log('🚀 Redirigiendo a MercadoPago...');
       
-      // Redirigir a MercadoPago usando el preferenceId
-      const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${response.preferenceId}`;
+      // Redirigir a MercadoPago
       window.location.href = mercadoPagoUrl;
       
     } catch (error) {
-      console.error('Error al procesar el pago:', error);
+      console.error('❌ Error en checkout:', error);
       alert('Error al procesar el pago: ' + error.message);
-    } finally {
       setLoading(false);
     }
+    // NO poner finally aquí para que no se detenga el loading antes de la redirección
   };
   
   return (
@@ -140,10 +173,13 @@ const Cart = () => {
           {loading ? (
             <>
               <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              Procesando...
+              Redirigiendo a MercadoPago...
             </>
           ) : (
-            'Proceder al Pago con MercadoPago'
+            <>
+              <i className="bi bi-credit-card me-2"></i>
+              Pagar con MercadoPago
+            </>
           )}
         </button>
         
