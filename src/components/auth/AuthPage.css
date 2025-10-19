@@ -14,6 +14,11 @@
   width: 50%; 
 }
 
+.radio-container{
+  display: flex; align-items: center;
+  gap: 10px;
+}
+
 .auth-card {
   background: color-mix(in srgb, var(--bg) 50%, var(--surface) 50%);
   border: 2px solid rgb(134, 134, 134);

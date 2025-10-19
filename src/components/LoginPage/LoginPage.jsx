@@ -7,9 +7,26 @@ import ProtectedRoute from './../../components/ProtectedRoute';
 import { Routes, Route } from 'react-router-dom';
 import Header from '../PaginaAdmin/Header/Header';
 import AdminPage from '../PaginaAdmin/AdminPage';
+import ClientePage from '../ClientShopping/ClientePage';
 
 function Content() {
   const { user } = useAuth(); // 👈 si hay usuario autenticado
+  
+  // Obtener el tipo de usuario desde localStorage o usar el valor del contexto
+  const getUserType = () => {
+    if (!user) return null;
+    
+    try {
+      // Intentar obtener userType desde localStorage
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      return storedUser.userType || 'client'; // Default a cliente si no hay tipo especificado
+    } catch (error) {
+      console.error('Error al obtener tipo de usuario:', error);
+      return 'client'; // Default a cliente en caso de error
+    }
+  };
+  
+  const userType = getUserType();
 
   return (
     <div className="login-page">
@@ -22,7 +39,7 @@ function Content() {
         </>
       )}
 
-      {/* Si SÍ hay sesión => Header + rutas de admin */}
+      {/* Si SÍ hay sesión => Header + rutas según el tipo de usuario */}
       {user && (
         <>
           <Routes>
@@ -30,7 +47,7 @@ function Content() {
               path="/*"
               element={
                 <ProtectedRoute>
-                  <AdminPage />
+                  {userType === 'admin' ? <AdminPage /> : <ClientePage />}
                 </ProtectedRoute>
               }
             />

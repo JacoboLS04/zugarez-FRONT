@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
-import { useAuth } from "../../../contexts/AuthContext"; 
+import { useAuth } from "../../../contexts/AuthContext.js"; 
 import ResponsiveImage from "../../Assest/Support/ResponsiveImage.jsx";
 import logo from "../../Assest/Imgs/LogoMin.png";
 import "./Header.css";
@@ -107,7 +107,7 @@ const Header = () => {
       <div className="header-container">
         {/* === IZQUIERDA: Logo + Título === */}
         <div className="header-left nav__brand">
-          <span className="nav__brand-text">Zugarez Admin</span>
+          <span className="nav__brand-text">Zugarez clientes</span>
         </div>
 
         {/* === DERECHA === */}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CartProvider } from '../../contexts/CartContext';
 import { AuthProvider } from '../../contexts/AuthContext';
-import TopBar from '../PaginaPrincipal/TopBar/TopBar';
+import TopBar from './Header/Header';
 import Footer from '../PaginaPrincipal/Footer/Footer';
 import ProductCatalog from './ProductCatalog';
 import ShoppingCart from './ShoppingCart';
