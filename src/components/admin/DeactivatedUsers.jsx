@@ -13,19 +13,23 @@ export default function DeactivatedUsers() {
   async function loadDeactivatedUsers() {
     setLoading(true);
     try {
-  console.log('DeactivatedUsers: loading list');
-  const response = await api.get('/api/admin/users/deactivated');
+      console.log('DeactivatedUsers: loading list from /api/admin/users/deactivated');
+      const response = await api.get('/api/admin/users/deactivated');
       console.log('DeactivatedUsers: response', response?.data);
       setUsers(response.data.users || []);
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
-      // if axios error, include response body/status for debugging
       if (error.response) {
         console.error('Backend response data:', error.response.data);
         console.error('Backend status:', error.response.status);
-        alert(`Error al cargar usuarios desactivados (status ${error.response.status}). Revisa consola para más detalles.`);
+        const errorMsg = error.response.data?.error || error.response.data?.message || 'Error desconocido';
+        alert(`Error al cargar usuarios desactivados (status ${error.response.status}): ${errorMsg}`);
+      } else if (error.request) {
+        console.error('No response from server:', error.request);
+        alert('Error: No se pudo conectar con el servidor. Verifica tu conexión.');
       } else {
-        alert('Error al cargar usuarios desactivados');
+        console.error('Error:', error.message);
+        alert(`Error al cargar usuarios desactivados: ${error.message}`);
       }
     } finally {
       setLoading(false);
@@ -36,12 +40,18 @@ export default function DeactivatedUsers() {
     if (!window.confirm(`¿Estás seguro de reactivar al usuario "${username}"?`)) return;
     setProcessing(userId);
     try {
-  await api.post(`/api/admin/users/${userId}/reactivate`);
+      console.log(`Reactivating user ${userId} via /api/admin/users/${userId}/reactivate`);
+      await api.post(`/api/admin/users/${userId}/reactivate`);
       alert(`Usuario "${username}" reactivado correctamente`);
       await loadDeactivatedUsers();
     } catch (error) {
       console.error('Error al reactivar:', error);
-      alert('Error al reactivar usuario');
+      if (error.response) {
+        const errorMsg = error.response.data?.error || error.response.data?.message || 'Error desconocido';
+        alert(`Error al reactivar usuario: ${errorMsg}`);
+      } else {
+        alert('Error al reactivar usuario. Verifica tu conexión.');
+      }
     } finally {
       setProcessing(null);
     }
@@ -74,12 +84,20 @@ export default function DeactivatedUsers() {
                 <td style={{padding:8}}>{user.username}</td>
                 <td style={{padding:8}}>{user.email}</td>
                 <td style={{padding:8}}>{user.deactivatedAt ? new Date(user.deactivatedAt).toLocaleString() : ''}</td>
-                <td style={{padding:8}}>{user.deactivationReason}</td>
+                <td style={{padding:8}}>{user.deactivationReason || 'Sin motivo especificado'}</td>
                 <td style={{padding:8}}>
                   <button 
                     onClick={() => reactivateUser(user.id, user.username)}
                     className="btn-reactivate"
                     disabled={processing === user.id}
+                    style={{
+                      padding: '6px 12px',
+                      backgroundColor: processing === user.id ? '#9ca3af' : '#10b981',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: processing === user.id ? 'not-allowed' : 'pointer'
+                    }}
                   >
                     {processing === user.id ? 'Procesando...' : '✅ Reactivar'}
                   </button>
