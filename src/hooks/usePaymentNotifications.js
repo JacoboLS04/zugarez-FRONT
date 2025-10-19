@@ -46,7 +46,7 @@ export const usePaymentNotifications = () => {
             </p>
           </div>
         `,
-        confirmButtonText: '📦 Ver Mis Compras',
+        confirmButtonText: '📦 Ver Mis Pedidos',
         showCancelButton: true,
         cancelButtonText: '🛒 Seguir Comprando',
         confirmButtonColor: '#198754',
@@ -56,12 +56,13 @@ export const usePaymentNotifications = () => {
         if (result.isConfirmed) {
           window.location.href = '/orders';
         }
+        // Si hace clic en "Seguir Comprando", simplemente se queda en /products
       });
       
       // Limpiar carrito
       clearCart();
       
-      // Limpiar URL
+      // Limpiar parámetros de URL
       setSearchParams({});
     }
 
@@ -77,7 +78,7 @@ export const usePaymentNotifications = () => {
           <hr>
           <p class="text-muted">Verifica tus datos e intenta nuevamente</p>
         `,
-        confirmButtonText: 'Reintentar',
+        confirmButtonText: 'Entendido',
         confirmButtonColor: '#dc3545'
       });
       
@@ -99,7 +100,7 @@ export const usePaymentNotifications = () => {
             Te notificaremos por correo cuando sea aprobado
           </p>
         `,
-        confirmButtonText: 'Ver Mis Compras',
+        confirmButtonText: 'Ver Mis Pedidos',
         confirmButtonColor: '#ffc107'
       }).then(() => {
         window.location.href = '/orders';

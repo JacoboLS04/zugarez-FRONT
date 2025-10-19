@@ -5,6 +5,7 @@ import Footer from '../PaginaPrincipal/Footer/Footer';
 import OrdersList from './OrdersList';
 import './OrdersApp.css';
 import { usePaymentNotifications } from './hooks/usePaymentNotifications';
+import { CartProvider } from './contexts/CartContext';
 
 const OrdersAppContent = () => {
   const { user } = useAuth();
