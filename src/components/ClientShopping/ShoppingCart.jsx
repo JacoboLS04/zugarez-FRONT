@@ -80,12 +80,21 @@ const ShoppingCart = () => {
       return;
     }
 
+    // Obtener y verificar token
     const token = authService.getToken();
-    if (!token) {
+    console.log('🔑 Token obtenido:', token ? 'Token existe' : 'NO HAY TOKEN');
+    console.log('👤 Usuario autenticado:', authService.isAuthenticated() ? 'SÍ' : 'NO');
+    
+    if (!token || !authService.isAuthenticated()) {
       Swal.fire({
         title: 'Sesión requerida',
         text: 'Debes iniciar sesión para realizar un pedido',
-        icon: 'warning'
+        icon: 'warning',
+        confirmButtonText: 'Ir a Login'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/login';
+        }
       });
       return;
     }
@@ -101,6 +110,7 @@ const ShoppingCart = () => {
       }));
 
       console.log('📦 Items:', items);
+      console.log('🔐 Enviando con token:', token.substring(0, 20) + '...');
 
       const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
       
@@ -114,6 +124,22 @@ const ShoppingCart = () => {
       });
 
       console.log('📡 Status:', response.status);
+
+      if (response.status === 401 || response.status === 403) {
+        // Token inválido o expirado
+        authService.clearAuthData();
+        Swal.fire({
+          title: 'Sesión expirada',
+          text: 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.',
+          icon: 'warning',
+          confirmButtonText: 'Ir a Login'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/login';
+          }
+        });
+        return;
+      }
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -129,7 +155,7 @@ const ShoppingCart = () => {
       const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
       console.log('🚀 Redirigiendo a MercadoPago:', mercadoPagoUrl);
 
-      // REDIRECCIÓN INMEDIATA - SIN MODALES
+      // REDIRECCIÓN INMEDIATA
       window.location.href = mercadoPagoUrl;
       
     } catch (error) {

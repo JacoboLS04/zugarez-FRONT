@@ -20,75 +20,79 @@ const Cart = () => {
   };
   
   const handleCheckout = async (e) => {
-    // PREVENIR CUALQUIER COMPORTAMIENTO POR DEFECTO
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
 
-    // Validaciones silenciosas
     if (cart.length === 0) return;
 
+    // Verificar token ANTES de continuar
     const token = authService.getToken();
-    if (!token) {
-      alert('Debes iniciar sesión para realizar un pedido');
+    console.log('🔑 Token existe:', !!token);
+    console.log('👤 Usuario autenticado:', authService.isAuthenticated());
+    
+    if (!token || !authService.isAuthenticated()) {
+      alert('Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
+      window.location.href = '/login';
       return;
     }
 
     setLoading(true);
-    document.body.style.overflow = 'hidden';
 
-    // Usar setTimeout para asegurar que no hay interferencias
-    setTimeout(async () => {
-      try {
-        console.log('🛒 CHECKOUT INICIADO');
-        
-        const items = cart.map(item => ({
-          productId: item.id,
-          quantity: item.quantity
-        }));
+    try {
+      console.log('🛒 CHECKOUT INICIADO desde Cart');
+      
+      const items = cart.map(item => ({
+        productId: item.id,
+        quantity: item.quantity
+      }));
 
-        const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
-        
-        console.log('📡 Enviando request a:', `${API_URL}/payment/checkout`);
-        console.log('📦 Items:', JSON.stringify(items));
-        
-        const response = await fetch(`${API_URL}/payment/checkout`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ items })
-        });
+      const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
+      
+      console.log('📡 URL:', `${API_URL}/payment/checkout`);
+      console.log('📦 Items:', items);
+      console.log('🔐 Token (primeros 20 chars):', token.substring(0, 20) + '...');
+      
+      const response = await fetch(`${API_URL}/payment/checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ items })
+      });
 
-        console.log('✅ Status:', response.status);
+      console.log('✅ Status:', response.status);
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error('❌ Error:', errorData);
-          throw new Error(errorData.error || 'Error al procesar el pago');
-        }
-
-        const data = await response.json();
-        console.log('📋 Data recibida:', data);
-        console.log('🔑 PreferenceId:', data.preferenceId);
-
-        localStorage.setItem('currentOrderId', data.orderId);
-
-        const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
-        console.log('🚀 REDIRIGIENDO A:', mercadoPagoUrl);
-
-        // FORZAR REDIRECCIÓN COMPLETA
-        window.location.href = mercadoPagoUrl;
-        
-      } catch (error) {
-        console.error('💥 ERROR COMPLETO:', error);
-        document.body.style.overflow = 'auto';
-        setLoading(false);
-        alert('Error: ' + error.message);
+      if (response.status === 401 || response.status === 403) {
+        authService.clearAuthData();
+        alert('Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
+        window.location.href = '/login';
+        return;
       }
-    }, 100);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('❌ Error:', errorData);
+        throw new Error(errorData.error || 'Error al procesar el pago');
+      }
+
+      const data = await response.json();
+      console.log('📋 Data:', data);
+
+      localStorage.setItem('currentOrderId', data.orderId);
+
+      const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
+      console.log('🚀 Redirigiendo a:', mercadoPagoUrl);
+
+      window.location.href = mercadoPagoUrl;
+      
+    } catch (error) {
+      console.error('💥 Error:', error);
+      setLoading(false);
+      alert('Error: ' + error.message);
+    }
   };
   
   return (
