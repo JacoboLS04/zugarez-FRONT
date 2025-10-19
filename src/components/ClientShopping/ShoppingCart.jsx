@@ -1,17 +1,11 @@
 import React, { useState } from 'react';
-import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { useCart } from '../../contexts/CartContext';
 import { authService } from '../../services/authService';
 import Swal from 'sweetalert2';
 
-// Inicializar MercadoPago con la Public Key
-const MERCADOPAGO_PUBLIC_KEY = 'TEST-368ba19c-ca6c-486c-b907-a5fae75688ac';
-initMercadoPago(MERCADOPAGO_PUBLIC_KEY);
-
 const ShoppingCart = () => {
   const { cart, totalItems, totalAmount, removeFromCart, updateQuantity, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
-  const [preferenceId, setPreferenceId] = useState(null);
   
   const formatCOP = (amount) => {
     return new Intl.NumberFormat('es-CO', {
@@ -112,8 +106,6 @@ const ShoppingCart = () => {
 
       const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
       
-      console.log('📦 Creando orden...');
-      
       const response = await fetch(`${API_URL}/payment/checkout`, {
         method: 'POST',
         headers: {
@@ -132,15 +124,12 @@ const ShoppingCart = () => {
       console.log('✅ Orden creada:', data);
 
       localStorage.setItem('currentOrderId', data.orderId);
-      setPreferenceId(data.preferenceId);
+
+      // REDIRECCIÓN DIRECTA A MERCADOPAGO
+      const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
+      console.log('🚀 Redirigiendo a:', mercadoPagoUrl);
       
-      Swal.fire({
-        title: '¡Orden creada!',
-        text: 'Haz clic en el botón de MercadoPago para continuar con el pago',
-        icon: 'success',
-        timer: 3000,
-        showConfirmButton: false
-      });
+      window.location.href = mercadoPagoUrl;
       
     } catch (error) {
       console.error('💥 Error:', error);
@@ -272,49 +261,23 @@ const ShoppingCart = () => {
           </div>
           
           <div className="d-grid gap-2">
-            {preferenceId ? (
-              <div className="mercadopago-button mb-2">
-                <Wallet 
-                  initialization={{ preferenceId: preferenceId }}
-                  customization={{
-                    texts: {
-                      valueProp: 'smart_option'
-                    }
-                  }}
-                  onReady={() => {
-                    console.log('✅ Botón de MercadoPago listo');
-                    setLoading(false);
-                  }}
-                  onError={(error) => {
-                    console.error('❌ Error en MercadoPago:', error);
-                    setLoading(false);
-                    Swal.fire({
-                      title: 'Error',
-                      text: 'Error al cargar el botón de pago',
-                      icon: 'error'
-                    });
-                  }}
-                />
-              </div>
-            ) : (
-              <button 
-                className="btn btn-success" 
-                onClick={handleCheckout}
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2"></span>
-                    Creando orden...
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-credit-card me-2"></i>
-                    Proceder al Pago
-                  </>
-                )}
-              </button>
-            )}
+            <button 
+              className="btn btn-success btn-lg" 
+              onClick={handleCheckout}
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2"></span>
+                  Redirigiendo a MercadoPago...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-credit-card me-2"></i>
+                  💳 Pagar con MercadoPago
+                </>
+              )}
+            </button>
             
             <button 
               className="btn btn-outline-danger btn-sm"

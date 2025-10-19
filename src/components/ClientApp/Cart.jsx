@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
-import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { useCart } from '../../contexts/CartContext';
 import { authService } from '../../services/authService';
-
-// Inicializar MercadoPago con la Public Key
-const MERCADOPAGO_PUBLIC_KEY = 'TEST-368ba19c-ca6c-486c-b907-a5fae75688ac';
-initMercadoPago(MERCADOPAGO_PUBLIC_KEY);
 
 const Cart = () => {
   const { cart, totalItems, totalAmount, removeFromCart, updateQuantity, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
-  const [preferenceId, setPreferenceId] = useState(null);
   
   const handleQuantityChange = (productId, event) => {
     const newQuantity = parseInt(event.target.value);
@@ -76,7 +70,12 @@ const Cart = () => {
       console.log('✅ Orden creada:', data);
 
       localStorage.setItem('currentOrderId', data.orderId);
-      setPreferenceId(data.preferenceId);
+
+      // REDIRECCIÓN DIRECTA
+      const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
+      console.log('🚀 Redirigiendo a:', mercadoPagoUrl);
+      
+      window.location.href = mercadoPagoUrl;
       
     } catch (error) {
       console.error('💥 Error:', error);
@@ -158,40 +157,24 @@ const Cart = () => {
           <span className="fw-bold text-primary">${(totalAmount * 1.05).toLocaleString()}</span>
         </div>
         
-        {preferenceId ? (
-          <div className="mercadopago-button mb-2">
-            <Wallet 
-              initialization={{ preferenceId: preferenceId }}
-              onReady={() => {
-                console.log('✅ Botón de MercadoPago listo');
-                setLoading(false);
-              }}
-              onError={(error) => {
-                console.error('❌ Error:', error);
-                setLoading(false);
-              }}
-            />
-          </div>
-        ) : (
-          <button 
-            type="button"
-            className="btn btn-success w-100 mb-2" 
-            onClick={handleCheckout}
-            disabled={cart.length === 0 || loading}
-          >
-            {loading ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2"></span>
-                Creando orden...
-              </>
-            ) : (
-              <>
-                <i className="bi bi-credit-card me-2"></i>
-                Proceder al Pago
-              </>
-            )}
-          </button>
-        )}
+        <button 
+          type="button"
+          className="btn btn-success w-100 mb-2 btn-lg" 
+          onClick={handleCheckout}
+          disabled={cart.length === 0 || loading}
+        >
+          {loading ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2"></span>
+              Redirigiendo a MercadoPago...
+            </>
+          ) : (
+            <>
+              <i className="bi bi-credit-card me-2"></i>
+              💳 Pagar con MercadoPago
+            </>
+          )}
+        </button>
         
         <button 
           className="btn btn-outline-secondary w-100"
