@@ -10,7 +10,7 @@ export const usePaymentNotifications = () => {
 
   useEffect(() => {
     // Solo ejecutar en rutas de productos/cliente
-    const allowedPaths = ['/products', '/client', '/'];
+    const allowedPaths = ['/products', '/client', '/', '/orders'];
     if (!allowedPaths.includes(location.pathname)) {
       return;
     }
@@ -63,13 +63,9 @@ export const usePaymentNotifications = () => {
         if (result.isConfirmed) {
           window.location.href = '/orders';
         }
-        // Si hace clic en "Seguir Comprando", simplemente se queda en /products
       });
       
-      // Limpiar carrito
       clearCart();
-      
-      // Limpiar parámetros de URL
       setSearchParams({});
     }
 
@@ -116,16 +112,48 @@ export const usePaymentNotifications = () => {
       setSearchParams({});
     }
 
-    // ⚠️ Error general
+    // ⚠️ Error general - MEJORADO para dar más información
     if (searchParams.get('paymentError') === 'true') {
-      console.log('⚠️ Error de pago detectado');
+      console.error('⚠️ Error de pago detectado');
+      console.error('URL completa:', window.location.href);
+      console.error('Todos los parámetros:', Object.fromEntries(searchParams));
 
       Swal.fire({
         icon: 'error',
-        title: 'Error en el Pago',
-        text: 'Hubo un error procesando el pago. Por favor, contacta con soporte.',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#dc3545'
+        title: '⚠️ Error Procesando el Pago',
+        html: `
+          <div class="text-start">
+            <p><strong>Hubo un error al procesar tu pago en el servidor.</strong></p>
+            <hr>
+            <p class="text-muted">Posibles causas:</p>
+            <ul class="text-muted small">
+              <li>Error de comunicación con MercadoPago</li>
+              <li>Error al actualizar la orden en la base de datos</li>
+              <li>Problema de configuración del servidor</li>
+            </ul>
+            <hr>
+            <p class="mb-0">
+              <i class="bi bi-info-circle me-2"></i>
+              <strong>¿Qué hacer?</strong>
+            </p>
+            <p class="text-muted small mb-0">
+              1. Verifica tu historial de pedidos<br>
+              2. Si el pago fue descontado pero no aparece la orden, contacta a soporte<br>
+              3. NO intentes pagar nuevamente sin verificar
+            </p>
+          </div>
+        `,
+        confirmButtonText: 'Ver Mis Pedidos',
+        showCancelButton: true,
+        cancelButtonText: 'Volver a Inicio',
+        confirmButtonColor: '#0d6efd',
+        cancelButtonColor: '#6c757d'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/orders';
+        } else {
+          window.location.href = '/';
+        }
       });
       
       setSearchParams({});
