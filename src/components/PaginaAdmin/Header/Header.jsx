@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext"; 
+import DeactivatedUsers from '../../admin/DeactivatedUsers';
 import ResponsiveImage from "../../Assest/Support/ResponsiveImage.jsx";
 import logo from "../../Assest/Imgs/LogoMin.png";
 import "./Header.css";
@@ -12,6 +13,7 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userModalOpen, setUserModalOpen] = useState(false); // nuevo estado para modal
   const [showUnsubscribeForm, setShowUnsubscribeForm] = useState(false); // estado para formulario de baja
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
 
   const handleLogout = () => {
     if (window.confirm("¿Estás seguro que quieres cerrar sesión?")) {
@@ -29,18 +31,23 @@ const Header = () => {
   // abrir modal de info de usuario - si es admin redirigir al panel admin
   const navigate = useNavigate();
   const openUserModal = () => {
-    // en la pagina admin, llevar a la vista de usuarios desactivados
     const roles = user?.roles ?? user?.role ?? [];
     const isAdmin = Array.isArray(roles)
       ? roles.some(r => String(r).toLowerCase().includes('admin'))
       : String(roles).toLowerCase().includes('admin');
+    console.log('openUserModal - user:', user, 'isAdmin:', isAdmin);
     if (isAdmin) {
-      navigate('/admin/deactivated-users');
+      setShowAdminPanel(true);
+      setUserModalOpen(true);
       return;
     }
     setUserModalOpen(true);
   };
-  const closeUserModal = () => setUserModalOpen(false);
+  const closeUserModal = () => {
+    setUserModalOpen(false);
+    setShowAdminPanel(false);
+    setShowUnsubscribeForm(false);
+  };
 
   /* -----------------------
      Nuevo: formulario de baja (simplificado)
@@ -246,35 +253,40 @@ const Header = () => {
               {user?.name && <div style={{ color: "#6c757d" }}>{user.name}</div>}
             </div>
 
-            {/* Mostrar formulario de baja si se solicitó, sino botones */}
-            {showUnsubscribeForm ? (
-              <UnsubscribeForm
-                defaultEmail={user?.email || ""}
-                onCancel={() => setShowUnsubscribeForm(false)}
-                onDone={() => {
-                  setShowUnsubscribeForm(false);
-                  closeUserModal();
-                }}
-              />
-            ) : (
-              <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 12 }}>
-                <button
-                  onClick={() => setShowUnsubscribeForm(true)}
-                  className="header-btn logout-btn"
-                  style={{ background: "transparent", border: "1px solid rgba(44,62,80,0.08)", color: "#E67E22", padding: "8px 12px", borderRadius: 8 }}
-                  title="Darse de baja"
-                >
-                  Darse de baja
-                </button>
-
-                <button
-                  onClick={closeUserModal}
-                  className="header-btn"
-                  style={{ padding: "8px 12px", borderRadius: 8 }}
-                >
-                  Cerrar
-                </button>
+            {showAdminPanel ? (
+              <div style={{ maxHeight: '60vh', overflow: 'auto' }}>
+                <DeactivatedUsers />
               </div>
+            ) : (
+              (showUnsubscribeForm ? (
+                <UnsubscribeForm
+                  defaultEmail={user?.email || ""}
+                  onCancel={() => setShowUnsubscribeForm(false)}
+                  onDone={() => {
+                    setShowUnsubscribeForm(false);
+                    closeUserModal();
+                  }}
+                />
+              ) : (
+                <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 12 }}>
+                  <button
+                    onClick={() => setShowUnsubscribeForm(true)}
+                    className="header-btn logout-btn"
+                    style={{ background: "transparent", border: "1px solid rgba(44,62,80,0.08)", color: "#E67E22", padding: "8px 12px", borderRadius: 8 }}
+                    title="Darse de baja"
+                  >
+                    Darse de baja
+                  </button>
+
+                  <button
+                    onClick={closeUserModal}
+                    className="header-btn"
+                    style={{ padding: "8px 12px", borderRadius: 8 }}
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              ))
             )}
           </div>
         </div>

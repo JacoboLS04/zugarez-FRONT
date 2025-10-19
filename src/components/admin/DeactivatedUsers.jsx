@@ -13,7 +13,9 @@ export default function DeactivatedUsers() {
   async function loadDeactivatedUsers() {
     setLoading(true);
     try {
+      console.log('DeactivatedUsers: loading list');
       const response = await api.get('/admin/users/deactivated');
+      console.log('DeactivatedUsers: response', response?.data);
       setUsers(response.data.users || []);
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
