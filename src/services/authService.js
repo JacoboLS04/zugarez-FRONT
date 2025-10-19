@@ -37,7 +37,6 @@ export const authService = {
     
     return data;
   },
-  // ...existing code...
   // Obtener token del localStorage
   getToken() {
     return localStorage.getItem('token');
@@ -141,19 +140,12 @@ export const authService = {
   },
 
   async verifyCode(email, code) {
-    // use api client when possible
-    try {
-      const res = await api.post('/auth/login/verify-code', { email, code });
-      return res.data;
-    } catch (err) {
-      // fallback to fetch
-      const response = await fetch(`${API_URL}/login/verify-code`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code })
-      });
-      return response.json();
-    }
+    const response = await fetch(`${API_URL}/login/verify-code`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code })
+    });
+    return response.json();
   },
 
   async register(registerData) {
