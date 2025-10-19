@@ -10,39 +10,48 @@
 
 .order-card {
   margin-bottom: 1.5rem;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: none;
 }
 
 .order-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+}
+
+.order-card .card-header {
+  background-color: #fff;
+  border-bottom: 2px solid #f0f0f0;
 }
 
 .products-list {
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
 }
 
 .product-item {
   padding: 0.75rem 0;
+  transition: background-color 0.2s;
+}
+
+.product-item:hover {
+  background-color: #f8f9fa;
 }
 
 .product-item:last-child {
   border-bottom: none !important;
 }
 
-.filter-panel {
-  position: sticky;
-  top: 20px;
-}
-
-.orders-list .card-header {
-  background-color: #f8f9fa;
-}
-
 .order-details {
   background-color: #f8f9fa;
   padding: 1rem;
   border-radius: 0.5rem;
+  border-left: 4px solid #198754;
+}
+
+.badge {
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
 }
 
 @media (max-width: 768px) {

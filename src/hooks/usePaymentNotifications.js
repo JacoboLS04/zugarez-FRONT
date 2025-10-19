@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import Swal from 'sweetalert2';
 
 export const usePaymentNotifications = () => {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { clearCart } = useCart();
 
   useEffect(() => {
@@ -17,11 +16,13 @@ export const usePaymentNotifications = () => {
       }).format(amount);
     };
 
-    // Detectar pago exitoso
+    // ✅ Detectar pago exitoso
     if (searchParams.get('paymentSuccess') === 'true') {
       const orderId = searchParams.get('orderId');
       const status = searchParams.get('status');
       const total = searchParams.get('total');
+
+      console.log('🎉 Pago exitoso detectado:', { orderId, status, total });
 
       Swal.fire({
         icon: 'success',
@@ -45,38 +46,48 @@ export const usePaymentNotifications = () => {
             </p>
           </div>
         `,
-        confirmButtonText: 'Ver Mis Compras',
+        confirmButtonText: '📦 Ver Mis Compras',
         showCancelButton: true,
-        cancelButtonText: 'Seguir Comprando',
+        cancelButtonText: '🛒 Seguir Comprando',
         confirmButtonColor: '#198754',
-        cancelButtonColor: '#6c757d'
+        cancelButtonColor: '#6c757d',
+        allowOutsideClick: false
       }).then((result) => {
         if (result.isConfirmed) {
-          navigate('/orders');
+          window.location.href = '/orders';
         }
       });
       
+      // Limpiar carrito
       clearCart();
-      navigate('/', { replace: true });
+      
+      // Limpiar URL
+      setSearchParams({});
     }
 
-    // Detectar pago fallido
+    // ❌ Detectar pago fallido
     if (searchParams.get('paymentFailed') === 'true') {
+      console.log('❌ Pago fallido detectado');
+
       Swal.fire({
         icon: 'error',
         title: '❌ Pago Rechazado',
-        text: 'El pago fue rechazado o cancelado. Por favor, intenta nuevamente.',
+        html: `
+          <p>El pago fue rechazado o cancelado.</p>
+          <hr>
+          <p class="text-muted">Verifica tus datos e intenta nuevamente</p>
+        `,
         confirmButtonText: 'Reintentar',
         confirmButtonColor: '#dc3545'
-      }).then(() => {
-        navigate('/client');
       });
       
-      navigate('/', { replace: true });
+      setSearchParams({});
     }
 
-    // Detectar pago pendiente
+    // ⏳ Detectar pago pendiente
     if (searchParams.get('paymentPending') === 'true') {
+      console.log('⏳ Pago pendiente detectado');
+
       Swal.fire({
         icon: 'warning',
         title: '⏳ Pago Pendiente',
@@ -91,22 +102,25 @@ export const usePaymentNotifications = () => {
         confirmButtonText: 'Ver Mis Compras',
         confirmButtonColor: '#ffc107'
       }).then(() => {
-        navigate('/orders');
+        window.location.href = '/orders';
       });
       
-      navigate('/', { replace: true });
+      setSearchParams({});
     }
 
-    // Detectar error general
+    // ⚠️ Error general
     if (searchParams.get('paymentError') === 'true') {
+      console.log('⚠️ Error de pago detectado');
+
       Swal.fire({
         icon: 'error',
         title: 'Error en el Pago',
         text: 'Hubo un error procesando el pago. Por favor, contacta con soporte.',
-        confirmButtonText: 'Entendido'
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#dc3545'
       });
       
-      navigate('/', { replace: true });
+      setSearchParams({});
     }
-  }, [searchParams, navigate, clearCart]);
+  }, [searchParams, setSearchParams, clearCart]);
 };

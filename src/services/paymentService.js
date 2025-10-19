@@ -57,12 +57,13 @@ export const paymentService = {
   },
 
   async getMyOrders(token) {
-    console.log('📦 Obteniendo mis pedidos...');
+    console.log('📦 Cargando historial de pedidos...');
     
     const response = await fetch(`${API_URL}/payment/orders`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       }
     });
 
@@ -76,7 +77,7 @@ export const paymentService = {
     }
 
     const data = await response.json();
-    console.log('✅ Pedidos obtenidos:', data.length);
+    console.log(`✅ ${data.length} pedidos cargados`);
     return data;
   },
 

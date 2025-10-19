@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider, useAuth } from '../../contexts/AuthContext';
 import Footer from '../PaginaPrincipal/Footer/Footer';
 import OrdersList from './OrdersList';

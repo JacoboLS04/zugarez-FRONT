@@ -6,9 +6,11 @@ import Footer from '../PaginaPrincipal/Footer/Footer';
 import ProductCatalog from './ProductCatalog';
 import ShoppingCart from './ShoppingCart';
 import './ClientShopping.css';
+import { usePaymentNotifications } from '../../hooks/usePaymentNotifications';
 
 const ClientShopping = () => {
   const [showCart, setShowCart] = useState(false);
+  usePaymentNotifications();
 
   const toggleCart = () => {
     setShowCart(!showCart);
