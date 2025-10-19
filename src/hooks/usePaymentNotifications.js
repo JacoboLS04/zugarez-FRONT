@@ -9,8 +9,8 @@ export const usePaymentNotifications = () => {
   const { clearCart } = useCart();
 
   useEffect(() => {
-    // Solo ejecutar en rutas de productos/cliente
-    const allowedPaths = ['/products', '/client', '/', '/orders'];
+    // Ejecutar en TODAS las rutas principales
+    const allowedPaths = ['/', '/client', '/products', '/orders'];
     if (!allowedPaths.includes(location.pathname)) {
       return;
     }
@@ -31,88 +31,52 @@ export const usePaymentNotifications = () => {
 
       console.log('🎉 Pago exitoso detectado:', { orderId, status, total });
 
-      // Limpiar carrito PRIMERO
+      // Limpiar carrito
       clearCart();
       
-      // Limpiar parámetros
+      // Limpiar URL
       setSearchParams({});
 
-      // Mostrar alerta nativa (más confiable que SweetAlert)
-      const mensaje = `
-🎉 ¡Pago Exitoso!
-
-Orden: #${orderId}
-Estado: ${status}
-Total: ${formatCOP(total)}
-
-✅ Recibirás un correo de confirmación
-      `;
+      // Mostrar alert nativo
+      const mensaje = `🎉 ¡Pago Exitoso!\n\nOrden: #${orderId}\nEstado: ${status}\nTotal: ${formatCOP(total)}\n\n✅ Recibirás un correo de confirmación`;
 
       if (window.confirm(mensaje + '\n\n¿Quieres ver tus pedidos?')) {
         navigate('/orders');
       } else {
-        // Se queda en /products para seguir comprando
-        navigate('/products', { replace: true });
+        // Redirigir a /client para seguir comprando
+        navigate('/client', { replace: true });
       }
     }
 
     // ❌ Detectar pago fallido
     if (searchParams.get('paymentFailed') === 'true') {
       console.log('❌ Pago fallido detectado');
-      
       setSearchParams({});
-      
-      alert('❌ Pago Rechazado\n\nEl pago fue rechazado o cancelado.\nVerifica tus datos e intenta nuevamente.');
+      alert('❌ Pago Rechazado\n\nEl pago fue rechazado o cancelado.');
+      navigate('/client', { replace: true });
     }
 
     // ⏳ Detectar pago pendiente
     if (searchParams.get('paymentPending') === 'true') {
       console.log('⏳ Pago pendiente detectado');
-      
       setSearchParams({});
       
-      const mensaje = `
-⏳ Pago Pendiente
-
-Tu pago está pendiente de confirmación.
-Te notificaremos por correo cuando sea aprobado.
-
-Esto puede tomar de algunos minutos a 48 horas hábiles.
-      `;
-
+      const mensaje = '⏳ Pago Pendiente\n\nTu pago está pendiente de confirmación.\nTe notificaremos por correo cuando sea aprobado.';
+      
       if (window.confirm(mensaje + '\n\n¿Quieres ver tus pedidos?')) {
         navigate('/orders');
+      } else {
+        navigate('/client', { replace: true });
       }
     }
 
     // ⚠️ Error general
     if (searchParams.get('paymentError') === 'true') {
       console.error('⚠️ Error de pago detectado');
-      console.error('URL completa:', window.location.href);
-      
       setSearchParams({});
       
-      const mensaje = `
-⚠️ Error Procesando el Pago
-
-Hubo un error al procesar tu pago en el servidor.
-
-Posibles causas:
-• Error de comunicación con MercadoPago
-• Error al actualizar la orden en la base de datos
-• Problema de configuración del servidor
-
-¿Qué hacer?
-1. Verifica tu historial de pedidos
-2. Si el pago fue descontado pero no aparece la orden, contacta a soporte
-3. NO intentes pagar nuevamente sin verificar
-      `;
-
-      if (window.confirm(mensaje + '\n\n¿Quieres ver tus pedidos?')) {
-        navigate('/orders');
-      } else {
-        navigate('/products', { replace: true });
-      }
+      alert('⚠️ Error Procesando el Pago\n\nHubo un error al procesar tu pago.\nVerifica tu historial de pedidos.');
+      navigate('/client', { replace: true });
     }
   }, [searchParams, setSearchParams, clearCart, location.pathname, navigate]);
 };

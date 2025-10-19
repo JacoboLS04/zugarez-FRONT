@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
 import Swal from 'sweetalert2';
+import { usePaymentNotifications } from '../../hooks/usePaymentNotifications';
 
 const Home = () => {
   const [searchParams] = useSearchParams();
@@ -90,6 +91,9 @@ const Home = () => {
       navigate('/', { replace: true });
     }
   }, [searchParams, navigate, clearCart]);
+
+  // Detectar notificaciones de pago
+  usePaymentNotifications();
 
   return (
     <div className="home">
