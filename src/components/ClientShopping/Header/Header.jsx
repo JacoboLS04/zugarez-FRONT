@@ -30,69 +30,97 @@ const Header = () => {
   const closeUserModal = () => setUserModalOpen(false);
 
   /* -----------------------
-     Nuevo: formulario de baja
+     Nuevo: formulario de baja (simplificado)
+     - Solo pide motivo
+     - Valida 10-500 caracteres
+     - Envía Authorization si hay token
+     - Realiza logout() y redirección tras 200 OK
      ----------------------- */
   const UnsubscribeForm = ({ defaultEmail = "", onCancel, onDone }) => {
-    const [form, setForm] = useState({ name: "", email: defaultEmail || "", password: "", reason: "" });
+    const [reason, setReason] = useState("");
     const [sending, setSending] = useState(false);
-
-    const handleChange = (e) => setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      if (!form.name.trim() || !form.email.trim() || !form.reason.trim() || !form.password.trim()) {
-        alert("Por favor completa todos los campos.");
+      const r = String(reason || "").trim();
+      if (!r || r.length < 10) {
+        alert("El motivo debe tener al menos 10 caracteres");
+        return;
+      }
+      if (r.length > 500) {
+        alert("El motivo no puede superar los 500 caracteres");
         return;
       }
       if (!window.confirm("Esta acción solicitará la baja. ¿Confirmas?")) return;
 
       setSending(true);
       try {
-        // placeholder: sustituir por tu endpoint real
-        await fetch("/api/request-account-unsubscribe", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
+        const token = localStorage.getItem('token');
+        const body = {
+          name: user?.name || user?.username || '',
+          email: user?.email || '',
+          reason: r,
+        };
+
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch('https://better-billi-zugarez-sys-ed7b78de.koyeb.app/api/unsubscribe', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(body),
         });
-        alert("Solicitud de baja enviada. Revisaremos tu petición.");
-        onDone?.();
+
+        if (res.ok) {
+          // logout y redirección (es obligatorio según especificación)
+          try { logout(); } catch (e) {
+            // fallback: limpiar storage
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            try { sessionStorage.clear(); } catch (e) {}
+          }
+          alert('Tu solicitud de baja ha sido procesada correctamente.');
+          onDone?.();
+          window.location.href = '/login?unsubscribed=true';
+          return;
+        }
+
+        if (res.status === 400) {
+          const data = await res.json().catch(() => ({}));
+          alert(data.details?.reason || data.message || 'Datos inválidos');
+        } else if (res.status === 409) {
+          alert('Tu cuenta ya está dada de baja');
+        } else if (res.status === 403) {
+          try { logout(); } catch (e) {}
+          alert('Tu cuenta ha sido desactivada');
+          window.location.href = '/login?deactivated=true';
+        } else {
+          const text = await res.text().catch(() => null);
+          console.error('unsubscribe failed', res.status, text);
+          alert('Error al procesar la solicitud');
+        }
+
       } catch (err) {
         console.error(err);
-        alert("Ocurrió un error al enviar la solicitud.");
+        alert('Ocurrió un error al enviar la solicitud.');
       } finally {
         setSending(false);
       }
     };
 
     return (
-      <form onSubmit={handleSubmit} className="unsubscribe-form" style={{ display: "grid", gap: 10 }}>
-        <label>
-          Nombre
-          {console.log(" el usuario essssssssssssss" ,user.role)}
-          <input name="name" value={form.name} onChange={handleChange} required />
-        </label>
-
-        <label>
-          Correo
-          <input type="email" name="email" value={form.email} onChange={handleChange} required />
-        </label>
-
-        <label>
-          Contraseña
-          <input type="password" name="password" value={form.password} onChange={handleChange} required />
-        </label>
-
+      <form onSubmit={handleSubmit} className="unsubscribe-form" style={{ display: 'grid', gap: 10 }}>
         <label>
           Motivo
-          <textarea name="reason" value={form.reason} onChange={handleChange} rows="3" required />
+          <textarea name="reason" value={reason} onChange={(e) => setReason(e.target.value)} rows="3" required />
         </label>
 
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <button type="button" onClick={onCancel} className="header-btn" style={{ padding: "8px 12px", borderRadius: 8 }}>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+          <button type="button" onClick={onCancel} className="header-btn" style={{ padding: '8px 12px', borderRadius: 8 }}>
             Cancelar
           </button>
-          <button type="submit" className="header-btn logout-btn" disabled={sending} style={{ padding: "8px 12px", borderRadius: 8 }}>
-            {sending ? "Enviando..." : "Solicitar baja"}
+          <button type="submit" className="header-btn logout-btn" disabled={sending} style={{ padding: '8px 12px', borderRadius: 8 }}>
+            {sending ? 'Enviando...' : 'Solicitar baja'}
           </button>
         </div>
       </form>

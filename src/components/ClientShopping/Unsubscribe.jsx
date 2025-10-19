@@ -50,7 +50,7 @@ const Unsubscribe = () => {
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
-      const res = await fetch('/api/unsubscribe', {
+  const res = await fetch('https://better-billi-zugarez-sys-ed7b78de.koyeb.app/api/unsubscribe', {
         method: 'POST',
         headers,
         body: JSON.stringify(body),
