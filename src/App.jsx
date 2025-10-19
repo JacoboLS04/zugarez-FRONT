@@ -7,7 +7,7 @@ import './OrdersApp.css';
 import { usePaymentNotifications } from './hooks/usePaymentNotifications';
 import { CartProvider } from './contexts/CartContext';
 
-const OrdersAppContent = () => {
+function AppContent() {
   const { user } = useAuth();
   const isAdmin = user?.roles?.includes('ROLE_ADMIN');
 
@@ -24,17 +24,21 @@ const OrdersAppContent = () => {
       <Footer />
     </div>
   );
-};
+}
 
-const OrdersApp = () => {
+function App() {
   // Detectar notificaciones de pago
   usePaymentNotifications();
 
   return (
-    <AuthProvider>
-      <OrdersAppContent />
-    </AuthProvider>
+    <Router>
+      <AuthProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </AuthProvider>
+    </Router>
   );
-};
+}
 
-export default OrdersApp;
+export default App;
