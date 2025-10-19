@@ -80,10 +80,17 @@ const ShoppingCart = () => {
       return;
     }
 
-    // Obtener y verificar token
     const token = authService.getToken();
-    console.log('🔑 Token obtenido:', token ? 'Token existe' : 'NO HAY TOKEN');
-    console.log('👤 Usuario autenticado:', authService.isAuthenticated() ? 'SÍ' : 'NO');
+    const user = authService.getUser();
+    
+    console.log('=== 🔍 DEBUGGING CHECKOUT ===');
+    console.log('🔑 Token completo:', token);
+    console.log('👤 Usuario completo:', user);
+    console.log('📧 Email:', user?.email);
+    console.log('👤 Username:', user?.username);
+    console.log('🆔 User ID:', user?.id);
+    console.log('🎭 Roles:', user?.roles);
+    console.log('✅ isAuthenticated():', authService.isAuthenticated());
     
     if (!token || !authService.isAuthenticated()) {
       Swal.fire({
@@ -102,36 +109,56 @@ const ShoppingCart = () => {
     try {
       setLoading(true);
       
-      console.log('🛒 INICIANDO CHECKOUT desde ShoppingCart');
-      
       const items = cart.map(item => ({
         productId: item.id,
         quantity: item.quantity
       }));
 
-      console.log('📦 Items:', items);
-      console.log('🔐 Enviando con token:', token.substring(0, 20) + '...');
-
       const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
       
-      const response = await fetch(`${API_URL}/payment/checkout`, {
+      const requestOptions = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ items })
-      });
+      };
+      
+      console.log('📡 === REQUEST DETAILS ===');
+      console.log('URL:', `${API_URL}/payment/checkout`);
+      console.log('Method:', requestOptions.method);
+      console.log('Headers:', requestOptions.headers);
+      console.log('Body:', requestOptions.body);
+      console.log('Items count:', items.length);
+      
+      const response = await fetch(`${API_URL}/payment/checkout`, requestOptions);
 
-      console.log('📡 Status:', response.status);
+      console.log('📡 === RESPONSE DETAILS ===');
+      console.log('Status:', response.status);
+      console.log('Status Text:', response.statusText);
+      console.log('Headers:', Object.fromEntries([...response.headers.entries()]));
 
       if (response.status === 401 || response.status === 403) {
-        // Token inválido o expirado
+        const errorText = await response.text();
+        console.error('❌ === ERROR 401/403 ===');
+        console.error('Response Text:', errorText);
+        
+        try {
+          const errorData = JSON.parse(errorText);
+          console.error('Error Data:', errorData);
+        } catch (e) {
+          console.error('No se pudo parsear como JSON');
+        }
+        
         authService.clearAuthData();
         Swal.fire({
-          title: 'Sesión expirada',
-          text: 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.',
-          icon: 'warning',
+          title: 'Error de Autenticación',
+          html: `
+            <p>El servidor rechazó tu sesión.</p>
+            <small class="text-muted">Detalles técnicos: ${response.status} ${response.statusText}</small>
+          `,
+          icon: 'error',
           confirmButtonText: 'Ir a Login'
         }).then((result) => {
           if (result.isConfirmed) {
@@ -148,18 +175,23 @@ const ShoppingCart = () => {
       }
 
       const data = await response.json();
-      console.log('✅ Respuesta:', data);
+      console.log('✅ === SUCCESS ===');
+      console.log('Order ID:', data.orderId);
+      console.log('Preference ID:', data.preferenceId);
+      console.log('Total:', data.total);
 
       localStorage.setItem('currentOrderId', data.orderId);
 
       const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
-      console.log('🚀 Redirigiendo a MercadoPago:', mercadoPagoUrl);
+      console.log('🚀 Redirigiendo a:', mercadoPagoUrl);
 
-      // REDIRECCIÓN INMEDIATA
       window.location.href = mercadoPagoUrl;
       
     } catch (error) {
-      console.error('💥 Error:', error);
+      console.error('💥 === EXCEPTION ===');
+      console.error('Error:', error);
+      console.error('Message:', error.message);
+      console.error('Stack:', error.stack);
       setLoading(false);
       Swal.fire({
         title: 'Error',
