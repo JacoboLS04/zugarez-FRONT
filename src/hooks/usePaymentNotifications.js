@@ -53,14 +53,18 @@ export const usePaymentNotifications = () => {
             </p>
           </div>
         `,
-        confirmButtonText: '📦 Ver Mis Pedidos',
+        confirmButtonText: '🛒 Seguir Comprando',
         showCancelButton: true,
-        cancelButtonText: '🛒 Seguir Comprando',
+        cancelButtonText: '📦 Ver Mi Pedido',
         confirmButtonColor: '#198754',
         cancelButtonColor: '#6c757d',
         allowOutsideClick: false
       }).then((result) => {
         if (result.isConfirmed) {
+          // Usuario quiere seguir comprando - redirige a productos
+          window.location.href = '/products';
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // Usuario quiere ver su pedido
           window.location.href = '/orders';
         }
       });
@@ -83,9 +87,10 @@ export const usePaymentNotifications = () => {
         `,
         confirmButtonText: 'Entendido',
         confirmButtonColor: '#dc3545'
+      }).then(() => {
+        // Después de cerrar, se queda en /products
+        setSearchParams({});
       });
-      
-      setSearchParams({});
     }
 
     // ⏳ Detectar pago pendiente
@@ -104,15 +109,21 @@ export const usePaymentNotifications = () => {
           </p>
         `,
         confirmButtonText: 'Ver Mis Pedidos',
+        showCancelButton: true,
+        cancelButtonText: 'Seguir Comprando',
         confirmButtonColor: '#ffc107'
-      }).then(() => {
-        window.location.href = '/orders';
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/orders';
+        } else {
+          window.location.href = '/products';
+        }
       });
       
       setSearchParams({});
     }
 
-    // ⚠️ Error general - MEJORADO para dar más información
+    // ⚠️ Error general
     if (searchParams.get('paymentError') === 'true') {
       console.error('⚠️ Error de pago detectado');
       console.error('URL completa:', window.location.href);
@@ -145,14 +156,14 @@ export const usePaymentNotifications = () => {
         `,
         confirmButtonText: 'Ver Mis Pedidos',
         showCancelButton: true,
-        cancelButtonText: 'Volver a Inicio',
+        cancelButtonText: 'Volver a Productos',
         confirmButtonColor: '#0d6efd',
         cancelButtonColor: '#6c757d'
       }).then((result) => {
         if (result.isConfirmed) {
           window.location.href = '/orders';
         } else {
-          window.location.href = '/';
+          window.location.href = '/products';
         }
       });
       
