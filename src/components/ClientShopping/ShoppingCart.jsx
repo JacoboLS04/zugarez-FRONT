@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../../contexts/CartContext';
+import { authService } from '../../services/authService';
 import Swal from 'sweetalert2';
 
 const ShoppingCart = () => {
   const { cart, totalItems, totalAmount, removeFromCart, updateQuantity, clearCart } = useCart();
+  const [loading, setLoading] = useState(false);
   
   const formatCOP = (amount) => {
     return new Intl.NumberFormat('es-CO', {
@@ -68,7 +70,7 @@ const ShoppingCart = () => {
     });
   };
   
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (cart.length === 0) {
       Swal.fire({
         title: 'Carrito vacío',
@@ -77,31 +79,68 @@ const ShoppingCart = () => {
       });
       return;
     }
-    
-    Swal.fire({
-      title: 'Proceder con la compra',
-      html: `
-        <div class="text-start">
-          <p><strong>Resumen del pedido:</strong></p>
-          <p>Productos: ${totalItems}</p>
-          <p><strong>Total: ${formatCOP(totalAmount)}</strong></p>
-        </div>
-      `,
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonText: 'Confirmar Pedido',
-      cancelButtonText: 'Seguir Comprando',
-      confirmButtonColor: '#198754'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: '¡Pedido confirmado!',
-          text: 'Tu pedido ha sido procesado correctamente',
-          icon: 'success'
-        });
-        clearCart();
+
+    const token = authService.getToken();
+    if (!token) {
+      Swal.fire({
+        title: 'Sesión requerida',
+        text: 'Debes iniciar sesión para realizar un pedido',
+        icon: 'warning'
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      console.log('🛒 INICIANDO CHECKOUT desde ShoppingCart');
+      
+      const items = cart.map(item => ({
+        productId: item.id,
+        quantity: item.quantity
+      }));
+
+      console.log('📦 Items:', items);
+
+      const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
+      
+      const response = await fetch(`${API_URL}/payment/checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ items })
+      });
+
+      console.log('📡 Status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('❌ Error:', errorData);
+        throw new Error(errorData.error || 'Error al procesar el pago');
       }
-    });
+
+      const data = await response.json();
+      console.log('✅ Respuesta:', data);
+
+      localStorage.setItem('currentOrderId', data.orderId);
+
+      const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
+      console.log('🚀 Redirigiendo a MercadoPago:', mercadoPagoUrl);
+
+      // REDIRECCIÓN INMEDIATA - SIN MODALES
+      window.location.href = mercadoPagoUrl;
+      
+    } catch (error) {
+      console.error('💥 Error:', error);
+      setLoading(false);
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudo procesar el pago: ' + error.message,
+        icon: 'error'
+      });
+    }
   };
   
   return (
@@ -226,14 +265,25 @@ const ShoppingCart = () => {
             <button 
               className="btn btn-success" 
               onClick={handleCheckout}
+              disabled={loading}
             >
-              <i className="bi bi-credit-card me-2"></i>
-              Proceder al Pago
+              {loading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2"></span>
+                  Conectando con MercadoPago...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-credit-card me-2"></i>
+                  Pagar con MercadoPago
+                </>
+              )}
             </button>
             
             <button 
               className="btn btn-outline-danger btn-sm"
               onClick={handleClearCart}
+              disabled={loading}
             >
               <i className="bi bi-trash me-2"></i>
               Vaciar Carrito
