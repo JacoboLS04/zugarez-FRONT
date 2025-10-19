@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import { useCart } from '../../contexts/CartContext';
 import { authService } from '../../services/authService';
+
+// Inicializar MercadoPago con la Public Key
+const MERCADOPAGO_PUBLIC_KEY = 'TEST-368ba19c-ca6c-486c-b907-a5fae75688ac';
+initMercadoPago(MERCADOPAGO_PUBLIC_KEY);
 
 const Cart = () => {
   const { cart, totalItems, totalAmount, removeFromCart, updateQuantity, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
+  const [preferenceId, setPreferenceId] = useState(null);
   
   const handleQuantityChange = (productId, event) => {
     const newQuantity = parseInt(event.target.value);
@@ -27,10 +33,7 @@ const Cart = () => {
 
     if (cart.length === 0) return;
 
-    // Verificar token ANTES de continuar
     const token = authService.getToken();
-    console.log('🔑 Token existe:', !!token);
-    console.log('👤 Usuario autenticado:', authService.isAuthenticated());
     
     if (!token || !authService.isAuthenticated()) {
       alert('Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
@@ -41,18 +44,12 @@ const Cart = () => {
     setLoading(true);
 
     try {
-      console.log('🛒 CHECKOUT INICIADO desde Cart');
-      
       const items = cart.map(item => ({
         productId: item.id,
         quantity: item.quantity
       }));
 
       const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
-      
-      console.log('📡 URL:', `${API_URL}/payment/checkout`);
-      console.log('📦 Items:', items);
-      console.log('🔐 Token (primeros 20 chars):', token.substring(0, 20) + '...');
       
       const response = await fetch(`${API_URL}/payment/checkout`, {
         method: 'POST',
@@ -63,8 +60,6 @@ const Cart = () => {
         body: JSON.stringify({ items })
       });
 
-      console.log('✅ Status:', response.status);
-
       if (response.status === 401 || response.status === 403) {
         authService.clearAuthData();
         alert('Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
@@ -74,19 +69,14 @@ const Cart = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('❌ Error:', errorData);
         throw new Error(errorData.error || 'Error al procesar el pago');
       }
 
       const data = await response.json();
-      console.log('📋 Data:', data);
+      console.log('✅ Orden creada:', data);
 
       localStorage.setItem('currentOrderId', data.orderId);
-
-      const mercadoPagoUrl = `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
-      console.log('🚀 Redirigiendo a:', mercadoPagoUrl);
-
-      window.location.href = mercadoPagoUrl;
+      setPreferenceId(data.preferenceId);
       
     } catch (error) {
       console.error('💥 Error:', error);
@@ -168,25 +158,40 @@ const Cart = () => {
           <span className="fw-bold text-primary">${(totalAmount * 1.05).toLocaleString()}</span>
         </div>
         
-        <button 
-          type="button"
-          className="btn btn-success w-100 mb-2" 
-          onClick={handleCheckout}
-          disabled={cart.length === 0 || loading}
-          style={{ pointerEvents: loading ? 'none' : 'auto' }}
-        >
-          {loading ? (
-            <>
-              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              Conectando con MercadoPago...
-            </>
-          ) : (
-            <>
-              <i className="bi bi-credit-card me-2"></i>
-              Pagar con MercadoPago
-            </>
-          )}
-        </button>
+        {preferenceId ? (
+          <div className="mercadopago-button mb-2">
+            <Wallet 
+              initialization={{ preferenceId: preferenceId }}
+              onReady={() => {
+                console.log('✅ Botón de MercadoPago listo');
+                setLoading(false);
+              }}
+              onError={(error) => {
+                console.error('❌ Error:', error);
+                setLoading(false);
+              }}
+            />
+          </div>
+        ) : (
+          <button 
+            type="button"
+            className="btn btn-success w-100 mb-2" 
+            onClick={handleCheckout}
+            disabled={cart.length === 0 || loading}
+          >
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2"></span>
+                Creando orden...
+              </>
+            ) : (
+              <>
+                <i className="bi bi-credit-card me-2"></i>
+                Proceder al Pago
+              </>
+            )}
+          </button>
+        )}
         
         <button 
           className="btn btn-outline-secondary w-100"
