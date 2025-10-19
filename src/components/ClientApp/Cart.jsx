@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../../contexts/CartContext';
 import { authService } from '../../services/authService';
+import { paymentService } from '../../services/paymentService';
 
 const Cart = () => {
   const { cart, totalItems, totalAmount, removeFromCart, updateQuantity, clearCart } = useCart();
@@ -43,36 +44,10 @@ const Cart = () => {
         quantity: item.quantity
       }));
 
-      const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
-      
       console.log('📦 Iniciando checkout...');
       
-      const response = await fetch(`${API_URL}/payment/checkout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ items })
-      });
-
-      console.log('📡 Status:', response.status);
-
-      if (response.status === 401 || response.status === 403) {
-        authService.clearAuthData();
-        alert('Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
-        window.location.href = '/login';
-        return;
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('❌ Error:', errorData);
-        throw new Error(errorData.error || errorData.details || 'Error al procesar el pago');
-      }
-
-      const data = await response.json();
-      console.log('✅ Datos recibidos:', data);
+      // Usar el servicio de pagos
+      const data = await paymentService.checkout(items, token);
 
       if (!data.preferenceId) {
         throw new Error('No se recibió preferenceId del servidor');
@@ -81,9 +56,11 @@ const Cart = () => {
       localStorage.setItem('currentOrderId', data.orderId);
       localStorage.setItem('currentPreferenceId', data.preferenceId);
 
-      // ✅ CAMBIO CRÍTICO: Usar SANDBOX para credenciales de prueba
-      const mercadoPagoUrl = `https://sandbox.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
-      console.log('🚀 Redirigiendo a SANDBOX:', mercadoPagoUrl);
+      // Usar la URL del sandbox que viene del backend
+      const mercadoPagoUrl = data.sandboxUrl || data.checkoutUrl || 
+        `https://sandbox.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
+      
+      console.log('🚀 Redirigiendo a:', mercadoPagoUrl);
       
       setTimeout(() => {
         window.location.href = mercadoPagoUrl;

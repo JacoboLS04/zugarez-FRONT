@@ -5,10 +5,15 @@ const API_URL = (process.env.REACT_APP_API_BASE || DEFAULT_BASE) + '/auth';
 
 export const authService = {
   async verifyCodeFlexible(identifier, code, key) {
+    // Validar que el código tenga 6 dígitos
+    if (!code || code.length !== 6) {
+      throw new Error('El código debe tener exactamente 6 dígitos');
+    }
+    
     const body = {
       code: code
     };
-    // Agregar el campo correcto según el tipo
+    
     if (key === 'email') {
       body.email = identifier;
       body.username = null;
@@ -16,7 +21,8 @@ export const authService = {
       body.username = identifier;
       body.email = null;
     }
-    console.log('Enviando verificación de código:', JSON.stringify(body));
+    
+    console.log('Enviando verificación de código (6 dígitos):', JSON.stringify(body));
     
     const response = await fetch(`${API_URL}/verify-code`, {
       method: 'POST',
@@ -25,15 +31,20 @@ export const authService = {
     });
     
     console.log('Respuesta verificación:', response.status);
-    const data = await response.json();
-    console.log('Data verificación COMPLETA:', data);
-    console.log('¿Tiene token?', !!data.token);
-    console.log('Token:', data.token);
     
-    // Si hay error, lanzar excepción con el mensaje del backend
+    // Manejo especial para usuarios desactivados
+    if (response.status === 403) {
+      const data = await response.json();
+      throw new Error(data.error || 'Tu cuenta ha sido desactivada');
+    }
+    
     if (!response.ok) {
+      const data = await response.json();
       throw new Error(data.message || `Error ${response.status}`);
     }
+    
+    const data = await response.json();
+    console.log('✅ Verificación exitosa');
     
     return data;
   },

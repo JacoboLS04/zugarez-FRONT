@@ -9,15 +9,21 @@ const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const { clearCart } = useCart();
   const [orderDetails, setOrderDetails] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadOrderDetails = async () => {
+    const verifyPayment = async () => {
       try {
         const orderId = localStorage.getItem('currentOrderId');
         const token = authService.getToken();
         
         if (orderId && token) {
+          // Verificar estado del pago
+          const status = await paymentService.checkPaymentStatus(orderId, token);
+          setPaymentStatus(status);
+          
+          // Obtener detalles de la orden
           const order = await paymentService.getOrderById(orderId, token);
           setOrderDetails(order);
         }
@@ -25,18 +31,27 @@ const PaymentSuccess = () => {
         // Limpiar el carrito después de un pago exitoso
         clearCart();
         localStorage.removeItem('currentOrderId');
+        localStorage.removeItem('currentPreferenceId');
       } catch (error) {
-        console.error('Error cargando detalles:', error);
+        console.error('Error verificando pago:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadOrderDetails();
+    verifyPayment();
   }, [clearCart]);
 
   const paymentId = searchParams.get('payment_id');
   const status = searchParams.get('status');
+
+  const formatCOP = (amount) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0
+    }).format(amount);
+  };
 
   return (
     <div className="container py-5">
@@ -58,8 +73,13 @@ const PaymentSuccess = () => {
               ) : orderDetails ? (
                 <div className="alert alert-info">
                   <h5>Detalles del Pedido #{orderDetails.id}</h5>
-                  <p className="mb-0">Total pagado: ${orderDetails.total.toLocaleString('es-CO')}</p>
-                  {paymentId && <p className="mb-0 small">ID de pago: {paymentId}</p>}
+                  <p className="mb-1">Subtotal: {formatCOP(orderDetails.subtotal)}</p>
+                  <p className="mb-1">Impuestos: {formatCOP(orderDetails.tax)}</p>
+                  <p className="mb-2"><strong>Total pagado: {formatCOP(orderDetails.total)}</strong></p>
+                  {paymentId && <p className="mb-0 small text-muted">ID de pago: {paymentId}</p>}
+                  {paymentStatus && (
+                    <p className="mb-0 small">Estado: <strong>{paymentStatus.status}</strong></p>
+                  )}
                 </div>
               ) : (
                 paymentId && (

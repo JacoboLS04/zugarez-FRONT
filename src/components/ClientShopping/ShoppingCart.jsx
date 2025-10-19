@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../../contexts/CartContext';
 import { authService } from '../../services/authService';
+import { paymentService } from '../../services/paymentService';
 import Swal from 'sweetalert2';
 
 const ShoppingCart = () => {
@@ -104,30 +105,8 @@ const ShoppingCart = () => {
         quantity: item.quantity
       }));
 
-      const API_URL = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
-      
-      console.log('📦 Creando orden...');
-      console.log('Items:', items);
-      
-      const response = await fetch(`${API_URL}/payment/checkout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ items })
-      });
-
-      console.log('📡 Response status:', response.status);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('❌ Error del backend:', errorData);
-        throw new Error(errorData.error || errorData.details || 'Error al procesar el pago');
-      }
-
-      const data = await response.json();
-      console.log('✅ Respuesta completa:', data);
+      // Usar el servicio de pagos
+      const data = await paymentService.checkout(items, token);
 
       if (!data.preferenceId) {
         throw new Error('No se recibió preferenceId del servidor');
@@ -136,25 +115,39 @@ const ShoppingCart = () => {
       localStorage.setItem('currentOrderId', data.orderId);
       localStorage.setItem('currentPreferenceId', data.preferenceId);
 
-      // ✅ USAR SANDBOX para credenciales de prueba
-      const mercadoPagoUrl = `https://sandbox.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
-      console.log('🚀 URL de MercadoPago SANDBOX:', mercadoPagoUrl);
+      // Usar la URL del sandbox que viene del backend
+      const mercadoPagoUrl = data.sandboxUrl || data.checkoutUrl || 
+        `https://sandbox.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.preferenceId}`;
+      
+      console.log('🚀 URL de pago:', mercadoPagoUrl);
       
       Swal.fire({
         title: '¡Redirigiendo a MercadoPago!',
         html: `
           <p>Orden creada: <strong>#${data.orderId}</strong></p>
-          <p>Total: <strong>${formatCOP(totalAmount * 1.05)}</strong></p>
+          <p>Subtotal: <strong>${formatCOP(data.subtotal)}</strong></p>
+          <p>Impuestos: <strong>${formatCOP(data.tax)}</strong></p>
+          <p>Total: <strong>${formatCOP(data.total)}</strong></p>
+          <hr>
           <small class="text-muted">Modo de prueba (SANDBOX)</small>
+          <div class="mt-3 text-start">
+            <p class="mb-1"><strong>🧪 Credenciales de prueba:</strong></p>
+            <small>Usuario: TESTUSER7191328507680256966</small><br>
+            <small>Contraseña: p4mhJvbM7Z</small><br>
+            <small>Tarjeta: 5031 7557 3453 0604</small><br>
+            <small>CVV: 123 | Exp: 11/25</small>
+          </div>
         `,
         icon: 'success',
-        timer: 2000,
-        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: true,
+        confirmButtonText: 'Ir a pagar',
         didOpen: () => {
           Swal.showLoading();
-        },
-        willClose: () => {
-          console.log('🔄 Redirigiendo a SANDBOX...');
+        }
+      }).then((result) => {
+        if (result.isConfirmed || result.dismiss === Swal.DismissReason.timer) {
           window.location.href = mercadoPagoUrl;
         }
       });

@@ -3,7 +3,7 @@ const API_URL = process.env.REACT_APP_API_BASE || DEFAULT_BASE;
 
 export const paymentService = {
   async checkout(items, token) {
-    console.log('Enviando checkout:', { items });
+    console.log('📦 Enviando checkout:', { items });
     
     const response = await fetch(`${API_URL}/payment/checkout`, {
       method: 'POST',
@@ -14,16 +14,45 @@ export const paymentService = {
       body: JSON.stringify({ items })
     });
 
-    console.log('Respuesta checkout:', response.status);
+    console.log('📡 Respuesta checkout:', response.status);
+    
+    if (response.status === 403) {
+      const data = await response.json();
+      throw new Error(data.error || 'Tu cuenta ha sido desactivada');
+    }
     
     if (!response.ok) {
       const error = await response.json();
-      console.error('Error en checkout:', error);
+      console.error('❌ Error en checkout:', error);
       throw new Error(error.error || error.message || 'Error al procesar el pago');
     }
 
     const data = await response.json();
-    console.log('Data checkout:', data);
+    console.log('✅ Checkout exitoso:', data);
+    return data;
+  },
+
+  async checkPaymentStatus(orderId, token) {
+    console.log(`🔍 Verificando estado del pago para orden #${orderId}`);
+    
+    const response = await fetch(`${API_URL}/payment/status/${orderId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.status === 403) {
+      const data = await response.json();
+      throw new Error(data.error || 'Tu cuenta ha sido desactivada');
+    }
+
+    if (!response.ok) {
+      throw new Error('Error al verificar el estado del pago');
+    }
+
+    const data = await response.json();
+    console.log('📊 Estado del pago:', data);
     return data;
   },
 
@@ -34,6 +63,11 @@ export const paymentService = {
         'Authorization': `Bearer ${token}`
       }
     });
+
+    if (response.status === 403) {
+      const data = await response.json();
+      throw new Error(data.error || 'Tu cuenta ha sido desactivada');
+    }
 
     if (!response.ok) {
       throw new Error('Error al obtener pedidos');
@@ -49,6 +83,11 @@ export const paymentService = {
         'Authorization': `Bearer ${token}`
       }
     });
+
+    if (response.status === 403) {
+      const data = await response.json();
+      throw new Error(data.error || 'Tu cuenta ha sido desactivada');
+    }
 
     if (!response.ok) {
       throw new Error('Error al obtener el pedido');
