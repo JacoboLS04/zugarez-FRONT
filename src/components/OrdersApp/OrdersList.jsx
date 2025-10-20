@@ -5,7 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import OrderCard from './OrderCard';
 
 const OrdersList = () => {
-  const { user } = useAuth();
+    const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,22 +35,42 @@ const OrdersList = () => {
 
       console.log('👤 Usuario:', user);
       console.log('🔐 Es admin:', isAdmin);
+      console.log('🎫 Token presente:', !!token);
 
       let data;
       
       if (isAdmin) {
         console.log('🔑 Cargando TODAS las órdenes (modo admin)...');
-        data = await paymentService.getAllOrders(token);
+        try {
+          data = await paymentService.getAllOrders(token);
+          console.log('📊 Datos recibidos:', {
+            esArray: Array.isArray(data),
+            cantidad: data?.length,
+            tipo: typeof data
+          });
+        } catch (adminError) {
+          console.error('❌ Error cargando órdenes de admin:', adminError);
+          throw adminError;
+        }
       } else {
         console.log('📦 Cargando órdenes del usuario...');
         data = await paymentService.getMyOrders(token);
       }
       
-      console.log(`✅ ${data.length} órdenes cargadas`);
-      setOrders(data || []);
+      // Validar que data sea un array
+      if (!Array.isArray(data)) {
+        console.error('❌ Los datos no son un array:', data);
+        throw new Error('Formato de datos inválido recibido del servidor');
+      }
+      
+      console.log(`✅ ${data.length} órdenes cargadas exitosamente`);
+      setOrders(data);
     } catch (err) {
-      console.error('❌ Error cargando órdenes:', err);
-      setError('Error al cargar pedidos: ' + err.message);
+      console.error('❌ Error cargando órdenes:', {
+        mensaje: err.message,
+        stack: err.stack
+      });
+      setError(`Error al cargar pedidos: ${err.message}`);
       setOrders([]);
     } finally {
       setLoading(false);

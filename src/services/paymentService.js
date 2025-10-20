@@ -84,10 +84,9 @@ export const paymentService = {
   // Obtener TODAS las órdenes (solo admin)
   async getAllOrders(token) {
     console.log('📦 [ADMIN] Cargando todas las órdenes del sistema...');
+    console.log('🔑 Token:', token ? 'Presente' : 'Ausente');
     
     try {
-      // El backend debe detectar automáticamente si es admin
-      // y devolver todas las órdenes, no solo las del usuario
       const response = await fetch(`${API_URL}/payment/orders`, {
         method: 'GET',
         headers: {
@@ -97,23 +96,41 @@ export const paymentService = {
       });
 
       console.log('📡 Response status:', response.status);
+      console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (response.status === 403) {
         const data = await response.json();
-        throw new Error(data.error || 'Acceso denegado');
+        console.error('❌ Acceso denegado:', data);
+        throw new Error(data.error || 'Acceso denegado - Verificar permisos de admin');
       }
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error('❌ Error response:', errorText);
-        throw new Error('Error al obtener órdenes');
+        throw new Error(`Error ${response.status}: ${errorText || 'Error al obtener órdenes'}`);
       }
 
       const data = await response.json();
-      console.log(`✅ [ADMIN] ${data.length} órdenes cargadas`);
+      console.log('✅ [ADMIN] Respuesta del servidor:', {
+        cantidadOrdenes: Array.isArray(data) ? data.length : 'No es array',
+        tipoData: typeof data,
+        primerosElementos: Array.isArray(data) ? data.slice(0, 2) : data
+      });
+      
+      // Verificar que sea un array
+      if (!Array.isArray(data)) {
+        console.error('❌ La respuesta no es un array:', data);
+        throw new Error('Formato de respuesta inválido del servidor');
+      }
+      
+      console.log(`✅ [ADMIN] ${data.length} órdenes cargadas correctamente`);
       return data;
     } catch (error) {
-      console.error('❌ Error en getAllOrders:', error);
+      console.error('❌ Error en getAllOrders:', {
+        mensaje: error.message,
+        stack: error.stack,
+        tipo: error.constructor.name
+      });
       throw error;
     }
   },
