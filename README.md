@@ -1,70 +1,314 @@
-# Getting Started with Create React App
+# Zugarez - Cafetería Web
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 📋 Descripción del Proyecto
 
-## Available Scripts
+Zugarez es una aplicación web completa de un café desarrollada con React que permite la gestión de productos, pedidos, inventario y ventas. El sistema cuenta con dos tipos de usuarios principales: administradores y clientes, cada uno con funcionalidades específicas.
 
-In the project directory, you can run:
+## 🎯 Características Principales
 
-### `npm start`
+### Para Clientes
+- 🛍️ Catálogo de productos con filtros y búsqueda
+- 🛒 Carrito de compras interactivo
+- 💳 Integración con Mercado Pago para pagos
+- 📦 Seguimiento de pedidos en tiempo real
+- 👤 Gestión de cuenta de usuario
+- 🔔 Notificaciones de pago
+- ♿ Widget de accesibilidad (tamaño de fuente, escala de grises)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Para Administradores
+- 📊 Panel de administración completo
+- 📦 Gestión de productos (CRUD)
+- 🏷️ Gestión de inventario y lotes
+- 📋 Gestión de pedidos
+- 👥 Administración de usuarios
+- 📈 Control de movimientos de inventario
+- 📄 Gestión de remisiones
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠️ Tecnologías Utilizadas
 
-### `npm test`
+### Frontend
+- **React 19.1.1** - Librería principal
+- **React Router DOM 7.8.0** - Navegación y ruteo
+- **Axios 1.12.2** - Cliente HTTP para API REST
+- **Bootstrap 5.3.7** - Framework CSS
+- **Mercado Pago SDK React 1.0.6** - Integración de pagos
+- **SweetAlert2 11.26.3** - Alertas y notificaciones
+- **Lucide React** - Iconos modernos
+- **Font Awesome 7.0.0** - Iconos adicionales
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Gestión de Estado
+- **React Context API** - Estado global de autenticación y carrito
+- **Custom Hooks** - Lógica reutilizable
 
-### `npm run build`
+## 📁 Estructura del Proyecto
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+zugarez-FRONT/
+├── public/                          # Archivos públicos
+│   ├── index.html                   # HTML principal
+│   ├── manifest.json               # PWA manifest
+│   └── robots.txt                  # SEO robots
+│
+├── src/
+│   ├── App.jsx                     # Componente raíz
+│   ├── index.js                    # Punto de entrada
+│   │
+│   ├── components/                 # Componentes React
+│   │   ├── Accesibility/          # Widget de accesibilidad
+│   │   ├── admin/                 # Componentes de administración
+│   │   ├── auth/                  # Autenticación (Login/Register)
+│   │   ├── ClientShopping/        # Tienda del cliente
+│   │   ├── CrudMongoApp/          # CRUD de productos
+│   │   ├── Inventario/            # Gestión de inventario
+│   │   ├── OrdersApp/             # Gestión de pedidos
+│   │   ├── PaginaAdmin/           # Panel de administrador
+│   │   ├── PaginaPrincipal/       # Página principal/home
+│   │   ├── Payment/               # Componentes de pago
+│   │   ├── ProtectedRoute.jsx     # Rutas protegidas
+│   │   └── ProtectedAdmin.jsx     # Rutas de admin
+│   │
+│   ├── contexts/                   # Contextos de React
+│   │   ├── AuthContext.js         # Contexto de autenticación
+│   │   └── CartContext.jsx        # Contexto del carrito
+│   │
+│   ├── hooks/                      # Custom hooks
+│   │   ├── useAuth.js             # Hook de autenticación
+│   │   └── usePaymentNotifications.js
+│   │
+│   ├── services/                   # Servicios API
+│   │   ├── api.js                 # Cliente API configurado
+│   │   ├── authService.js         # Servicio de autenticación
+│   │   └── paymentService.js      # Servicio de pagos
+│   │
+│   └── utils/                      # Utilidades
+│
+├── package.json                    # Dependencias
+├── JWT_INTEGRATION.md             # Documentación JWT
+├── MANUAL_DE_USUARIO.txt          # Manual de usuario
+└── README.md                      # Este archivo
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🚀 Instalación y Configuración
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Prerrequisitos
+- Node.js (v14 o superior)
+- npm o yarn
+- Backend de Spring Boot corriendo
 
-### `npm run eject`
+### Pasos de Instalación
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. **Clonar el repositorio**
+```bash
+git clone <repository-url>
+cd zugarez-FRONT
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. **Instalar dependencias**
+```bash
+npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. **Configurar variables de entorno**
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Crear un archivo `.env` en la raíz del proyecto:
 
-## Learn More
+```env
+REACT_APP_API_BASE=https://better-billi-zugarez-sys-ed7b78de.koyeb.app
+# o para desarrollo local:
+# REACT_APP_API_BASE=http://localhost:8080
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+4. **Iniciar el servidor de desarrollo**
+```bash
+npm start
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+La aplicación estará disponible en `http://localhost:3000`
 
-### Code Splitting
+## 📜 Scripts Disponibles
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+npm start          # Inicia el servidor de desarrollo
+npm test           # Ejecuta los tests
+npm run build      # Compila para producción
+npm run eject      # Expone la configuración de Webpack
+```
 
-### Analyzing the Bundle Size
+## 🔐 Sistema de Autenticación
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Características JWT
+- ✅ Login y registro de usuarios
+- ✅ Gestión automática de tokens JWT
+- ✅ Verificación de expiración de tokens
+- ✅ Logout automático por inactividad (100 minutos)
+- ✅ Protección de rutas por rol
+- ✅ Interceptor de peticiones HTTP
+- ✅ Manejo de cuentas desactivadas
 
-### Making a Progressive Web App
+### Roles de Usuario
+- **ROLE_USER**: Cliente regular
+- **ROLE_ADMIN**: Administrador del sistema
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Para más detalles, consultar [JWT_INTEGRATION.md](JWT_INTEGRATION.md)
 
-### Advanced Configuration
+## 🛒 Sistema de Carrito de Compras
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Funcionalidades
+- Agregar/eliminar productos
+- Actualizar cantidades
+- Persistencia en localStorage
+- Validación de stock
+- Integración con Mercado Pago
+- Notificaciones de pago en tiempo real
 
-### Deployment
+## 📦 Módulo de Inventario
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Componentes
+- **Inventario Real**: Vista del inventario actual
+- **Lotes**: Gestión de lotes de productos
+- **Movimientos**: Registro de entradas/salidas
+- **Remisiones**: Gestión de documentos de envío
 
-### `npm run build` fails to minify
+## 💳 Integración de Pagos
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Mercado Pago
+- Flujo completo de pago
+- Notificaciones de estado
+- Manejo de errores
+- Confirmación de pedidos
+- Limpieza automática del carrito
+
+### Estados de Pago
+- ✅ **Aprobado**: Pago exitoso
+- ⏳ **Pendiente**: En proceso
+- ❌ **Rechazado**: Pago fallido
+
+## 🎨 Accesibilidad
+
+### Widget de Accesibilidad
+- Aumento/disminución del tamaño de fuente
+- Modo escala de grises
+- Botón flotante siempre visible
+- Configuración persistente
+
+## 🔌 API y Endpoints
+
+### Autenticación
+```
+POST /auth/login           # Iniciar sesión
+POST /auth/create-user     # Registrar usuario
+POST /auth/logout          # Cerrar sesión
+```
+
+### Productos
+```
+GET    /api/products       # Listar productos
+POST   /api/products       # Crear producto
+PUT    /api/products/{id}  # Actualizar producto
+DELETE /api/products/{id}  # Eliminar producto
+```
+
+### Pedidos
+```
+GET    /api/orders         # Listar pedidos
+POST   /api/orders         # Crear pedido
+PUT    /api/orders/{id}    # Actualizar pedido
+```
+
+### Inventario
+```
+GET    /api/inventory      # Consultar inventario
+POST   /api/lotes          # Crear lote
+GET    /api/movimientos    # Listar movimientos
+```
+
+## 🧪 Testing
+
+El proyecto incluye configuración para tests con Jest y React Testing Library:
+
+```bash
+npm test
+```
+
+## 🏗️ Build y Despliegue
+
+### Compilar para Producción
+```bash
+npm run build
+```
+
+Esto crea una carpeta `build/` optimizada lista para desplegar.
+
+### Despliegue
+- Puede desplegarse en Vercel, Netlify, AWS S3, etc.
+- Asegurar que las variables de entorno estén configuradas
+- Configurar el backend CORS para aceptar el dominio de producción
+
+## 🔧 Configuración Avanzada
+
+### Proxy de Desarrollo
+Si necesitas configurar un proxy para desarrollo, agrega en `package.json`:
+
+```json
+"proxy": "http://localhost:8080"
+```
+
+### Variables de Entorno
+- `REACT_APP_API_BASE`: URL del backend
+- Cualquier variable debe comenzar con `REACT_APP_`
+
+## 📱 Responsive Design
+
+El sistema está completamente optimizado para:
+- 📱 Móviles (320px+)
+- 📱 Tablets (768px+)
+- 💻 Desktop (1024px+)
+- 🖥️ Large screens (1440px+)
+
+## 🐛 Solución de Problemas
+
+### Error de CORS
+Si encuentras errores de CORS, verifica que el backend tenga configurado correctamente:
+```java
+@CrossOrigin(origins = "http://localhost:3000")
+```
+
+### Token Expirado
+El sistema maneja automáticamente tokens expirados y redirige al login.
+
+### Problemas con Mercado Pago
+- Verifica las credenciales en el backend
+- Asegura que el webhook esté configurado correctamente
+- Revisa la consola del navegador para errores
+
+## 👥 Contribución
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto es privado y pertenece a Zugarez.
+
+## 📞 Soporte
+
+Para soporte técnico, contactar al equipo de desarrollo.
+
+## 🔄 Changelog
+
+### Versión 0.1.0 (Actual)
+- ✅ Sistema de autenticación JWT completo
+- ✅ CRUD de productos
+- ✅ Carrito de compras
+- ✅ Integración con Mercado Pago
+- ✅ Gestión de inventario
+- ✅ Panel de administración
+- ✅ Widget de accesibilidad
+- ✅ Sistema de notificaciones
+
+## 🎓 Desarrollado por
+
+Proyecto de Software III - Universidad 2025-2
