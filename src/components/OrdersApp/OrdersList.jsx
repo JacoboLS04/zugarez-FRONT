@@ -33,18 +33,32 @@ const OrdersList = () => {
         return;
       }
 
-      console.log(`📦 Cargando órdenes... ${isAdmin ? '[MODO ADMIN]' : '[MODO USUARIO]'}`);
+      console.log('👤 Usuario:', user);
+      console.log('🔐 Es admin:', isAdmin);
+      console.log('📦 Cargando órdenes...');
 
-      // Si es admin, cargar TODAS las órdenes
-      const data = isAdmin 
-        ? await paymentService.getAllOrders(token)
-        : await paymentService.getMyOrders(token);
+      let data;
+      
+      // Intentar cargar según rol
+      if (isAdmin) {
+        try {
+          console.log('🔑 Intentando cargar TODAS las órdenes (modo admin)...');
+          data = await paymentService.getAllOrders(token);
+        } catch (adminError) {
+          console.warn('⚠️ No se pudieron cargar todas las órdenes:', adminError.message);
+          console.log('🔄 Cargando solo órdenes del usuario...');
+          data = await paymentService.getMyOrders(token);
+        }
+      } else {
+        data = await paymentService.getMyOrders(token);
+      }
       
       console.log(`✅ ${data.length} órdenes cargadas`);
-      setOrders(data);
+      setOrders(data || []);
     } catch (err) {
-      console.error('❌ Error:', err);
-      setError('Error: ' + err.message);
+      console.error('❌ Error cargando órdenes:', err);
+      setError('Error al cargar pedidos: ' + err.message);
+      setOrders([]);
     } finally {
       setLoading(false);
     }
