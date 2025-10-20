@@ -84,11 +84,9 @@ export const paymentService = {
   // Obtener TODAS las órdenes (solo admin)
   async getAllOrders(token) {
     console.log('📦 [ADMIN] Cargando todas las órdenes del sistema...');
-    console.log('🔑 Token:', token ? 'Presente' : 'Ausente');
     
     try {
-      // Intentar endpoint específico de admin primero
-      let response = await fetch(`${API_URL}/payment/admin/orders`, {
+      const response = await fetch(`${API_URL}/payment/orders`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -96,57 +94,29 @@ export const paymentService = {
         }
       });
 
-      // Si no existe ese endpoint (404), intentar con parámetro
-      if (response.status === 404) {
-        console.log('⚠️ Endpoint /admin/orders no existe, probando con parámetro...');
-        response = await fetch(`${API_URL}/payment/orders?all=true`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-      }
-
       console.log('📡 Response status:', response.status);
 
       if (response.status === 403) {
         const data = await response.json();
         console.error('❌ Acceso denegado:', data);
-        throw new Error(data.error || 'Acceso denegado - Verificar permisos de admin');
+        throw new Error(data.error || 'Acceso denegado');
       }
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Error response:', errorText);
-        
-        // Si sigue sin funcionar, mostrar mensaje claro
-        throw new Error(
-          'El backend no está devolviendo todas las órdenes para admin. ' +
-          'Por favor, contacta al desarrollador del backend para que modifique ' +
-          'el endpoint /payment/orders para que devuelva todas las órdenes cuando el usuario es admin.'
-        );
+        throw new Error(`Error ${response.status}: Error al obtener órdenes`);
       }
 
       const data = await response.json();
-      console.log('✅ [ADMIN] Respuesta del servidor:', {
-        cantidadOrdenes: Array.isArray(data) ? data.length : 'No es array',
-        tipoData: typeof data,
-        primerosElementos: Array.isArray(data) ? data.slice(0, 2) : data
-      });
+      console.log(`✅ [ADMIN] ${data.length} órdenes cargadas correctamente`);
       
       if (!Array.isArray(data)) {
         console.error('❌ La respuesta no es un array:', data);
-        throw new Error('Formato de respuesta inválido del servidor');
+        throw new Error('Formato de respuesta inválido');
       }
       
-      console.log(`✅ [ADMIN] ${data.length} órdenes cargadas correctamente`);
       return data;
     } catch (error) {
-      console.error('❌ Error en getAllOrders:', {
-        mensaje: error.message,
-        stack: error.stack
-      });
+      console.error('❌ Error en getAllOrders:', error.message);
       throw error;
     }
   },

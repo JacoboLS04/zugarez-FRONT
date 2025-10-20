@@ -25,6 +25,8 @@ const OrdersList = () => {
     try {
       setLoading(true);
       setError(null);
+      setOrders([]); // Limpiar órdenes anteriores
+      
       const token = authService.getToken();
       
       if (!token) {
@@ -33,43 +35,34 @@ const OrdersList = () => {
         return;
       }
 
-      console.log('👤 Usuario:', user);
+      console.log('👤 Usuario:', user?.username);
       console.log('🔐 Es admin:', isAdmin);
-      console.log('🎫 Token presente:', !!token);
 
       let data;
       
       if (isAdmin) {
         console.log('🔑 Cargando TODAS las órdenes (modo admin)...');
-        try {
-          data = await paymentService.getAllOrders(token);
-          console.log('📊 Datos recibidos:', {
-            esArray: Array.isArray(data),
-            cantidad: data?.length,
-            tipo: typeof data
-          });
-        } catch (adminError) {
-          console.error('❌ Error cargando órdenes de admin:', adminError);
-          throw adminError;
-        }
+        data = await paymentService.getAllOrders(token);
       } else {
         console.log('📦 Cargando órdenes del usuario...');
         data = await paymentService.getMyOrders(token);
       }
       
-      // Validar que data sea un array
+      console.log('📊 Datos recibidos:', {
+        esArray: Array.isArray(data),
+        cantidad: data?.length,
+        primeraOrden: data?.[0]
+      });
+      
       if (!Array.isArray(data)) {
-        console.error('❌ Los datos no son un array:', data);
-        throw new Error('Formato de datos inválido recibido del servidor');
+        throw new Error('Formato de datos inválido');
       }
       
       console.log(`✅ ${data.length} órdenes cargadas exitosamente`);
       setOrders(data);
+      setError(null); // Asegurar que no hay error
     } catch (err) {
-      console.error('❌ Error cargando órdenes:', {
-        mensaje: err.message,
-        stack: err.stack
-      });
+      console.error('❌ Error cargando órdenes:', err.message);
       setError(`Error al cargar pedidos: ${err.message}`);
       setOrders([]);
     } finally {
