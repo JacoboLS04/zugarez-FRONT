@@ -57,7 +57,7 @@ export const paymentService = {
   },
 
   async getMyOrders(token) {
-    console.log('📦 Cargando historial de pedidos...');
+    console.log('📦 Cargando mis pedidos...');
     
     const response = await fetch(`${API_URL}/payment/orders`, {
       method: 'GET',
@@ -78,6 +78,32 @@ export const paymentService = {
 
     const data = await response.json();
     console.log(`✅ ${data.length} pedidos cargados`);
+    return data;
+  },
+
+  // NUEVO: Obtener TODAS las órdenes (solo admin)
+  async getAllOrders(token) {
+    console.log('📦 [ADMIN] Cargando TODAS las órdenes...');
+    
+    const response = await fetch(`${API_URL}/payment/orders/all`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 403) {
+      const data = await response.json();
+      throw new Error(data.error || 'Acceso denegado - Solo admin');
+    }
+
+    if (!response.ok) {
+      throw new Error('Error al obtener todas las órdenes');
+    }
+
+    const data = await response.json();
+    console.log(`✅ [ADMIN] ${data.length} órdenes totales cargadas`);
     return data;
   },
 

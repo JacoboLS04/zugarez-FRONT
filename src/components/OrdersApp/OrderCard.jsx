@@ -1,6 +1,6 @@
 import React from 'react';
 
-const OrderCard = ({ order }) => {
+const OrderCard = ({ order, isAdmin = false }) => {
   const getStatusBadgeClass = (status) => {
     switch (status) {
       case 'PENDING': return 'bg-warning text-dark';
@@ -39,10 +39,26 @@ const OrderCard = ({ order }) => {
     <div className="card order-card shadow-sm">
       <div className="card-header d-flex justify-content-between align-items-center">
         <div>
-          <h5 className="mb-0">Pedido #{order.id}</h5>
+          <h5 className="mb-0">
+            Pedido #{order.id}
+          </h5>
           <small className="text-muted">
             {new Date(order.createdAt).toLocaleString('es-CO')}
           </small>
+          {isAdmin && order.user && (
+            <div className="mt-2">
+              <span className="badge bg-info me-2">
+                <i className="bi bi-person me-1"></i>
+                {order.user.username}
+              </span>
+              {order.user.email && (
+                <span className="badge bg-secondary">
+                  <i className="bi bi-envelope me-1"></i>
+                  {order.user.email}
+                </span>
+              )}
+            </div>
+          )}
         </div>
         <span className={`badge ${getStatusBadgeClass(order.status)}`}>
           {getStatusText(order.status)}
