@@ -54,6 +54,19 @@
   padding: 0.5rem 1rem;
 }
 
+.alert-info {
+  border-left: 4px solid #0dcaf0;
+}
+
+.alert-info .btn {
+  white-space: nowrap;
+}
+
+.orders-list .alert {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
 @media (max-width: 768px) {
   .filter-panel {
     margin-bottom: 20px;

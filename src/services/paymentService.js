@@ -83,11 +83,12 @@ export const paymentService = {
 
   // Obtener TODAS las órdenes (solo admin)
   async getAllOrders(token) {
-    console.log('📦 [ADMIN] Intentando cargar TODAS las órdenes...');
+    console.log('📦 [ADMIN] Cargando todas las órdenes del sistema...');
     
     try {
-      // Intentar endpoint de admin
-      const response = await fetch(`${API_URL}/payment/orders/all`, {
+      // El backend debe detectar automáticamente si es admin
+      // y devolver todas las órdenes, no solo las del usuario
+      const response = await fetch(`${API_URL}/payment/orders`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -97,36 +98,23 @@ export const paymentService = {
 
       console.log('📡 Response status:', response.status);
 
-      if (response.status === 404) {
-        console.warn('⚠️ Endpoint /orders/all no existe, usando /orders como fallback');
-        // Fallback: usar endpoint normal
-        return await this.getMyOrders(token);
-      }
-
       if (response.status === 403) {
         const data = await response.json();
-        throw new Error(data.error || 'Acceso denegado - Solo administradores');
+        throw new Error(data.error || 'Acceso denegado');
       }
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error('❌ Error response:', errorText);
-        throw new Error('Error al obtener todas las órdenes');
+        throw new Error('Error al obtener órdenes');
       }
 
       const data = await response.json();
-      console.log(`✅ [ADMIN] ${data.length} órdenes totales cargadas`);
+      console.log(`✅ [ADMIN] ${data.length} órdenes cargadas`);
       return data;
     } catch (error) {
       console.error('❌ Error en getAllOrders:', error);
-      console.log('🔄 Intentando fallback a endpoint normal...');
-      
-      // Si falla, usar endpoint normal como fallback
-      try {
-        return await this.getMyOrders(token);
-      } catch (fallbackError) {
-        throw new Error('No se pudieron cargar las órdenes: ' + error.message);
-      }
+      throw error;
     }
   },
 

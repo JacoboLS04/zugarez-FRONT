@@ -35,21 +35,14 @@ const OrdersList = () => {
 
       console.log('👤 Usuario:', user);
       console.log('🔐 Es admin:', isAdmin);
-      console.log('📦 Cargando órdenes...');
 
       let data;
       
-      // Intentar cargar según rol
       if (isAdmin) {
-        try {
-          console.log('🔑 Intentando cargar TODAS las órdenes (modo admin)...');
-          data = await paymentService.getAllOrders(token);
-        } catch (adminError) {
-          console.warn('⚠️ No se pudieron cargar todas las órdenes:', adminError.message);
-          console.log('🔄 Cargando solo órdenes del usuario...');
-          data = await paymentService.getMyOrders(token);
-        }
+        console.log('🔑 Cargando TODAS las órdenes (modo admin)...');
+        data = await paymentService.getAllOrders(token);
       } else {
+        console.log('📦 Cargando órdenes del usuario...');
         data = await paymentService.getMyOrders(token);
       }
       
@@ -116,22 +109,30 @@ const OrdersList = () => {
   return (
     <div className="orders-list">
       {/* Header con badge de admin */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          {isAdmin && (
-            <div className="alert alert-info mb-3">
+      <div className="mb-4">
+        {isAdmin && (
+          <div className="alert alert-info d-flex justify-content-between align-items-center">
+            <div>
               <i className="bi bi-shield-check me-2"></i>
               <strong>Modo Administrador:</strong> Viendo todas las órdenes del sistema
             </div>
-          )}
-          <p className="text-muted mb-0">
-            Mostrando {filteredOrders.length} de {orders.length} órdenes
-          </p>
-        </div>
-        <button className="btn btn-primary" onClick={loadOrders}>
-          <i className="bi bi-arrow-clockwise me-2"></i>
-          Actualizar
-        </button>
+            <button className="btn btn-primary btn-sm" onClick={loadOrders}>
+              <i className="bi bi-arrow-clockwise me-2"></i>
+              Actualizar
+            </button>
+          </div>
+        )}
+        {!isAdmin && (
+          <div className="d-flex justify-content-between align-items-center">
+            <p className="text-muted mb-0">
+              Mostrando {filteredOrders.length} de {orders.length} órdenes
+            </p>
+            <button className="btn btn-primary" onClick={loadOrders}>
+              <i className="bi bi-arrow-clockwise me-2"></i>
+              Actualizar
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Estadísticas */}
