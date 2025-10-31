@@ -3,7 +3,7 @@ import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
 import { validaciones } from '../../utils/validations';
-import type { Empleado, TipoContrato } from '../../types';
+import { TipoContrato, type Empleado } from '../../types';
 
 interface EmpleadoFormProps {
   empleado?: Empleado;
