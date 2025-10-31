@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { nominaService } from '../services/nomina.service';
-import type { Nomina, EstadoNomina } from '../types';
+import type { EstadoNomina } from '../types';
 
 interface CalcularNominaParams {
   empleadoId: number;
