@@ -312,3 +312,22 @@ Para soporte técnico, contactar al equipo de desarrollo.
 ## 🎓 Desarrollado por
 
 Proyecto de Software III - Universidad 2025-2
+
+# Sistema de Gestión de Nómina - Frontend
+
+Frontend desarrollado con React + TypeScript + Vite + Tailwind CSS
+
+## 🚀 Instalación
+
+```bash
+# Instalar dependencias
+npm install
+
+# Configurar variables de entorno
+cp .env.example .env
+
+# Ejecutar en modo desarrollo
+npm run dev
+```
+
+## 📁 Estructura del Proyecto
