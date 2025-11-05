@@ -5,7 +5,38 @@ import { Menu, X } from "lucide-react";
 function Sidebar({ active, onSelect }) {
   const [open, setOpen] = useState(false);
   const [nominaExpanded, setNominaExpanded] = useState(() => (active || "").startsWith("nomina-"));
-  const userRole = localStorage.getItem("userRole");
+  // Robust ADMIN detection: localStorage keys + optional JWT payload
+  const isAdmin = (() => {
+    const pick = (...vals) => vals.find(v => typeof v === "string" && v.trim().length > 0) || "";
+    const fromLocal =
+      pick(localStorage.getItem("userRole"), localStorage.getItem("role"), localStorage.getItem("rol"), localStorage.getItem("user_type"));
+    const fromUserJson = (() => {
+      try {
+        const raw = localStorage.getItem("user") || localStorage.getItem("userInfo");
+        if (!raw) return "";
+        const u = JSON.parse(raw);
+        return pick(u?.role, Array.isArray(u?.roles) ? u.roles[0] : u?.roles, Array.isArray(u?.authorities) ? u.authorities[0] : u?.authorities);
+      } catch {
+        return "";
+      }
+    })();
+    const fromJwt = (() => {
+      const t = localStorage.getItem("token");
+      if (!t || !t.includes(".")) return "";
+      try {
+        const payload = JSON.parse(atob(t.split(".")[1]));
+        return pick(
+          payload?.role,
+          Array.isArray(payload?.roles) ? payload.roles[0] : payload?.roles,
+          Array.isArray(payload?.authorities) ? payload.authorities[0] : payload?.authorities
+        );
+      } catch {
+        return "";
+      }
+    })();
+    const roleRaw = pick(fromLocal, fromUserJson, fromJwt);
+    return String(roleRaw).toLowerCase().includes("admin");
+  })();
 
   return (
     <>
@@ -50,8 +81,8 @@ function Sidebar({ active, onSelect }) {
             Pedidos
           </li>
 
-          {/* NEW: Sección Nómina (solo ADMIN) */}
-          {userRole === "ADMIN" && (
+          {/* Sección Nómina (visible si el rol contiene "admin") */}
+          {isAdmin && (
             <div className="menu-section-nomina">
               <button
                 className="menu-toggle sidebar__item"
