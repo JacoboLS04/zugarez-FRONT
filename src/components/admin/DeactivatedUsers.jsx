@@ -23,13 +23,13 @@ export default function DeactivatedUsers() {
         console.error('Backend response data:', error.response.data);
         console.error('Backend status:', error.response.status);
         const errorMsg = error.response.data?.error || error.response.data?.message || 'Error desconocido';
-        alert(`Error al cargar usuarios desactivados (status ${error.response.status}): ${errorMsg}`);
+        window.alert(`Error al cargar usuarios desactivados (status ${error.response.status}): ${errorMsg}`);
       } else if (error.request) {
         console.error('No response from server:', error.request);
-        alert('Error: No se pudo conectar con el servidor. Verifica tu conexión.');
+        window.alert('Error: No se pudo conectar con el servidor. Verifica tu conexión.');
       } else {
         console.error('Error:', error.message);
-        alert(`Error al cargar usuarios desactivados: ${error.message}`);
+        window.alert(`Error al cargar usuarios desactivados: ${error.message}`);
       }
     } finally {
       setLoading(false);
@@ -42,15 +42,15 @@ export default function DeactivatedUsers() {
     try {
       console.log(`Reactivating user ${userId} via /api/admin/users/${userId}/reactivate`);
       await api.post(`/api/admin/users/${userId}/reactivate`);
-      alert(`Usuario "${username}" reactivado correctamente`);
+      window.alert(`Usuario "${username}" reactivado correctamente`);
       await loadDeactivatedUsers();
     } catch (error) {
       console.error('Error al reactivar:', error);
       if (error.response) {
         const errorMsg = error.response.data?.error || error.response.data?.message || 'Error desconocido';
-        alert(`Error al reactivar usuario: ${errorMsg}`);
+        window.alert(`Error al reactivar usuario: ${errorMsg}`);
       } else {
-        alert('Error al reactivar usuario. Verifica tu conexión.');
+        window.alert('Error al reactivar usuario. Verifica tu conexión.');
       }
     } finally {
       setProcessing(null);
