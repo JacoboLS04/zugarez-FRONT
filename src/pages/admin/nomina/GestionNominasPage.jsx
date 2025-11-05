@@ -18,25 +18,25 @@ const GestionNominasPage = () => {
   };
 
   const aprobarNomina = async (id) => {
-    if (!confirm('¿Está seguro de aprobar esta nómina?')) return;
+    if (!window.confirm('¿Está seguro de aprobar esta nómina?')) return;
     try {
       await api.put(`/nomina/${id}/aprobar`);
-      alert('Nómina aprobada exitosamente');
+      window.alert('Nómina aprobada exitosamente');
       cargarNominas();
     } catch (error) {
-      alert('Error al aprobar nómina: ' + (error.response?.data?.message || ''));
+      window.alert('Error al aprobar nómina: ' + (error.response?.data?.message || ''));
     }
   };
 
   const registrarPago = async (id) => {
-    const numeroTransaccion = prompt('Ingrese el número de transacción:');
+    const numeroTransaccion = window.prompt('Ingrese el número de transacción:');
     if (!numeroTransaccion) return;
     try {
       await api.put(`/nomina/${id}/registrar-pago`, { numeroTransaccion });
-      alert('Pago registrado exitosamente');
+      window.alert('Pago registrado exitosamente');
       cargarNominas();
     } catch (error) {
-      alert('Error al registrar pago: ' + (error.response?.data?.message || ''));
+      window.alert('Error al registrar pago: ' + (error.response?.data?.message || ''));
     }
   };
 
@@ -51,7 +51,7 @@ const GestionNominasPage = () => {
       link.click();
       link.remove();
     } catch (error) {
-      alert('Error al descargar comprobante');
+      window.alert('Error al descargar comprobante');
     }
   };
 
