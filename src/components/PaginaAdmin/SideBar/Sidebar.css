@@ -102,10 +102,192 @@ border-bottom: 2px solid rgba(255,255,255,0.2);
   }
 }
 
-/* ESTILOS PARA LA NUEVA SECCIÓN DE NÓMINA */
-.menu-section-nomina {
-  margin: 0;
+/* ===== Mejoras visuales área derecha ===== */
+.admin-layout {
+  display: flex;
 }
+
+.admin-content-panel {
+  flex: 1;
+  padding: 1.25rem 1.5rem;
+  /* evitar que el contenido se pegue al borde en móvil */
+  min-width: 0;
+}
+
+/* Encabezados de página */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin: 0 0 1rem 0;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+/* Botones */
+.btn-primary,
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  padding: .6rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: filter .2s ease, transform .02s ease;
+}
+
+.btn-primary { background: var(--sidebar-bg); color: #fff; }
+.btn-secondary { background: #6b7280; color: #fff; }
+.btn-success { background: #10b981; color: #fff; }
+.btn-danger  { background: #ef4444; color: #fff; }
+.btn-info    { background: #3b82f6; color: #fff; }
+
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-success:hover,
+.btn-danger:hover,
+.btn-info:hover {
+  filter: brightness(1.05);
+}
+
+.btn-sm { padding: .35rem .6rem; border-radius: 6px; font-size: .85rem; }
+.btn-large { padding: .8rem 1.1rem; }
+
+/* Formularios */
+.form-row {
+  display: flex;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  min-width: 220px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+select,
+.form-control {
+  background: rgba(255,255,255,0.9);
+  color: #111;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: .55rem .7rem;
+  outline: none;
+  min-height: 38px;
+}
+
+input:focus,
+select:focus,
+.form-control:focus {
+  border-color: var(--sidebar-active);
+  box-shadow: 0 0 0 3px rgba(212, 197, 189, .35);
+}
+
+/* Tabla de datos */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255,255,255,0.9);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  margin-top: .75rem;
+}
+
+.data-table thead th {
+  background: var(--sidebar-bg);
+  color: #fff;
+  text-align: left;
+  padding: .75rem .9rem;
+  font-weight: 700;
+}
+
+.data-table tbody td {
+  padding: .65rem .9rem;
+  border-bottom: 1px solid #eee;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background: rgba(0,0,0,0.02);
+}
+
+.data-table tbody tr:hover {
+  background: rgba(0,0,0,0.04);
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: .25rem .5rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.badge-success { background: #10b981; }
+.badge-danger  { background: #ef4444; }
+.badge-info    { background: #3b82f6; }
+.badge-warning { background: #f59e0b; }
+
+/* Estados usados en Gestión de Nóminas */
+.badge-calculada { background: #6366f1; }
+.badge-aprobada  { background: #10b981; }
+.badge-pagada    { background: #0ea5e9; }
+.badge-cancelada { background: #ef4444; }
+
+/* Modal simple */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2500;
+}
+
+.modal-content {
+  background: #fff;
+  color: #111;
+  width: min(780px, 92vw);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+  margin-top: .75rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: .6rem;
+}
+
+/* ===== Mejora del submenú de Nómina ===== */
+.menu-section-nomina { margin: 0; }
 
 .menu-toggle {
   width: 100%;
@@ -114,7 +296,7 @@ border-bottom: 2px solid rgba(255,255,255,0.2);
   align-items: center;
   background: none;
   border: none;
-  padding: 0.75rem 1rem; /* similar a .sidebar__item */
+  padding: 0.75rem 1rem;
   color: inherit;
   cursor: pointer;
   font: inherit;
@@ -123,43 +305,35 @@ border-bottom: 2px solid rgba(255,255,255,0.2);
   text-align: left;
 }
 
-.menu-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
+.menu-toggle:hover { background-color: rgba(255, 255, 255, 0.2); }
 
-.menu-toggle .arrow {
-  transition: transform 0.3s;
-  font-size: 12px;
-  margin-left: auto;
-}
-
-.menu-toggle .arrow.expanded {
-  transform: rotate(180deg);
-}
+.menu-toggle .arrow { transition: transform 0.3s; font-size: 12px; margin-left: auto; }
+.menu-toggle .arrow.expanded { transform: rotate(180deg); }
 
 .submenu {
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 0;
+  background-color: rgba(0, 0, 0, 0.08);
+  padding: 6px 6px;
   margin-top: 6px;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .submenu-item {
-  display: block;
-  padding: 10px 20px 10px 40px;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: 10px 14px 10px 28px;
   color: inherit;
   text-decoration: none;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.25s ease;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, transform .02s ease;
 }
 
-.submenu-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
+.submenu-item:hover { background-color: rgba(255, 255, 255, 0.15); }
 .submenu-item.active {
-  background-color: rgba(255, 255, 255, 0.2);
-  font-weight: bold;
+  background-color: var(--sidebar-active);
+  color: var(--sidebar-bg);
+  font-weight: 700;
 }

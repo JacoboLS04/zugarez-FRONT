@@ -36,7 +36,9 @@ function AdminLayout() {
   return (
     <div className="admin-layout">
       <Sidebar active={activeSection} onSelect={handleSelect} />
-      {activeSection.startsWith("nomina-") ? renderNomina() : <MainContent section={activeSection} />}
+      <div className="admin-content-panel">
+        {activeSection.startsWith("nomina-") ? renderNomina() : <MainContent section={activeSection} />}
+      </div>
     </div>
   );
 }
