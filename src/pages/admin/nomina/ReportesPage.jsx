@@ -8,14 +8,16 @@ const ReportesPage = () => {
 
   const generarReporte = async () => {
     if (!fechaInicio || !fechaFin) {
-      alert('Seleccione el rango de fechas');
+      window.alert('Seleccione el rango de fechas');
       return;
     }
     try {
-      const response = await api.get('/reportes/nomina/periodo', { params: { inicio: fechaInicio, fin: fechaFin } });
+      const response = await api.get('/api/reportes/nomina/periodo', {
+        params: { inicio: fechaInicio, fin: fechaFin }
+      });
       setReporte(response.data);
     } catch (error) {
-      alert('Error al generar reporte: ' + (error.response?.data?.message || ''));
+      window.alert('Error al generar reporte: ' + (error.response?.data?.message || ''));
     }
   };
 

@@ -9,7 +9,9 @@ const GestionNominasPage = () => {
 
   const cargarNominas = async () => {
     try {
-      const url = filtroEstado ? `/nomina/estado/${filtroEstado}` : '/nomina/empleado/1';
+      const url = filtroEstado
+        ? `/api/nomina/estado/${filtroEstado}`
+        : '/api/nomina/empleado/1';
       const response = await api.get(url);
       setNominas(response.data);
     } catch (error) {
@@ -20,7 +22,7 @@ const GestionNominasPage = () => {
   const aprobarNomina = async (id) => {
     if (!window.confirm('¿Está seguro de aprobar esta nómina?')) return;
     try {
-      await api.put(`/nomina/${id}/aprobar`);
+      await api.put(`/api/nomina/${id}/aprobar`);
       window.alert('Nómina aprobada exitosamente');
       cargarNominas();
     } catch (error) {
@@ -32,7 +34,7 @@ const GestionNominasPage = () => {
     const numeroTransaccion = window.prompt('Ingrese el número de transacción:');
     if (!numeroTransaccion) return;
     try {
-      await api.put(`/nomina/${id}/registrar-pago`, { numeroTransaccion });
+      await api.put(`/api/nomina/${id}/registrar-pago`, { numeroTransaccion });
       window.alert('Pago registrado exitosamente');
       cargarNominas();
     } catch (error) {
@@ -42,7 +44,7 @@ const GestionNominasPage = () => {
 
   const descargarComprobante = async (id) => {
     try {
-      const response = await api.get(`/comprobantes/nomina/${id}/pdf`, { responseType: 'blob' });
+      const response = await api.get(`/api/comprobantes/nomina/${id}/pdf`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;

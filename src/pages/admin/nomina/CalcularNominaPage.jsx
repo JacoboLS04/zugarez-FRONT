@@ -16,7 +16,7 @@ const CalcularNominaPage = () => {
 
   const cargarEmpleados = async () => {
     try {
-      const response = await api.get('/empleados');
+      const response = await api.get('/api/empleados');
       setEmpleados(response.data);
     } catch (error) {
       console.error('Error al cargar empleados:', error);
@@ -26,7 +26,7 @@ const CalcularNominaPage = () => {
   const handleCalcular = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/nomina/calcular', {
+      const response = await api.post('/api/nomina/calcular', {
         empleadoId: parseInt(formData.empleadoId),
         periodoInicio: formData.periodoInicio,
         periodoFin: formData.periodoFin,
@@ -34,9 +34,9 @@ const CalcularNominaPage = () => {
         bonificaciones: parseFloat(formData.bonificaciones)
       });
       setResultado(response.data);
-      alert('Nómina calculada exitosamente');
+      window.alert('Nómina calculada exitosamente');
     } catch (error) {
-      alert('Error al calcular nómina: ' + (error.response?.data?.message || ''));
+      window.alert('Error al calcular nómina: ' + (error.response?.data?.message || ''));
     }
   };
 

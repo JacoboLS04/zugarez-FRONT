@@ -14,7 +14,7 @@ const AsistenciaPage = () => {
 
   const cargarEmpleados = async () => {
     try {
-      const response = await api.get('/empleados');
+      const response = await api.get('/api/empleados');
       setEmpleados(response.data);
     } catch (error) {
       console.error('Error al cargar empleados:', error);
@@ -24,7 +24,7 @@ const AsistenciaPage = () => {
   const cargarRegistrosHoy = async () => {
     const hoy = new Date().toISOString().split('T')[0];
     try {
-      const response = await api.get(`/asistencia/empleado/1?inicio=${hoy}&fin=${hoy}`);
+      const response = await api.get(`/api/asistencia/empleado/1?inicio=${hoy}&fin=${hoy}`);
       setRegistros(response.data);
     } catch (error) {
       console.error('Error al cargar registros:', error);
@@ -37,24 +37,24 @@ const AsistenciaPage = () => {
       return;
     }
     try {
-      await api.post('/asistencia/entrada', {
+      await api.post('/api/asistencia/entrada', {
         empleadoId: parseInt(selectedEmpleado),
         turno: turno
       });
-      alert('Entrada registrada exitosamente');
+      window.alert('Entrada registrada exitosamente');
       cargarRegistrosHoy();
     } catch (error) {
-      alert('Error al registrar entrada: ' + (error.response?.data?.message || ''));
+      window.alert('Error al registrar entrada: ' + (error.response?.data?.message || ''));
     }
   };
 
   const registrarSalida = async (registroId) => {
     try {
-      await api.put(`/asistencia/${registroId}/salida`);
-      alert('Salida registrada exitosamente');
+      await api.put(`/api/asistencia/${registroId}/salida`);
+      window.alert('Salida registrada exitosamente');
       cargarRegistrosHoy();
     } catch (error) {
-      alert('Error al registrar salida: ' + (error.response?.data?.message || ''));
+      window.alert('Error al registrar salida: ' + (error.response?.data?.message || ''));
     }
   };
 

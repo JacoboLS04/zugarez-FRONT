@@ -22,7 +22,7 @@ const EmpleadosPage = () => {
 
   const cargarEmpleados = async () => {
     try {
-      const response = await api.get('/empleados');
+      const response = await api.get('/api/empleados');
       setEmpleados(response.data);
     } catch (error) {
       console.error('Error al cargar empleados:', error);
@@ -32,13 +32,13 @@ const EmpleadosPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/empleados', formData);
-      alert('Empleado creado exitosamente');
+      await api.post('/api/empleados', formData);
+      window.alert('Empleado creado exitosamente');
       setShowModal(false);
       cargarEmpleados();
       resetForm();
     } catch (error) {
-      alert('Error al crear empleado: ' + (error.response?.data?.message || ''));
+      window.alert('Error al crear empleado: ' + (error.response?.data?.message || ''));
     }
   };
 
