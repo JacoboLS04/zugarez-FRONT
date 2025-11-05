@@ -129,7 +129,7 @@ const OrdersList = () => {
               <i className="bi bi-shield-check me-2"></i>
               <strong>Modo Administrador:</strong> Viendo todas las órdenes del sistema
             </div>
-            <button className="btn btn-primary btn-sm" onClick={loadOrders}>
+            <button className="btn btn-primary btn-sm" onClick={loadOrders}           style={{ fontSize: "1.1rem", padding: "0.6rem 1.2rem" }}>
               <i className="bi bi-arrow-clockwise me-2"></i>
               Actualizar
             </button>
@@ -140,7 +140,8 @@ const OrdersList = () => {
             <p className="text-muted mb-0">
               Mostrando {filteredOrders.length} de {orders.length} órdenes
             </p>
-            <button className="btn btn-primary" onClick={loadOrders}>
+            <button className="btn btn-primary" onClick={loadOrders}
+                      style={{ fontSize: "1.1rem", padding: "0.6rem 1.2rem" }}>
               <i className="bi bi-arrow-clockwise me-2"></i>
               Actualizar
             </button>
