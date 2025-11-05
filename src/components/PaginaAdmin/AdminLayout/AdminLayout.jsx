@@ -3,6 +3,11 @@ import Sidebar from "../SideBar/Sidebar";
 import MainContent from "../MainContent";
 import "../AdminPage.css";
 import { useLocation, useNavigate } from "react-router-dom";
+import EmpleadosPage from "../../../pages/admin/nomina/EmpleadosPage";
+import AsistenciaPage from "../../../pages/admin/nomina/AsistenciaPage";
+import CalcularNominaPage from "../../../pages/admin/nomina/CalcularNominaPage";
+import GestionNominasPage from "../../../pages/admin/nomina/GestionNominasPage";
+import ReportesPage from "../../../pages/admin/nomina/ReportesPage";
 
 function AdminLayout() {
   const [activeSection, setActiveSection] = useState("inventario");
@@ -57,10 +62,31 @@ function AdminLayout() {
     if (navigate && path) navigate(path, { replace: false });
   };
 
+  const renderNomina = () => {
+    switch (activeSection) {
+      case "nomina-empleados":
+        return <EmpleadosPage />;
+      case "nomina-asistencia":
+        return <AsistenciaPage />;
+      case "nomina-calcular":
+        return <CalcularNominaPage />;
+      case "nomina-gestion":
+        return <GestionNominasPage />;
+      case "nomina-reportes":
+        return <ReportesPage />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="admin-layout">
       <Sidebar active={activeSection} onSelect={handleSelect} />
-      <MainContent section={activeSection} />
+      {activeSection.startsWith("nomina-") ? (
+        renderNomina()
+      ) : (
+        <MainContent section={activeSection} />
+      )}
     </div>
   );
 }
