@@ -4,6 +4,8 @@ import { Menu, X } from "lucide-react";
 
 function Sidebar({ active, onSelect }) {
   const [open, setOpen] = useState(false);
+  const [nominaExpanded, setNominaExpanded] = useState(() => (active || "").startsWith("nomina-"));
+  const userRole = localStorage.getItem("userRole");
 
   return (
     <>
@@ -47,15 +49,69 @@ function Sidebar({ active, onSelect }) {
           >
             Pedidos
           </li>
-          <li
-            className={`sidebar__item ${active === "nomina" ? "active" : ""}`}
-            onClick={() => {
-              onSelect("nomina");
-              setOpen(false);
-            }}
-          >
-            Nómina (Proximamente)
-          </li>
+
+          {/* NEW: Sección Nómina (solo ADMIN) */}
+          {userRole === "ADMIN" && (
+            <div className="menu-section-nomina">
+              <button
+                className="menu-toggle sidebar__item"
+                onClick={() => setNominaExpanded((v) => !v)}
+              >
+                <span>💰 Nómina</span>
+                <span className={`arrow ${nominaExpanded ? "expanded" : ""}`}>▼</span>
+              </button>
+
+              {nominaExpanded && (
+                <div className="submenu">
+                  <div
+                    className={`submenu-item ${active === "nomina-empleados" ? "active" : ""}`}
+                    onClick={() => {
+                      onSelect("nomina-empleados");
+                      setOpen(false);
+                    }}
+                  >
+                    👥 Empleados
+                  </div>
+                  <div
+                    className={`submenu-item ${active === "nomina-asistencia" ? "active" : ""}`}
+                    onClick={() => {
+                      onSelect("nomina-asistencia");
+                      setOpen(false);
+                    }}
+                  >
+                    🕐 Asistencia
+                  </div>
+                  <div
+                    className={`submenu-item ${active === "nomina-calcular" ? "active" : ""}`}
+                    onClick={() => {
+                      onSelect("nomina-calcular");
+                      setOpen(false);
+                    }}
+                  >
+                    🧮 Calcular Nómina
+                  </div>
+                  <div
+                    className={`submenu-item ${active === "nomina-gestion" ? "active" : ""}`}
+                    onClick={() => {
+                      onSelect("nomina-gestion");
+                      setOpen(false);
+                    }}
+                  >
+                    📊 Gestión de Nóminas
+                  </div>
+                  <div
+                    className={`submenu-item ${active === "nomina-reportes" ? "active" : ""}`}
+                    onClick={() => {
+                      onSelect("nomina-reportes");
+                      setOpen(false);
+                    }}
+                  >
+                    📈 Reportes
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </ul>
       </aside>
 
