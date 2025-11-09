@@ -8,6 +8,7 @@ import AsistenciaPage from "../../../pages/admin/nomina/AsistenciaPage";
 import CalcularNominaPage from "../../../pages/admin/nomina/CalcularNominaPage";
 import GestionNominasPage from "../../../pages/admin/nomina/GestionNominasPage";
 import ReportesPage from "../../../pages/admin/nomina/ReportesPage";
+import NovedadesPage from "../Novedades/Novedades";
 
 function AdminLayout() {
   const [activeSection, setActiveSection] = useState("inventario");
@@ -29,6 +30,7 @@ function AdminLayout() {
       case "nomina-calcular": return <CalcularNominaPage />;
       case "nomina-gestion": return <GestionNominasPage />;
       case "nomina-reportes": return <ReportesPage />;
+      case "nomina-novedades": return <NovedadesPage />;
       default: return null;
     }
   };

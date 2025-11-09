@@ -88,7 +88,7 @@ function Sidebar({ active, onSelect }) {
                 className="menu-toggle sidebar__item"
                 onClick={() => setNominaExpanded((v) => !v)}
               >
-                <span>💰 Nómina</span>
+                <span>Nómina</span>
                 <span className={`arrow ${nominaExpanded ? "expanded" : ""}`}>▼</span>
               </button>
 
@@ -101,7 +101,7 @@ function Sidebar({ active, onSelect }) {
                       setOpen(false);
                     }}
                   >
-                    👥 Empleados
+                    Empleados
                   </div>
                   <div
                     className={`submenu-item ${active === "nomina-asistencia" ? "active" : ""}`}
@@ -110,7 +110,7 @@ function Sidebar({ active, onSelect }) {
                       setOpen(false);
                     }}
                   >
-                    🕐 Asistencia
+                    Asistencia
                   </div>
                   <div
                     className={`submenu-item ${active === "nomina-calcular" ? "active" : ""}`}
@@ -119,7 +119,7 @@ function Sidebar({ active, onSelect }) {
                       setOpen(false);
                     }}
                   >
-                    🧮 Calcular Nómina
+                    Calcular Nómina
                   </div>
                   <div
                     className={`submenu-item ${active === "nomina-gestion" ? "active" : ""}`}
@@ -128,8 +128,9 @@ function Sidebar({ active, onSelect }) {
                       setOpen(false);
                     }}
                   >
-                    📊 Gestión de Nóminas
+                    Gestión de Nóminas
                   </div>
+
                   <div
                     className={`submenu-item ${active === "nomina-reportes" ? "active" : ""}`}
                     onClick={() => {
@@ -137,7 +138,17 @@ function Sidebar({ active, onSelect }) {
                       setOpen(false);
                     }}
                   >
-                    📈 Reportes
+                    Reportes
+                  </div>
+                  
+                  <div
+                    className={`submenu-item ${active === "nomina-novedades" ? "active" : ""}`}
+                    onClick={() => {
+                      onSelect("nomina-novedades");
+                      setOpen(false);
+                    }}
+                  >
+                    Novedades
                   </div>
                 </div>
               )}
