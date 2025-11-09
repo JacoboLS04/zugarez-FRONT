@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useCallback, useState, useRef } from "react";
 
 export default function ImageCarousel({
   images = [],
@@ -9,15 +9,23 @@ export default function ImageCarousel({
   const count = images.length;
   const timer = useRef(null);
 
-  function next() { setIdx((i) => (i + 1) % (count || 1)); }
-  function prev() { setIdx((i) => (i - 1 + (count || 1)) % (count || 1)); }
-  function goTo(i) { setIdx(i); }
+  const next = useCallback(() => {
+    setIdx((i) => (i + 1) % (count || 1));
+  }, [count]);
+
+  const prev = useCallback(() => {
+    setIdx((i) => (i - 1 + (count || 1)) % (count || 1));
+  }, [count]);
+
+  const goTo = useCallback((i) => {
+    setIdx(i);
+  }, [count]);
 
   useEffect(() => {
     if (!autoPlay || count <= 1) return;
     timer.current = setInterval(next, interval);
     return () => clearInterval(timer.current);
-  }, [count, autoPlay, interval]);
+  }, [next, count, autoPlay, interval]);
 
   // Fallback si no hay imágenes
   if (count === 0) {
@@ -53,8 +61,7 @@ export default function ImageCarousel({
           <button
             key={i}
             className={`carousel__dot ${i === idx ? "is-active" : ""}`}
-            aria-label={`Ir a la imagen ${i + 1}`}
-            aria-selected={i === idx}
+            aria-pressed={i === idx}
             onClick={() => goTo(i)}
           />
         ))}

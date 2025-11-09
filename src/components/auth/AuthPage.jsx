@@ -9,7 +9,7 @@ import './AuthPage.css';
 
 //TODO: Also, si entro con el usuario, me manda codigo pero no deja ingresar el codigo
 const AuthPage = () => {
-  const { login, register, loginVerifyCode } = useAuth();
+  const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({

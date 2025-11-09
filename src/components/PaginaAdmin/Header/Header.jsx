@@ -4,7 +4,6 @@ import api from '../../../services/api';
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext"; 
 import DeactivatedUsers from '../../admin/DeactivatedUsers';
-import ResponsiveImage from "../../Assest/Support/ResponsiveImage.jsx";
 import logo from "../../Assest/Imgs/LogoMin.png";
 import "./Header.css";
 
@@ -30,7 +29,6 @@ const Header = () => {
   }, []);
 
   // abrir modal de info de usuario - si es admin redirigir al panel admin
-  const navigate = useNavigate();
   const openUserModal = () => {
     const roles = user?.roles ?? user?.role ?? [];
     const isAdmin = Array.isArray(roles)
@@ -76,7 +74,6 @@ const Header = () => {
 
       setSending(true);
       try {
-        const token = localStorage.getItem('token');
         const body = {
           name: user?.name || user?.username || '',
           email: user?.email || '',
