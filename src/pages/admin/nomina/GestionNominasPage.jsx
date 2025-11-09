@@ -4,18 +4,19 @@ import api from '../../../services/api';
 const GestionNominasPage = () => {
   const [nominas, setNominas] = useState([]);
   const [filtroEstado, setFiltroEstado] = useState('');
+  const [filtroEmpleadoId, setFiltroEmpleadoId] = useState(''); // nuevo filtro por empleado
 
   const cargarNominas = useCallback(async () => {
     try {
       const url = filtroEstado
         ? `/api/nomina/estado/${filtroEstado}`
-        : '/api/nomina/empleado/1';
+        : `/api/nomina/empleado/${filtroEmpleadoId || 1}`; // usa empleado si no hay estado (default 1)
       const response = await api.get(url);
       setNominas(response.data);
     } catch (error) {
       console.error('Error al cargar nóminas:', error);
     }
-  }, [filtroEstado]);
+  }, [filtroEstado, filtroEmpleadoId]);
 
   useEffect(() => {
     cargarNominas();
@@ -63,13 +64,24 @@ const GestionNominasPage = () => {
     <div className="gestion-nominas-page">
       <div className="page-header">
         <h1>Gestión de Nóminas</h1>
-        <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)} className="form-control">
-          <option value="">Todos los estados</option>
-          <option value="CALCULADA">Calculada</option>
-          <option value="APROBADA">Aprobada</option>
-          <option value="PAGADA">Pagada</option>
-          <option value="CANCELADA">Cancelada</option>
-        </select>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)} className="form-control">
+            <option value="">Todos los estados</option>
+            <option value="CALCULADA">Calculada</option>
+            <option value="APROBADA">Aprobada</option>
+            <option value="PAGADA">Pagada</option>
+            <option value="CANCELADA">Cancelada</option>
+          </select>
+          <input
+            type="number"
+            min="1"
+            className="form-control"
+            placeholder="Empleado ID"
+            value={filtroEmpleadoId}
+            onChange={(e) => setFiltroEmpleadoId(e.target.value)}
+            title="Filtrar por ID de empleado"
+          />
+        </div>
       </div>
 
       <table className="data-table">
