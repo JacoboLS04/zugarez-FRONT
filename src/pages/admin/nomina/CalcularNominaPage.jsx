@@ -26,13 +26,16 @@ const CalcularNominaPage = () => {
   const handleCalcular = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/api/nomina/calcular', {
-        empleadoId: parseInt(formData.empleadoId),
-        periodoInicio: formData.periodoInicio,
-        periodoFin: formData.periodoFin,
-        comisiones: parseFloat(formData.comisiones),
-        bonificaciones: parseFloat(formData.bonificaciones)
-      });
+      // Construir payload con los nombres esperados por el backend
+      const payload = {
+        inicio: formData.periodoInicio,
+        fin: formData.periodoFin,
+      };
+      if (formData.empleadoId) payload.empleadoId = parseInt(formData.empleadoId, 10);
+      if (formData.comisiones !== '' && formData.comisiones != null) payload.comisiones = parseFloat(formData.comisiones);
+      if (formData.bonificaciones !== '' && formData.bonificaciones != null) payload.bonificaciones = parseFloat(formData.bonificaciones);
+
+      const response = await api.post('/api/nomina/calcular', payload);
       setResultado(response.data);
       window.alert('Nómina calculada exitosamente');
     } catch (error) {
