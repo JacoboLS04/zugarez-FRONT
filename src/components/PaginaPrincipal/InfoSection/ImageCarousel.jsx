@@ -12,22 +12,22 @@ export default function ImageCarousel({
   // avanzar al siguiente slide
   const next = useCallback(() => {
     setIndex((i) => {
-      const total = Array.isArray(images) ? images.length : 0;
-      if (!total) return 0;
-      return (i + 1) % total;
+      if (!count) return 0;
+      return (i + 1) % count;
     });
-  }, [images]);
+  }, [count]);
 
   const prev = useCallback(() => {
     setIndex((i) => (i - 1 + (count || 1)) % (count || 1));
-  }, [index, images.length]);
+  }, [count]);
 
   const goTo = useCallback((i) => {
     setIndex(i);
-  }, [index, images.length]);
+  }, []);
 
   useEffect(() => {
     // auto-play
+    if (!autoPlay || count === 0) return;
     const id = setInterval(next, interval);
     return () => clearInterval(id);
   }, [next, count, autoPlay, interval]);

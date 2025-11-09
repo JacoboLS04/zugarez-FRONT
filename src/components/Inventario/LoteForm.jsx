@@ -92,7 +92,6 @@ const LoteForm = ({ formData, products, onChange, onClose, onSubmit, loading }) 
 
   // Interceptamos el cambio de cantidad para recalcular inmediatamente
   const handleInitialQuantityChange = (e) => {
-    const value = e.target.value;
     onChange(e); // actualiza cantidad
     // El efecto useEffect recalculará unitPrice
   };

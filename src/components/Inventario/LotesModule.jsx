@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Swal from 'sweetalert2';
 import { useAuthenticatedRequest } from '../../hooks/useAuth';
-import { useAuth } from '../../contexts/AuthContext';
 import "./LotesModule.css";
 import LoteForm from "./LoteForm";
 
@@ -44,21 +43,14 @@ const LotesModule = () => {
   });
 
   const { makeRequest } = useAuthenticatedRequest();
-  const { user } = useAuth();
 
   const LOTES_URL = '/inventory/lotes';
   const PRODUCTS_URL = '/products';
 
-  useEffect(() => {
-    loadLotes();
-    loadProducts();
-  }, []);
-
-  const loadLotes = async () => {
+  const loadLotes = useCallback(async () => {
     try {
       setLoading(true);
       const data = await makeRequest(LOTES_URL, { method: 'GET' });
-      // Normaliza a números para no romper sort y formatear bien
       const normalized = (data || []).map(l => ({
         ...l,
         batchPrice: Number(l.batchPrice),
@@ -73,16 +65,21 @@ const LotesModule = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const loadProducts = async () => {
+  }, [makeRequest]);
+ 
+  const loadProducts = useCallback(async () => {
     try {
       const data = await makeRequest(PRODUCTS_URL, { method: 'GET' });
       setProducts(data || []);
     } catch (error) {
       console.error('Error cargando productos:', error);
     }
-  };
+  }, [makeRequest]);
+ 
+  useEffect(() => {
+    loadLotes();
+    loadProducts();
+  }, [loadLotes, loadProducts]);
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -159,10 +156,10 @@ const LotesModule = () => {
     }
   };
 
-  const getProductName = (productId) => {
+  const getProductName = useCallback((productId) => {
     const product = products.find(p => p.id === productId);
     return product ? product.name : `Producto ${productId}`;
-  };
+  }, [products]);
 
   const formatDate = (dateString) => {
     const [year, month, day] = (dateString || "").split('-');
@@ -252,62 +249,62 @@ const LotesModule = () => {
 
   // Sort apply
   const sortedLotes = React.useMemo(() => {
-    let sortableLotes = [...filteredLotes];
-    if (sortConfig.key) {
-      sortableLotes.sort((a, b) => {
-        let aValue, bValue;
-        
-        switch(sortConfig.key) {
-          case 'id':
-            return sortConfig.direction === 'ascending' 
-              ? a.id - b.id 
-              : b.id - a.id;
-          
-          case 'product':
-            aValue = getProductName(a.product?.id).toLowerCase();
-            bValue = getProductName(b.product?.id).toLowerCase();
-            break;
-          
-          case 'expirationDate':
-            aValue = new Date(a.expirationDate);
-            bValue = new Date(b.expirationDate);
-            break;
-          
-          case 'initialQuantity':
-            return sortConfig.direction === 'ascending' 
-              ? a.initialQuantity - b.initialQuantity 
-              : b.initialQuantity - a.initialQuantity;
-          
-          case 'availableQuantity':
-            return sortConfig.direction === 'ascending' 
-              ? a.availableQuantity - b.availableQuantity 
-              : b.availableQuantity - a.availableQuantity;
-          
-          case 'batchPrice':
-            return sortConfig.direction === 'ascending' 
-              ? a.batchPrice - b.batchPrice 
-              : b.batchPrice - a.batchPrice;
-          
-          case 'unitPrice':
-            return sortConfig.direction === 'ascending' 
-              ? a.unitPrice - b.unitPrice 
-              : b.unitPrice - a.unitPrice;
-          
-          default:
-            return 0;
-        }
-        
-        if (aValue < bValue) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (aValue > bValue) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableLotes;
-  }, [filteredLotes, sortConfig, products]);
+     let sortableLotes = [...filteredLotes];
+     if (sortConfig.key) {
+       sortableLotes.sort((a, b) => {
+         let aValue, bValue;
+         
+         switch(sortConfig.key) {
+           case 'id':
+             return sortConfig.direction === 'ascending' 
+               ? a.id - b.id 
+               : b.id - a.id;
+           
+           case 'product':
+             aValue = getProductName(a.product?.id).toLowerCase();
+             bValue = getProductName(b.product?.id).toLowerCase();
+             break;
+           
+           case 'expirationDate':
+             aValue = new Date(a.expirationDate);
+             bValue = new Date(b.expirationDate);
+             break;
+           
+           case 'initialQuantity':
+             return sortConfig.direction === 'ascending' 
+               ? a.initialQuantity - b.initialQuantity 
+               : b.initialQuantity - a.initialQuantity;
+           
+           case 'availableQuantity':
+             return sortConfig.direction === 'ascending' 
+               ? a.availableQuantity - b.availableQuantity 
+               : b.availableQuantity - a.availableQuantity;
+           
+           case 'batchPrice':
+             return sortConfig.direction === 'ascending' 
+               ? a.batchPrice - b.batchPrice 
+               : b.batchPrice - a.batchPrice;
+           
+           case 'unitPrice':
+             return sortConfig.direction === 'ascending' 
+               ? a.unitPrice - b.unitPrice 
+               : b.unitPrice - a.unitPrice;
+           
+           default:
+             return 0;
+         }
+         
+         if (aValue < bValue) {
+           return sortConfig.direction === 'ascending' ? -1 : 1;
+         }
+         if (aValue > bValue) {
+           return sortConfig.direction === 'ascending' ? 1 : -1;
+         }
+         return 0;
+       });
+     }
+     return sortableLotes;
+   }, [filteredLotes, sortConfig, getProductName]);
 
   return (
     <div className="lotes-module">

@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
 import api from '../../../services/api';
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext.js"; 
 import DeactivatedUsers from '../../admin/DeactivatedUsers';
-import ResponsiveImage from "../../Assest/Support/ResponsiveImage.jsx";
-import logo from "../../Assest/Imgs/LogoMin.png";
 import "./Header.css";
 
 const Header = () => {
@@ -30,7 +27,6 @@ const Header = () => {
   }, []);
 
   // abrir modal de info de usuario - si es admin redirigir a panel admin
-  const navigate = useNavigate();
   const openUserModal = () => {
     const roles = user?.roles ?? user?.role ?? [];
     const isAdmin = Array.isArray(roles)

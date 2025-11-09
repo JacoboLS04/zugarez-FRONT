@@ -3,7 +3,6 @@ import api from '../../../services/api';
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext"; 
 import DeactivatedUsers from '../../admin/DeactivatedUsers';
-import logo from "../../Assest/Imgs/LogoMin.png";
 import "./Header.css";
 
 const Header = () => {

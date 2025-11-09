@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./MovimientosModule.css";
 import MovimientoForm from "./MovmientoForm";
 import { useAuthenticatedRequest } from '../../hooks/useAuth';
@@ -17,11 +17,7 @@ const MovimientosModule = () => {
   const { makeRequest } = useAuthenticatedRequest();
   const LOTES_URL = '/inventory/lotes';
 
-  useEffect(() => {
-    loadLotes();
-  }, []);
-
-  const loadLotes = async () => {
+  const loadLotes = useCallback(async () => {
     try { 
       setLoading(true);
       const data = await makeRequest(LOTES_URL, { method: 'GET' });
@@ -32,7 +28,11 @@ const MovimientosModule = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [makeRequest]);
+
+  useEffect(() => {
+    loadLotes();
+  }, [loadLotes]);
 
   const handleAddMovimiento = (nuevo) => {
     setMovimientos([...movimientos, { ...nuevo, id: movimientos.length + 1 }]);

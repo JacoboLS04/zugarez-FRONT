@@ -17,10 +17,6 @@ const OrdersList = () => {
     role === 'ROLE_ADMIN' || role.toLowerCase().includes('admin')
   ) || false;
 
-  useEffect(() => {
-    loadOrders();
-  }, [loadOrders]); // depend on memoized function
-
   const loadOrders = useCallback(async () => {
     try {
       setLoading(true);
@@ -69,6 +65,10 @@ const OrdersList = () => {
       setLoading(false);
     }
   }, [isAdmin, user]); // dependencias reales usadas dentro
+
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]); // depend on memoized function
 
   // Filtrar órdenes
   const filteredOrders = orders.filter(order => {
