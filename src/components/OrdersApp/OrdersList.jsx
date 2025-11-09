@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { paymentService } from '../../services/paymentService';
 import { authService } from '../../services/authService';
 import { useAuth } from '../../contexts/AuthContext';
@@ -19,9 +19,9 @@ const OrdersList = () => {
 
   useEffect(() => {
     loadOrders();
-  }, [isAdmin]);
+  }, [loadOrders]); // depend on memoized function
 
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -68,7 +68,7 @@ const OrdersList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [isAdmin, user]); // dependencias reales usadas dentro
 
   // Filtrar órdenes
   const filteredOrders = orders.filter(order => {

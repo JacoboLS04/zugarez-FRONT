@@ -52,9 +52,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, [isAuthenticated, logout, INACTIVITY_TIMEOUT]);
 
-  // Eventos que reinician el timer
-  const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-
   // Agregar listeners de actividad cuando el usuario está autenticado
   useEffect(() => {
     if (isAuthenticated) {
@@ -62,17 +59,17 @@ export const AuthProvider = ({ children }) => {
       // Reiniciar timer inicialmente
       resetInactivityTimer();
       
-      // Agregar listeners para detectar actividad
-      activityEvents.forEach(event => {
-        document.addEventListener(event, resetInactivityTimer, true);
-      });
-      
+      const onActivity = () => {
+        resetInactivityTimer();
+      };
+
+      const activityEvents = ['click', 'keydown', 'scroll', 'mousemove', 'visibilitychange']; // movido aquí
+      activityEvents.forEach(evt => window.addEventListener(evt, onActivity, { passive: true }));
+
       return () => {
         console.log('Limpiando listeners de actividad...');
         // Limpiar listeners y timer al desmontar o logout
-        activityEvents.forEach(event => {
-          document.removeEventListener(event, resetInactivityTimer, true);
-        });
+        activityEvents.forEach(evt => window.removeEventListener(evt, onActivity));
         if (inactivityTimer.current) {
           clearTimeout(inactivityTimer.current);
           inactivityTimer.current = null;

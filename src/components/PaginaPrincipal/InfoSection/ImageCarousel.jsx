@@ -11,15 +11,15 @@ export default function ImageCarousel({
 
   const next = useCallback(() => {
     setIdx((i) => (i + 1) % (count || 1));
-  }, [count]);
+  }, [index, images.length]);
 
   const prev = useCallback(() => {
     setIdx((i) => (i - 1 + (count || 1)) % (count || 1));
-  }, [count]);
+  }, [index, images.length]);
 
   const goTo = useCallback((i) => {
     setIdx(i);
-  }, [count]);
+  }, [index, images.length]);
 
   useEffect(() => {
     if (!autoPlay || count <= 1) return;

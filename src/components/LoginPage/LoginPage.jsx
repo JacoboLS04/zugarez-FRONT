@@ -5,7 +5,6 @@ import TopBar from '../PaginaPrincipal/TopBar/TopBar';
 import Footer from '../PaginaPrincipal/Footer/Footer';
 import ProtectedRoute from './../../components/ProtectedRoute';
 import { Routes, Route } from 'react-router-dom';
-import Header from '../PaginaAdmin/Header/Header';
 import AdminPage from '../PaginaAdmin/AdminPage';
 import ClientePage from '../ClientShopping/ClientePage';
 
