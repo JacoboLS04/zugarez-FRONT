@@ -1,30 +1,37 @@
-import React, { useEffect, useCallback, useState, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 export default function ImageCarousel({
   images = [],
   autoPlay = true,
   interval = 4500,
 }) {
-  const [idx, setIdx] = useState(0);
+  // índice del slide actual
+  const [index, setIndex] = useState(0);
   const count = images.length;
   const timer = useRef(null);
 
+  // avanzar al siguiente slide
   const next = useCallback(() => {
-    setIdx((i) => (i + 1) % (count || 1));
-  }, [index, images.length]);
+    setIndex((i) => {
+      // usa la longitud real de tu lista de imágenes
+      const total = Array.isArray(images) ? images.length : 0;
+      if (!total) return 0;
+      return (i + 1) % total;
+    });
+  }, [images]);
 
   const prev = useCallback(() => {
-    setIdx((i) => (i - 1 + (count || 1)) % (count || 1));
+    setIndex((i) => (i - 1 + (count || 1)) % (count || 1));
   }, [index, images.length]);
 
   const goTo = useCallback((i) => {
-    setIdx(i);
+    setIndex(i);
   }, [index, images.length]);
 
   useEffect(() => {
-    if (!autoPlay || count <= 1) return;
-    timer.current = setInterval(next, interval);
-    return () => clearInterval(timer.current);
+    // auto-play
+    const id = setInterval(next, interval);
+    return () => clearInterval(id);
   }, [next, count, autoPlay, interval]);
 
   // Fallback si no hay imágenes
@@ -43,10 +50,10 @@ export default function ImageCarousel({
       <div className="carousel__frame">
         <div
           className="carousel__track"
-          style={{ transform: `translateX(-${idx * 100}%)` }}
+          style={{ transform: `translateX(-${index * 100}%)` }}
         >
           {images.map((src, i) => (
-            <div className="carousel__slide" key={i} aria-hidden={i !== idx}>
+            <div className="carousel__slide" key={i} aria-hidden={i !== index}>
               <img src={src} alt={`Imagen ${i + 1} del carrusel`} />
             </div>
           ))}
@@ -60,8 +67,8 @@ export default function ImageCarousel({
         {images.map((_, i) => (
           <button
             key={i}
-            className={`carousel__dot ${i === idx ? "is-active" : ""}`}
-            aria-pressed={i === idx}
+            className={`carousel__dot ${i === index ? "is-active" : ""}`}
+            aria-pressed={i === index}
             onClick={() => goTo(i)}
           />
         ))}

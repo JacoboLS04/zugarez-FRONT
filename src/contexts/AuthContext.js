@@ -63,20 +63,20 @@ export const AuthProvider = ({ children }) => {
         resetInactivityTimer();
       };
 
-      const activityEvents = ['click', 'keydown', 'scroll', 'mousemove', 'visibilitychange']; // movido aquí
-      activityEvents.forEach(evt => window.addEventListener(evt, onActivity, { passive: true }));
+      const events = ['click', 'keydown', 'scroll', 'mousemove', 'visibilitychange']; // local
+      events.forEach(evt => window.addEventListener(evt, onActivity, { passive: true }));
 
       return () => {
         console.log('Limpiando listeners de actividad...');
         // Limpiar listeners y timer al desmontar o logout
-        activityEvents.forEach(evt => window.removeEventListener(evt, onActivity));
+        events.forEach(evt => window.removeEventListener(evt, onActivity));
         if (inactivityTimer.current) {
           clearTimeout(inactivityTimer.current);
           inactivityTimer.current = null;
         }
       };
     }
-  }, [isAuthenticated, resetInactivityTimer, activityEvents]);
+  }, [isAuthenticated, resetInactivityTimer]);
 
   // Verificar autenticación al cargar la aplicación
   useEffect(() => {
