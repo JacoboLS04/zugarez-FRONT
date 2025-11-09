@@ -78,7 +78,7 @@ const AsistenciaPage = () => {
     if (empleados.length) {
       cargarRegistros();
     }
-  }, [cargarRegistros]);
+  }, [empleados.length, cargarRegistros]);
 
   // Helper para formatear hora segura
   const fmtHora = (value) => {
