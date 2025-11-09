@@ -97,29 +97,33 @@ const GestionNominasPage = () => {
           </tr>
         </thead>
         <tbody>
-          {nominas.map(nomina => (
-            <tr key={nomina.id}>
-              <td>{nomina.id}</td>
-              <td>{nomina.empleadoNombre}</td>
-              <td>{nomina.periodoInicio} / {nomina.periodoFin}</td>
-              <td>S/. {nomina.salarioNeto}</td>
-              <td>
-                <span className={`badge badge-${nomina.estado.toLowerCase()}`}>{nomina.estado}</span>
-              </td>
-              <td>{nomina.fechaPago || '-'}</td>
-              <td>
-                {nomina.estado === 'CALCULADA' && (
-                  <button className="btn-sm btn-success" onClick={() => aprobarNomina(nomina.id)}>Aprobar</button>
-                )}
-                {nomina.estado === 'APROBADA' && (
-                  <button className="btn-sm btn-primary" onClick={() => registrarPago(nomina.id)}>Registrar Pago</button>
-                )}
-                {nomina.estado === 'PAGADA' && (
-                  <button className="btn-sm btn-info" onClick={() => descargarComprobante(nomina.id)}>📄 Comprobante</button>
-                )}
-              </td>
-            </tr>
-          ))}
+          {nominas.map(nomina => {
+            const estado = nomina?.estado || 'SIN ESTADO';
+            const estadoLower = typeof estado === 'string' ? estado.toLowerCase() : 'default';
+            return (
+              <tr key={nomina.id}>
+                <td>{nomina.id}</td>
+                <td>{nomina.empleadoNombre}</td>
+                <td>{nomina.periodoInicio} / {nomina.periodoFin}</td>
+                <td>S/. {nomina.salarioNeto}</td>
+                <td>
+                  <span className={`badge badge-${estadoLower}`}>{estado}</span>
+                </td>
+                <td>{nomina.fechaPago || '-'}</td>
+                <td>
+                  {estado === 'CALCULADA' && (
+                    <button className="btn-sm btn-success" onClick={() => aprobarNomina(nomina.id)}>Aprobar</button>
+                  )}
+                  {estado === 'APROBADA' && (
+                    <button className="btn-sm btn-primary" onClick={() => registrarPago(nomina.id)}>Registrar Pago</button>
+                  )}
+                  {estado === 'PAGADA' && (
+                    <button className="btn-sm btn-info" onClick={() => descargarComprobante(nomina.id)}>📄 Comprobante</button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
