@@ -74,7 +74,6 @@ const Header = () => {
 
       setSending(true);
       try {
-        const token = localStorage.getItem('token');
         const body = {
           name: user?.name || user?.username || '',
           email: user?.email || '',

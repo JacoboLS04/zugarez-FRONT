@@ -3,10 +3,6 @@ import React from "react";
 const InventoryDashboard = ({ products, selectedProduct }) => {
   if (!selectedProduct) return <p>Selecciona un producto</p>;
 
-  // Calcular tops
-  const top3Menor = [...products].sort((a, b) => a.stock - b.stock).slice(0, 3);
-  const top3Mayor = [...products].sort((a, b) => b.stock - a.stock).slice(0, 3);
-
   const faltante = Math.max(selectedProduct.stockMin - selectedProduct.stock, 0);
 
   return (
@@ -19,7 +15,6 @@ const InventoryDashboard = ({ products, selectedProduct }) => {
           <p>Stock mínimo:{selectedProduct.stockMin}</p>
           <p><strong>Faltante para el minimo:</strong> {faltante}</p>
         </div>
-
       </div>
     </div>
   );

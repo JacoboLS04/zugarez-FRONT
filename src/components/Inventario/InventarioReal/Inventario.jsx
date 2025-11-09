@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuthenticatedRequest } from '../../../hooks/useAuth';
 import Swal from 'sweetalert2';
 import InventoryDashboard from "./InventoryDashboard";
@@ -13,24 +13,16 @@ const Inventario = () => {
   const { makeRequest } = useAuthenticatedRequest();
   const PRODUCTS_URL = '/products'; // ✅ Cambiado de '/api/products' a '/products'
 
-  // Fetch products from the database when component mounts
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setLoading(true);
       const data = await makeRequest(PRODUCTS_URL, { method: 'GET' });
-      
       // Transform data to include stock_minimo if not present
       const processedData = data.map(product => ({
         ...product,
         stock: product.stock || 0,
       }));
-      
       setProducts(processedData || []);
-      
       // Set the first product as selected by default if available
       if (processedData.length > 0 && !selectedProduct) {
         setSelectedProduct(processedData[0]);
@@ -41,7 +33,11 @@ const Inventario = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [makeRequest, selectedProduct, PRODUCTS_URL]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
 
   return (
     <div className="inventory-module">

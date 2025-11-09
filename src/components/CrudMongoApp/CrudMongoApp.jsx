@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Swal from 'sweetalert2';
 import { useAuthenticatedRequest } from '../../hooks/useAuth';
-import { useAuth } from '../../contexts/AuthContext';
 import ProductList from './ProductList';
 import ProductForm from './Fomulario/ProductForm';
 
@@ -12,7 +11,6 @@ const CrudMongoApp = () => {
   const [formData, setFormData] = useState({ name: '', price: '', brand: '', supplierId: '', description: '', urlImage: '' });
   const [loading, setLoading] = useState(false);
   const { makeRequest } = useAuthenticatedRequest();
-  const { user } = useAuth();
 
   const PRODUCTS_URL = '/products';
 

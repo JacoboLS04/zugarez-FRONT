@@ -28,7 +28,6 @@ const Unsubscribe = () => {
     setSending(true);
     try {
       // intentar obtener token y user desde localStorage
-      const token = localStorage.getItem('token');
       let userName = '';
       let userEmail = '';
       try {
