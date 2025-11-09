@@ -25,23 +25,28 @@ const GestionNominasPage = () => {
   }, [cargarNominas]);
 
   const changeEstado = async (id, nuevoEstado) => {
-    let body = { estado: nuevoEstado };
+    const estadoUpper = String(nuevoEstado || '').toUpperCase();
 
-    if (nuevoEstado === 'PAGADA') {
-      const numeroTransaccion = window.prompt('Ingrese el número de transacción:');
+    let numeroTransaccion;
+    if (estadoUpper === 'PAGADA') {
+      numeroTransaccion = window.prompt('Ingrese el número de transacción:');
       if (!numeroTransaccion) return;
-      body.numeroTransaccion = numeroTransaccion;
     }
 
-    if (nuevoEstado === 'CANCELADA' && !window.confirm('¿Confirmar cancelación de la nómina?')) return;
-    if (nuevoEstado === 'CALCULADA' && !window.confirm('¿Revertir la nómina a CALCULADA?')) return;
+    if (estadoUpper === 'CANCELADA' && !window.confirm('¿Confirmar cancelación de la nómina?')) return;
+    if (estadoUpper === 'CALCULADA' && !window.confirm('¿Revertir la nómina a CALCULADA?')) return;
 
     try {
-      const response = await api.put(`/api/nomina/${id}/estado`, body);
+      // Preferir endpoint con estado en el path; agregar query param si es PAGADA
+      const url = estadoUpper === 'PAGADA'
+        ? `/api/nomina/${id}/estado/${estadoUpper}?numeroTransaccion=${encodeURIComponent(numeroTransaccion)}`
+        : `/api/nomina/${id}/estado/${estadoUpper}`;
+
+      const response = await api.put(url);
       window.alert('Estado actualizado');
-      // Mostrar modal de pago si aplica
+
       const payout = response?.data?.payout;
-      if (nuevoEstado === 'PAGADA' && payout?.success) {
+      if (estadoUpper === 'PAGADA' && payout?.success) {
         setPayoutData({
           titulo: 'Pago enviado',
           mensaje: payout.mensaje,
@@ -52,9 +57,11 @@ const GestionNominasPage = () => {
         });
         setPayoutModalOpen(true);
       }
+
       cargarNominas();
     } catch (error) {
-      window.alert('Error al cambiar estado: ' + (error.response?.data?.message || ''));
+      const msg = error.response?.data?.message || 'Error al cambiar estado';
+      window.alert(msg);
     }
   };
 
