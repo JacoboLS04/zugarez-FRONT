@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuthenticatedRequest } from '../../hooks/useAuth';
 import FilterPanel from './FilterPanel';
 import ProductCard from './ProductCard';
@@ -18,62 +18,50 @@ const ProductCatalog = () => {
 
   const PRODUCTS_URL = '/products';
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  // Apply filters whenever filter states change
-  useEffect(() => {
-    applyFilters();
-  }, [searchTerm, priceRange, selectedCategories, products]);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setLoading(true);
       const data = await makeRequest(PRODUCTS_URL, { method: 'GET' });
       setProducts(data || []);
-      
-      // Extract unique categories from products (using brand as category)
       const uniqueCategories = [...new Set(data.map(product => product.brand))];
       setCategories(uniqueCategories);
-      
-      // Find max price for range slider
       const maxPrice = Math.max(...data.map(product => parseFloat(product.price) || 0));
       setPriceRange(prev => ({ min: prev.min, max: Math.ceil(maxPrice) }));
-      
     } catch (error) {
       console.error('Error loading products:', error);
       Swal.fire('Error', 'No se pudieron cargar los productos: ' + error.message, 'error');
     } finally {
       setLoading(false);
     }
-  };
+  }, [makeRequest, PRODUCTS_URL]);
 
-  const applyFilters = () => {
+  // Apply filters whenever filter states change
+  const applyFilters = useCallback(() => {
     let result = [...products];
-    
-    // Apply search filter (by product name)
     if (searchTerm) {
-      result = result.filter(product => 
+      result = result.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
-    // Apply price filter
     result = result.filter(product => {
       const price = parseFloat(product.price);
       return price >= priceRange.min && price <= priceRange.max;
     });
-    
-    // Apply category filter (using brand)
     if (selectedCategories.length > 0) {
-      result = result.filter(product => 
+      result = result.filter(product =>
         selectedCategories.includes(product.brand)
       );
     }
-    
     setFilteredProducts(result);
-  };
+  }, [products, searchTerm, priceRange, selectedCategories]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   const handleSearchChange = (term) => {
     setSearchTerm(term);
