@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import FilterPanel from './FilterPanel';
 import ProductCard from './ProductCard';
 import api from '../../services/api';
@@ -16,21 +16,12 @@ const ProductCatalog = () => {
 
   const API_URL = '/products';
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  // Apply filters whenever filter states change
-  useEffect(() => {
-    applyFilters();
-  }, [searchTerm, priceRange, selectedCategories, products]);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setLoading(true);
-  // Use centralized api client
-  const response = await api.get(API_URL);
-  const data = response.data;
+      // Use centralized api client
+      const response = await api.get(API_URL);
+      const data = response.data;
       
       setProducts(data || []);
       
@@ -48,9 +39,9 @@ const ProductCatalog = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_URL]);
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let result = [...products];
     
     // Apply search filter
@@ -74,7 +65,15 @@ const ProductCatalog = () => {
     }
     
     setFilteredProducts(result);
-  };
+  }, [products, searchTerm, priceRange, selectedCategories]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   const handleSearchChange = (term) => {
     setSearchTerm(term);
