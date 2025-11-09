@@ -9,8 +9,13 @@ const AsistenciaPage = () => {
 
   useEffect(() => {
     cargarEmpleados();
-    cargarRegistrosHoy();
   }, []);
+
+  useEffect(() => {
+    if (empleados.length) {
+      cargarRegistrosHoy();
+    }
+  }, [empleados]);
 
   const cargarEmpleados = async () => {
     try {
@@ -24,11 +29,54 @@ const AsistenciaPage = () => {
   const cargarRegistrosHoy = async () => {
     const hoy = new Date().toISOString().split('T')[0];
     try {
-      const response = await api.get(`/api/asistencia/empleado/1?inicio=${hoy}&fin=${hoy}`);
-      setRegistros(response.data);
+      // Solicita registros de todos los empleados para hoy
+      const all = await Promise.all(
+        empleados.map(emp =>
+          api
+            .get(`/api/asistencia/empleado/${emp.id}?inicio=${hoy}&fin=${hoy}`)
+            .then(r => r.data)
+            .catch(() => [])
+        )
+      );
+      // Aplanar y ordenar por horaEntrada
+      const planos = all.flat().sort(
+        (a, b) => new Date(a.horaEntrada) - new Date(b.horaEntrada)
+      );
+      setRegistros(planos);
     } catch (error) {
       console.error('Error al cargar registros:', error);
     }
+  };
+
+  // Helper para formatear hora segura
+  const fmtHora = (value) => {
+    if (!value) return '-';
+    try {
+      return new Date(value).toLocaleTimeString();
+    } catch {
+      return '-';
+    }
+  };
+
+  // Cálculo local si backend no envía horasTrabajadas / horasExtras
+  const calcularHoras = (entrada, salida) => {
+    if (!entrada || !salida) return null;
+    const ms = new Date(salida) - new Date(entrada);
+    if (ms <= 0) return null;
+    const horas = ms / 1000 / 3600;
+    return horas.toFixed(2);
+  };
+
+  const calcularExtras = (horasTrabajadas, turno) => {
+    if (!horasTrabajadas) return null;
+    const baseTurno = {
+      MANANA: 8,
+      TARDE: 8,
+      NOCHE: 8,
+      COMPLETO: 8
+    }[turno] || 8;
+    const extras = parseFloat(horasTrabajadas) - baseTurno;
+    return extras > 0 ? extras.toFixed(2) : '0.00';
   };
 
   const registrarEntrada = async () => {
@@ -85,33 +133,54 @@ const AsistenciaPage = () => {
         <table className="data-table">
           <thead>
             <tr>
+              {/* nuevas columnas */}
+              <th>Fecha</th>
               <th>Empleado</th>
               <th>Turno</th>
               <th>Hora Entrada</th>
               <th>Hora Salida</th>
               <th>Horas Trabajadas</th>
               <th>Horas Extras</th>
+              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {registros.map(reg => (
-              <tr key={reg.id}>
-                <td>{reg.empleadoNombre}</td>
-                <td>{reg.turno}</td>
-                <td>{new Date(reg.horaEntrada).toLocaleTimeString()}</td>
-                <td>{reg.horaSalida ? new Date(reg.horaSalida).toLocaleTimeString() : '-'}</td>
-                <td>{reg.horasTrabajadas || '-'}</td>
-                <td>{reg.horasExtras || '-'}</td>
-                <td>
-                  {!reg.horaSalida && (
-                    <button className="btn-sm btn-primary" onClick={() => registrarSalida(reg.id)}>
-                      Registrar Salida
-                    </button>
-                  )}
+            {registros.map(reg => {
+              const horasCalc = reg.horasTrabajadas || calcularHoras(reg.horaEntrada, reg.horaSalida);
+              const extrasCalc = reg.horasExtras || calcularExtras(horasCalc, reg.turno);
+              const fecha = reg.horaEntrada ? new Date(reg.horaEntrada).toLocaleDateString() : '-';
+              const estado = reg.horaSalida ? 'CERRADA' : 'EN CURSO';
+              return (
+                <tr key={reg.id}>
+                  <td>{fecha}</td>
+                  <td>{reg.empleadoNombre}</td>
+                  <td>{reg.turno}</td>
+                  <td>{fmtHora(reg.horaEntrada)}</td>
+                  <td>{fmtHora(reg.horaSalida)}</td>
+                  <td>{horasCalc || '-'}</td>
+                  <td>{extrasCalc || '-'}</td>
+                  <td>{estado}</td>
+                  <td>
+                    {!reg.horaSalida && (
+                      <button
+                        className="btn-sm btn-primary"
+                        onClick={() => registrarSalida(reg.id)}
+                      >
+                        Registrar Salida
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+            {!registros.length && (
+              <tr>
+                <td colSpan={9} style={{ textAlign: 'center' }}>
+                  Sin registros hoy
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
