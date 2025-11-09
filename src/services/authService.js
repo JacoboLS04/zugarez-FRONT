@@ -1,9 +1,7 @@
-import api from './api';
-
 const DEFAULT_BASE = 'https://better-billi-zugarez-sys-ed7b78de.koyeb.app';
 const API_URL = (process.env.REACT_APP_API_BASE || DEFAULT_BASE) + '/auth';
 
-export const authService = {
+const authService = {
   async verifyCodeFlexible(identifier, code, key) {
     // Validar que el código tenga 6 dígitos
     if (!code || code.length !== 6) {
@@ -266,3 +264,5 @@ export const authService = {
     return this.getToken();
   }
 };
+
+export default authService;

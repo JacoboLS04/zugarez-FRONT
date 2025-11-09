@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../../services/api';
 
 const AsistenciaPage = () => {
@@ -11,22 +11,7 @@ const AsistenciaPage = () => {
     cargarEmpleados();
   }, []);
 
-  useEffect(() => {
-    if (empleados.length) {
-      cargarRegistrosHoy();
-    }
-  }, [empleados]);
-
-  const cargarEmpleados = async () => {
-    try {
-      const response = await api.get('/api/empleados');
-      setEmpleados(response.data);
-    } catch (error) {
-      console.error('Error al cargar empleados:', error);
-    }
-  };
-
-  const cargarRegistrosHoy = async () => {
+  const cargarRegistrosHoy = useCallback(async () => {
     const hoy = new Date().toISOString().split('T')[0];
     try {
       // Solicita registros de todos los empleados para hoy
@@ -39,12 +24,27 @@ const AsistenciaPage = () => {
         )
       );
       // Aplanar y ordenar por horaEntrada
-      const planos = all.flat().sort(
-        (a, b) => new Date(a.horaEntrada) - new Date(b.horaEntrada)
-      );
+      const planos = all
+        .flat()
+        .sort((a, b) => new Date(a.horaEntrada) - new Date(b.horaEntrada));
       setRegistros(planos);
     } catch (error) {
       console.error('Error al cargar registros:', error);
+    }
+  }, [empleados]);
+
+  useEffect(() => {
+    if (empleados.length) {
+      cargarRegistrosHoy();
+    }
+  }, [cargarRegistrosHoy]);
+
+  const cargarEmpleados = async () => {
+    try {
+      const response = await api.get('/api/empleados');
+      setEmpleados(response.data);
+    } catch (error) {
+      console.error('Error al cargar empleados:', error);
     }
   };
 

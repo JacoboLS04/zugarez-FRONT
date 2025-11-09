@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { authService } from '../services/authService';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 
@@ -7,7 +6,7 @@ import api from '../services/api';
 export const useAuthenticatedRequest = () => {
   const { logout } = useAuth();
 
-  const makeRequest = async (url, options = {}) => {
+  const makeRequest = useCallback(async (url, options = {}) => {
     try {
       const method = (options.method || 'GET').toLowerCase();
 
@@ -36,7 +35,7 @@ export const useAuthenticatedRequest = () => {
 
       throw error;
     }
-  };
+  }, [logout]);
 
   return { makeRequest };
 };
@@ -49,23 +48,8 @@ export const useAuthenticatedData = (url, dependencies = []) => {
   const { makeRequest } = useAuthenticatedRequest();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const result = await makeRequest(url);
-        setData(result);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (url) {
-      fetchData();
-    }
-  }, [url, ...dependencies]);
+    makeRequest();
+  }, [makeRequest]);
 
   const refetch = async () => {
     try {

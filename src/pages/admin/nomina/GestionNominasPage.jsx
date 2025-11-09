@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../../services/api';
 
 const GestionNominasPage = () => {
   const [nominas, setNominas] = useState([]);
   const [filtroEstado, setFiltroEstado] = useState('');
 
-  useEffect(() => { cargarNominas(); }, [filtroEstado]);
-
-  const cargarNominas = async () => {
+  const cargarNominas = useCallback(async () => {
     try {
       const url = filtroEstado
         ? `/api/nomina/estado/${filtroEstado}`
@@ -17,7 +15,11 @@ const GestionNominasPage = () => {
     } catch (error) {
       console.error('Error al cargar nóminas:', error);
     }
-  };
+  }, [filtroEstado]);
+
+  useEffect(() => {
+    cargarNominas();
+  }, [cargarNominas]);
 
   const aprobarNomina = async (id) => {
     if (!window.confirm('¿Está seguro de aprobar esta nómina?')) return;
