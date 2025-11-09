@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Swal from 'sweetalert2';
 import { useAuthenticatedRequest } from '../../hooks/useAuth';
 import { useAuth } from '../../contexts/AuthContext';
@@ -17,11 +17,7 @@ const CrudMongoApp = () => {
 
   const PRODUCTS_URL = '/products';
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setLoading(true);
       const data = await makeRequest(PRODUCTS_URL, { method: 'GET' });
@@ -32,7 +28,11 @@ const CrudMongoApp = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [makeRequest]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
 
   const handleEdit = (product) => {
   console.log('🔍 DEBUG handleEdit - Producto recibido:', product);

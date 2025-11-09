@@ -1,16 +1,7 @@
 import React from 'react';
 
-import ProtectedRoute from './components/ProtectedRoute';
 import ProtectedAdmin from './components/ProtectedAdmin';
-import Header from './components/PaginaAdmin/Header/Header';
-import CrudMongoApp from './components/CrudMongoApp/CrudMongoApp';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import TopBar from './components/PaginaPrincipal/TopBar/TopBar';
-import Carousel from './components/PaginaPrincipal/Carousel/Carousel';
-import InfoSection from './components/PaginaPrincipal/InfoSection/InfoSection';
-import PaginaPrincipal from './components/PaginaPrincipal/PaginaPrincipal';
-import AuthPage from './components/auth/AuthPage';
-import { AuthProvider } from './contexts/AuthContext';
 import LoginPage from './components/LoginPage/LoginPage';
 import AccessibilityWidget from './components/Accesibility/AccessibilityWidget';
 import ClientApp from './components/ClientApp/ClientApp';
