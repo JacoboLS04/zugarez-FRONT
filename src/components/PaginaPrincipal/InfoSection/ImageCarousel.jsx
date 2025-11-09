@@ -8,12 +8,10 @@ export default function ImageCarousel({
   // índice del slide actual
   const [index, setIndex] = useState(0);
   const count = images.length;
-  const timer = useRef(null);
 
   // avanzar al siguiente slide
   const next = useCallback(() => {
     setIndex((i) => {
-      // usa la longitud real de tu lista de imágenes
       const total = Array.isArray(images) ? images.length : 0;
       if (!total) return 0;
       return (i + 1) % total;
