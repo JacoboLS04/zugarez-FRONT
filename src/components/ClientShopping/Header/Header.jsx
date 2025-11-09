@@ -4,6 +4,7 @@ import { User, LogOut, Settings, ChevronDown } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext.js"; 
 import DeactivatedUsers from '../../admin/DeactivatedUsers';
 import "./Header.css";
+import logo from "../../Assest/Imgs/LogoMin.png"; // reinstated for TopBar logo
 
 const Header = () => {
   const { user, logout } = useAuth();
