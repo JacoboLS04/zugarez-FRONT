@@ -4,7 +4,6 @@ import { useAuthenticatedRequest } from '../../hooks/useAuth';
 import { useAuth } from '../../contexts/AuthContext';
 import ProductList from './ProductList';
 import ProductForm from './Fomulario/ProductForm';
-import ProductView from './ProductView';
 
 const CrudMongoApp = () => {
   const [currentView, setCurrentView] = useState('list');

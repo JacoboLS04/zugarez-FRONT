@@ -7,9 +7,10 @@ import AccessibilityWidget from './components/Accesibility/AccessibilityWidget';
 import ClientApp from './components/ClientApp/ClientApp';
 import OrdersApp from './components/OrdersApp/OrdersApp';
 import MenuPage from './components/PaginaPrincipal/Menu/Menu/MenuPage';
-import ClientShopping from './components/ClientShopping/ClientShopping';
 import ClientePage from './components/ClientShopping/ClientePage'; // <-- nuevo wrapper con sidebar
 import DeactivatedUsers from './components/admin/DeactivatedUsers';
+import { AuthProvider } from './contexts/AuthContext'; // added
+import PaginaPrincipal from './components/PaginaPrincipal/PaginaPrincipal'; // added
 
 function App() {
   return (
