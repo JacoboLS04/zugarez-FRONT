@@ -7,10 +7,14 @@ const CalcularNominaPage = () => {
     empleadoId: '',
     periodoInicio: '',
     periodoFin: '',
+    salarioBaseMensual: '',         // nuevo campo
+    horasTrabajadas: '',            // opcional override
+    horasExtras: '',                // opcional override
     comisiones: '0',
     bonificaciones: '0'
   });
   const [resultado, setResultado] = useState(null);
+  const [mostrarAvanzados, setMostrarAvanzados] = useState(false);
 
   useEffect(() => { cargarEmpleados(); }, []);
 
@@ -26,14 +30,16 @@ const CalcularNominaPage = () => {
   const handleCalcular = async (e) => {
     e.preventDefault();
     try {
-      // Construir payload con los nombres esperados por el backend
       const payload = {
         inicio: formData.periodoInicio,
         fin: formData.periodoFin,
       };
       if (formData.empleadoId) payload.empleadoId = parseInt(formData.empleadoId, 10);
-      if (formData.comisiones !== '' && formData.comisiones != null) payload.comisiones = parseFloat(formData.comisiones);
-      if (formData.bonificaciones !== '' && formData.bonificaciones != null) payload.bonificaciones = parseFloat(formData.bonificaciones);
+      if (formData.salarioBaseMensual) payload.salarioBaseMensual = parseFloat(formData.salarioBaseMensual);
+      if (formData.horasTrabajadas) payload.horasTrabajadas = parseFloat(formData.horasTrabajadas);
+      if (formData.horasExtras) payload.horasExtras = parseFloat(formData.horasExtras);
+      if (formData.comisiones) payload.comisiones = parseFloat(formData.comisiones);
+      if (formData.bonificaciones) payload.bonificaciones = parseFloat(formData.bonificaciones);
 
       const response = await api.post('/api/nomina/calcular', payload);
       setResultado(response.data);
@@ -46,11 +52,15 @@ const CalcularNominaPage = () => {
   return (
     <div className="calcular-nomina-page">
       <h1>Calcular Nómina</h1>
-
       <form onSubmit={handleCalcular} className="nomina-form">
+        {/* Empleado */}
         <div className="form-group">
           <label>Empleado *</label>
-          <select value={formData.empleadoId} onChange={(e) => setFormData({...formData, empleadoId: e.target.value})} required>
+          <select
+            value={formData.empleadoId}
+            onChange={(e) => setFormData({ ...formData, empleadoId: e.target.value })}
+            required
+          >
             <option value="">Seleccionar empleado...</option>
             {empleados.map(emp => (
               <option key={emp.id} value={emp.id}>{emp.nombres} {emp.apellidos}</option>
@@ -58,27 +68,96 @@ const CalcularNominaPage = () => {
           </select>
         </div>
 
+        {/* Fechas */}
         <div className="form-row">
           <div className="form-group">
             <label>Período Inicio *</label>
-            <input type="date" value={formData.periodoInicio} onChange={(e) => setFormData({...formData, periodoInicio: e.target.value})} required />
+            <input
+              type="date"
+              value={formData.periodoInicio}
+              onChange={(e) => setFormData({ ...formData, periodoInicio: e.target.value })}
+              required
+            />
           </div>
           <div className="form-group">
             <label>Período Fin *</label>
-            <input type="date" value={formData.periodoFin} onChange={(e) => setFormData({...formData, periodoFin: e.target.value})} required />
+            <input
+              type="date"
+              value={formData.periodoFin}
+              onChange={(e) => setFormData({ ...formData, periodoFin: e.target.value })}
+              required
+            />
           </div>
         </div>
 
+        {/* Salario base mensual */}
+        <div className="form-group">
+          <label>Salario Base Mensual (opcional si no viene del empleado)</label>
+            <input
+              type="number"
+              step="0.01"
+              value={formData.salarioBaseMensual}
+              onChange={(e) => setFormData({ ...formData, salarioBaseMensual: e.target.value })}
+              placeholder="Ej: 1500.00"
+            />
+        </div>
+
+        {/* Comisiones / Bonificaciones */}
         <div className="form-row">
           <div className="form-group">
             <label>Comisiones</label>
-            <input type="number" step="0.01" value={formData.comisiones} onChange={(e) => setFormData({...formData, comisiones: e.target.value})} />
+            <input
+              type="number"
+              step="0.01"
+              value={formData.comisiones}
+              onChange={(e) => setFormData({ ...formData, comisiones: e.target.value })}
+            />
           </div>
           <div className="form-group">
             <label>Bonificaciones</label>
-            <input type="number" step="0.01" value={formData.bonificaciones} onChange={(e) => setFormData({...formData, bonificaciones: e.target.value})} />
+            <input
+              type="number"
+              step="0.01"
+              value={formData.bonificaciones}
+              onChange={(e) => setFormData({ ...formData, bonificaciones: e.target.value })}
+            />
           </div>
         </div>
+
+        {/* Toggle campos avanzados */}
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={() => setMostrarAvanzados(v => !v)}
+          style={{ marginBottom: 12 }}
+        >
+          {mostrarAvanzados ? 'Ocultar Campos Avanzados' : 'Mostrar Campos Avanzados'}
+        </button>
+
+        {mostrarAvanzados && (
+          <div className="form-row">
+            <div className="form-group">
+              <label>Horas Trabajadas (override opcional)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={formData.horasTrabajadas}
+                onChange={(e) => setFormData({ ...formData, horasTrabajadas: e.target.value })}
+                placeholder="Ej: 160"
+              />
+            </div>
+            <div className="form-group">
+              <label>Horas Extras (override opcional)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={formData.horasExtras}
+                onChange={(e) => setFormData({ ...formData, horasExtras: e.target.value })}
+                placeholder="Ej: 10"
+              />
+            </div>
+          </div>
+        )}
 
         <button type="submit" className="btn-primary btn-large">Calcular Nómina</button>
       </form>
@@ -89,7 +168,7 @@ const CalcularNominaPage = () => {
           <div className="resultado-grid">
             <div className="resultado-card">
               <h3>Ingresos</h3>
-              <p>Salario Base: S/. {resultado.salarioBase}</p>
+              <p>Salario Base Mensual: S/. {resultado.salarioBaseMensual}</p>
               <p>Horas Trabajadas: {resultado.horasTrabajadas}</p>
               <p>Horas Extras: {resultado.horasExtras}</p>
               <p>Pago Horas Extras: S/. {resultado.pagoHorasExtras}</p>
@@ -101,8 +180,8 @@ const CalcularNominaPage = () => {
 
             <div className="resultado-card">
               <h3>Deducciones</h3>
-              <p>EsSalud (9%): S/. {resultado.deduccionEssalud || '0.00'}</p>
-              <p>ONP (13%): S/. {resultado.deduccionOnp || '0.00'}</p>
+              <p>EsSalud: S/. {resultado.essalud || '0.00'}</p>
+              <p>ONP: S/. {resultado.onp || '0.00'}</p>
               <hr />
               <p><strong>Total Deducciones: S/. {resultado.totalDeducciones}</strong></p>
             </div>
