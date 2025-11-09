@@ -195,33 +195,6 @@ const authService = {
     return data;
   },
 
-  // Logout
-  logout() {
-    // Opcional: notificar al backend sobre el logout
-    try {
-      const token = this.getToken();
-      if (token) {
-        fetch(`${API_URL}/logout`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }).catch(() => {
-          // Ignorar errores del logout en el backend
-        });
-      }
-    } catch (error) {
-      console.log('Error en logout del backend:', error);
-    }
-    
-    this.clearAuthData();
-    // Recargar la página para resetear el estado de la aplicación
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
-  },
-
   // Hacer petición autenticada (con token en el header)
   async authenticatedRequest(url, options = {}) {
     const token = this.getToken();

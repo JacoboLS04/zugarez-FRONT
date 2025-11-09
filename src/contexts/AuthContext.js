@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }) => {
         }
       };
     }
-  }, [isAuthenticated, resetInactivityTimer]);
+  }, [isAuthenticated, resetInactivityTimer, activityEvents]);
 
   // Verificar autenticación al cargar la aplicación
   useEffect(() => {

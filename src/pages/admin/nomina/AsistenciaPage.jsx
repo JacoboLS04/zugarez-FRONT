@@ -37,7 +37,7 @@ const AsistenciaPage = () => {
     if (empleados.length) {
       cargarRegistrosHoy();
     }
-  }, [cargarRegistrosHoy]);
+  }, [empleados.length, cargarRegistrosHoy]); // añadido empleados.length
 
   const cargarEmpleados = async () => {
     try {

@@ -20,8 +20,6 @@ const AuthPage = () => {
   const [userType, setUserType] = useState('client'); // Default to client
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showResend, setShowResend] = useState(false);
-  const [resendStatus, setResendStatus] = useState('');
   const [showCodeInput, setShowCodeInput] = useState(false);
   const [code, setCode] = useState('');
   const [loginEmail, setLoginEmail] = useState('');
@@ -92,8 +90,7 @@ const AuthPage = () => {
       e && e.preventDefault();
       setIsLoading(true);
       setError('');
-      setShowResend(false);
-      setResendStatus('');
+      setShowCodeInput(false);
 
       if (!validateForm()) {
         setIsLoading(false);
